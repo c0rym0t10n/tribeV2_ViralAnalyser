@@ -1,3 +1,5 @@
+line-length = 120
+
 [lint]
 select = ["E", "F", "W"]
 # Ignored to unblock CI; each is documented as a follow-up clean-up:
@@ -5,11 +7,22 @@ select = ["E", "F", "W"]
 #          and report_localization.py — duplicate Russian keys, unrelated to
 #          this stack).
 #   F541 - f-string without placeholders (5 pre-existing hits).
-#   E501 - line-too-long (1000+ hits at default 88 cols, mostly long Russian
-#          copy strings in review_engine.py, app.py, report_localization.py).
-# TODO(post-phase-4): re-enable E501 once i18n move flattens Russian copy strings into report_localization.py
-ignore = ["F601", "F541", "E501"]
+ignore = ["F601", "F541"]
 exclude = ["runtime_media", ".venv", "__pycache__"]
 
 [lint.per-file-ignores]
+# Tests routinely have long parametrize tables and printable assertions.
 "tests/*" = ["E501"]
+# Prose-heavy modules: the bulk of long lines are Russian copy strings or
+# their English overlays. Reformatting them has a real chance of garbling
+# punctuation/whitespace inside the strings, so we leave E501 off here and
+# track the cleanup as a separate copy-localization PR (the F3-style move).
+"tribe_review/_engine.py" = ["E501"]
+"report_localization.py" = ["E501"]
+"ollama_runtime.py" = ["E501"]
+"analysis_settings.py" = ["E501"]
+# Charting / HTML-template modules: the long lines are matplotlib calls and
+# inline CSS/SVG strings where wrapping isn't an obvious improvement.
+"pdf_report.py" = ["E501"]
+"official_report.py" = ["E501"]
+"brain_visualization.py" = ["E501"]

@@ -309,7 +309,10 @@ def _refresh_comparison_report(report: dict) -> dict:
     if len(variants) < 2:
         return deepcopy(report)
     analysis_mode = report.get("analysis_mode") if isinstance(report.get("analysis_mode"), dict) else {}
-    refreshed = generate_comparison_report(deepcopy(variants), analysis_mode=analysis_mode.get("key") or DEFAULT_ANALYSIS_MODE)
+    refreshed = generate_comparison_report(
+        deepcopy(variants),
+        analysis_mode=analysis_mode.get("key") or DEFAULT_ANALYSIS_MODE,
+    )
     for key in ("report_id", "created_at", "official_sources"):
         if key in report:
             refreshed[key] = deepcopy(report[key])

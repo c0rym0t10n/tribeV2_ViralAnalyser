@@ -87,7 +87,10 @@ def main() -> int:
         _log("First launch setup failed.")
         _log(f"Error: {exc}")
         _log("")
-        _log("Check your internet connection and make sure Hugging Face access is available if the model download asks for it.")
+        _log(
+            "Check your internet connection and make sure Hugging Face access "
+            "is available if the model download asks for it."
+        )
         _log("After fixing the issue, run Start_TRIBE_Review.cmd again.")
         return 1
 
