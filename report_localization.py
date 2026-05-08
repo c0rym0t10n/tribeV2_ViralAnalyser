@@ -1287,3 +1287,247 @@ def _fallback_action_timestamp(report: dict[str, Any]) -> str | None:
         if isinstance(moment, dict) and moment.get("timestamp"):
             return str(moment["timestamp"])
     return None
+
+
+# ---------------------------------------------------------------------------
+# Source-of-truth copy strings (Follow-up F3)
+#
+# These constants used to live inside ``tribe_review/_engine.py`` and inside
+# ``tribe_review/curve_alignment.py``. Moving them here means localization
+# concerns (Russian-default + English-overlay) sit in one module instead of
+# being scattered across the engine.
+#
+# Status of the EN data:
+#   * Action-item TITLES on the EN side are already covered by
+#     ``LABEL_MAP_EN`` and by the native rewriting in
+#     ``_rewrite_english_report``. ``ACTION_VARIANTS_EN`` adds the matching
+#     INSTRUCTIONS so a future PR can teach ``_rewrite_action_items_en`` to
+#     prefer the curated translation over its current heuristic builder.
+#   * Curve-alignment default labels/summaries get used when the editorial
+#     layer copies them into ``focus_windows`` / ``drop_moments`` without
+#     overriding them; the EN translations are merged into ``LABEL_MAP_EN``
+#     below so ``_apply_known_labels`` picks them up automatically.
+# ---------------------------------------------------------------------------
+
+
+ACTION_VARIANTS_RU: dict[str, list[tuple[str, str]]] = {
+    "early_response": [
+        ("Усиль первый кадр", "Поставь перед этой точкой кадр, где сразу видно главный объект, результат или конфликт."),
+        ("Начни с результата", "Покажи итог или самый понятный эффект раньше, а объяснение оставь после него."),
+        ("Убери долгий заход", "Если перед этой точкой есть вступление без нового смысла, сократи его до первого действия."),
+        ("Подними главный объект", "Сделай объект крупнее или ближе к центру уже в начале слабого окна."),
+        ("Дай обещание раньше", "Если ролик продает результат, покажи его пользу до просадки, а не после нее."),
+        ("Начни с действия", "Замени спокойный вход на кадр с движением, жестом или заметным изменением."),
+        ("Переставь сильный кадр", "Возьми ближайший сильный кадр после просадки и протестируй его раньше."),
+        ("Сократи пустой старт", "Убери кадры, где зритель еще не понимает, на что смотреть."),
+        ("Покажи контекст сразу", "Добавь короткую визуальную подсказку, чтобы смысл считывался до слабого места."),
+        ("Сделай вход резче", "Ускорь первые секунды: меньше паузы, крупнее объект, яснее действие."),
+    ],
+    "sustain": [
+        ("Подрежь затянутый отрезок", "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию."),
+        ("Добавь новый поворот", "Перед этой точкой вставь новую деталь, движение или смену плана, чтобы ролик не провисал."),
+        ("Собери темп плотнее", "Сожми паузу и оставь только кадры, которые двигают сцену вперед."),
+        ("Обнови середину", "Добавь в этот участок новую информацию: реакцию, деталь, результат или изменение действия."),
+        ("Сократи повтор", "Если кадр повторяет уже понятную мысль, оставь только самый сильный кусок."),
+        ("Смени крупность", "Перед просадкой перейди на другой масштаб: крупный план, общий план или деталь."),
+        ("Дай маленький payoff", "Вставь быстрый мини-результат до того, как график начинает падать."),
+        ("Переставь событие ближе", "Если важное действие происходит позже, протестируй его на 1-2 секунды раньше."),
+        ("Убери нейтральный кадр", "Кадр без новой информации лучше заменить движением или реакцией."),
+        ("Разбей длинный план", "Раздели статичный участок короткой сменой ракурса или вставкой детали."),
+    ],
+    "transition": [
+        ("Смени кадр раньше", "Смени план, ракурс или действие раньше, чтобы этот участок не тянулся."),
+        ("Добавь визуальный акцент", "Перед этой точкой добавь движение, жест, приближение или смену крупности."),
+        ("Убери зависший план", "Если кадр стоит без нового действия, сократи его до первого понятного движения."),
+        ("Вставь деталь", "Добавь короткий крупный план детали, чтобы зритель получил новый повод смотреть."),
+        ("Поменяй ракурс", "Оставь то же действие, но покажи его с другого угла до начала просадки."),
+        ("Добавь реакцию", "Если есть человек, животное или объект в действии, вставь реакцию или последствие."),
+        ("Ускорь монтаж", "Проверь более короткую длительность этого плана без изменения смысла сцены."),
+        ("Сделай переход заметнее", "Используй движение в кадре или совпадение действия, чтобы смена не выглядела случайной."),
+        ("Раздели однообразный кусок", "Внутри длинного фрагмента добавь вторую визуальную фазу: было - стало, до - после."),
+        ("Дай текстовую опору", "Если картинка похожа сама на себя, добавь короткую подпись с новым смыслом."),
+    ],
+    "stability": [
+        ("Убери лишнее из кадра", "Оставь один главный объект и убери лишние детали или текст рядом с ним."),
+        ("Сделай фокус понятнее", "Подсвети главный объект крупностью, положением в кадре или более чистым фоном."),
+        ("Разгрузи композицию", "Убери конкурирующие элементы, чтобы взгляд не распадался между несколькими деталями."),
+        ("Спрячь лишний текст", "Если рядом с главным объектом много слов, оставь одну короткую подпись или убери ее совсем."),
+        ("Укрупни главный объект", "Сделай важный объект больше, чтобы он не конкурировал с фоном."),
+        ("Очисти фон", "Проверь кадр без лишних предметов, бликов или деталей за главным действием."),
+        ("Сделай движение понятнее", "Если действие мелкое, покажи его крупнее или повтори в более читаемом ракурсе."),
+        ("Убери второй центр внимания", "Оставь один главный фокус, а второстепенный объект затемни, обрежь или вынеси позже."),
+        ("Стабилизируй кадр", "Если просадка рядом с тряской или резким сдвигом, протестируй более спокойный фрагмент."),
+        ("Отдели объект от фона", "Усиль разницу светом, цветом или рамкой, чтобы главное не сливалось."),
+    ],
+    "density": [
+        ("Подними средний уровень", "Усиль не один пик, а обычные кадры вокруг этой точки: крупнее объект, чище фон, заметнее действие."),
+        ("Покажи товар крупнее", "Сделай объект крупнее, усили движение в кадре или добавь контраст."),
+        ("Усиль визуальный удар", "Перед этой точкой добавь более яркий кадр, крупный план или заметное действие."),
+        ("Сделай кадр контрастнее", "Отдели главный объект от фона светом, цветом или более чистой композицией."),
+        ("Добавь движение", "Если кадр статичный, протестируй движение руки, камеры, объекта или смену положения."),
+        ("Покажи деталь ближе", "Вставь крупный план детали, на которую зритель должен обратить внимание."),
+        ("Убери серый кадр", "Замени нейтральный фрагмент на кадр с более явным действием или эмоцией."),
+        ("Сделай пользу видимой", "Если продукт или результат плохо читается, покажи его эффект прямо в кадре."),
+        ("Дай визуальный контраст", "Проверь светлый объект на темном фоне, цветовой акцент или более чистую композицию."),
+        ("Собери сильнее сцену", "Убери слабые промежуточные кадры и оставь те, где объект, действие и смысл видны сразу."),
+    ],
+    "speech_start": [
+        ("Скажи главное раньше", "Если смысл держится на словах, подай главную фразу до этой точки и сократи немой заход."),
+        ("Перенеси фразу вперед", "Поставь ключевую реплику ближе к началу слабого участка."),
+        ("Начни с короткой фразы", "Добавь одну понятную реплику до просадки, без длинного объяснения."),
+        ("Убери немой заход", "Если первые секунды без слов не работают, сократи их или положи поверх ключевую мысль."),
+        ("Синхронизируй слово и кадр", "Пусть важная фраза звучит в тот момент, когда главный объект уже виден."),
+    ],
+    "pause": [
+        ("Убери паузу", "Подрежь пустой промежуток или скажи фразу плотнее, чтобы участок не проседал."),
+        ("Сожми речь", "Сократи паузу между словами и оставь только нужную фразу."),
+        ("Подтяни подачу", "Сделай фразу короче и ближе к действию в кадре."),
+        ("Закрой пустое место", "Если паузу нельзя убрать, перекрой ее действием, реакцией или крупным планом."),
+        ("Разрежь длинную фразу", "Раздели речь на короткие куски и поставь каждый рядом с нужным кадром."),
+    ],
+}
+
+
+ACTION_VARIANTS_EN: dict[str, list[tuple[str, str]]] = {
+    "early_response": [
+        ("Strengthen the first frame", "Place a frame here that immediately shows the main subject, the result, or the conflict."),
+        ("Open with the result", "Lead with the outcome or the clearest payoff and put the explanation behind it."),
+        ("Cut the long intro", "If there is setup before this point that adds no new meaning, trim it down to the first action."),
+        ("Lift the main subject", "Make the subject larger or closer to centre right at the start of the weak window."),
+        ("Promise earlier", "If the cut is selling a result, show its benefit before the dip, not after."),
+        ("Open on action", "Replace the calm opener with a frame that has motion, a gesture, or a clear change."),
+        ("Move a strong frame forward", "Take the nearest strong frame after the dip and try it earlier in the cut."),
+        ("Trim the empty start", "Drop frames where the viewer does not yet know what they are looking at."),
+        ("Show context up front", "Add a short visual cue so the meaning lands before the weak section."),
+        ("Sharpen the entry", "Speed up the first seconds: less pause, bigger subject, clearer action."),
+    ],
+    "sustain": [
+        ("Trim the dragged section", "Cut 1-2 seconds before this point, or jump faster to the next beat."),
+        ("Add a new turn", "Insert a new detail, motion, or shot change before this point so the cut does not sag."),
+        ("Tighten the pacing", "Squeeze the pause and keep only the frames that move the scene forward."),
+        ("Refresh the middle", "Add new information here: a reaction, a detail, a payoff, or a change of action."),
+        ("Cut the repeat", "If the frame restates a beat the viewer already got, keep only the strongest copy."),
+        ("Switch the framing", "Move to a different scale before the dip: close-up, wide shot, or a detail."),
+        ("Drop a small payoff", "Land a quick mini-result before the curve starts to fall."),
+        ("Move the beat earlier", "If the important action lands later, try it 1-2 seconds sooner."),
+        ("Drop the neutral frame", "A frame with no new info plays better as a motion or reaction beat."),
+        ("Break up the long take", "Split the static stretch with a fast angle change or an inserted detail."),
+    ],
+    "transition": [
+        ("Change the shot earlier", "Switch the angle, framing, or action sooner so this stretch does not drag."),
+        ("Add a visual accent", "Before this point add motion, a gesture, a push-in, or a scale change."),
+        ("Cut the held shot", "If the frame sits without new action, trim it to the first clear movement."),
+        ("Insert a detail", "Drop in a short close-up of a detail so the viewer gets a new reason to keep watching."),
+        ("Switch the angle", "Keep the same action but show it from another angle before the dip starts."),
+        ("Add a reaction", "If there is a person, animal, or object in motion, insert a reaction or aftermath."),
+        ("Speed up the cut", "Try a shorter take here without changing what the scene means."),
+        ("Make the transition obvious", "Use motion or a match-cut so the change does not feel accidental."),
+        ("Split the uniform stretch", "Inside a long fragment add a second visual phase: before-after, then-now."),
+        ("Add a text anchor", "If the picture looks the same to itself, add a short caption that introduces a new beat."),
+    ],
+    "stability": [
+        ("Clean up the frame", "Keep one main subject and remove the extra detail or text around it."),
+        ("Sharpen the focus", "Make the main subject pop with size, position, or a cleaner background."),
+        ("Declutter the composition", "Cut the competing elements so the eye does not split between multiple details."),
+        ("Hide the extra text", "If there are too many words near the subject, leave one short caption or drop it entirely."),
+        ("Make the subject larger", "Push the important subject up in scale so it does not fight the background."),
+        ("Clean the background", "Try the frame without stray objects, glare, or detail behind the main action."),
+        ("Make the motion obvious", "If the action is small, show it bigger or repeat it from a more readable angle."),
+        ("Remove the second focal point", "Keep one main focus; darken, crop, or move the secondary element later."),
+        ("Stabilise the frame", "If the dip lines up with shake or a hard cut, try a calmer fragment instead."),
+        ("Separate subject from background", "Boost the contrast with light, colour, or a frame so the main thing stands out."),
+    ],
+    "density": [
+        ("Lift the average level", "Strengthen not just the peak but the everyday frames around this point: bigger subject, cleaner background, more visible action."),
+        ("Show the product larger", "Push the subject up in scale, add motion, or boost the contrast."),
+        ("Sharpen the visual punch", "Before this point add a brighter frame, a close-up, or a louder action."),
+        ("Boost the contrast", "Separate the subject from the background with light, colour, or a cleaner composition."),
+        ("Add motion", "If the frame is static, try a hand, camera, or subject motion or a change of position."),
+        ("Show the detail closer", "Insert a close-up of the detail you want the viewer to notice."),
+        ("Cut the grey frame", "Replace the neutral fragment with a frame that has clearer action or emotion."),
+        ("Show the benefit", "If the product or result is hard to read, show its effect right inside the frame."),
+        ("Add visual contrast", "Try a bright subject on a dark background, a colour accent, or a cleaner composition."),
+        ("Tighten the scene", "Drop the weak filler frames and keep only ones where subject, action, and meaning land at once."),
+    ],
+    "speech_start": [
+        ("Say the main point earlier", "If the meaning lives in the words, deliver the key line before this point and trim the silent intro."),
+        ("Move the line forward", "Place the key line closer to the start of the weak section."),
+        ("Open with a short line", "Add one clear line before the dip, without a long explanation."),
+        ("Cut the silent opener", "If the first seconds without words are not working, trim them or lay the key thought on top."),
+        ("Sync word and frame", "Let the important line land at the moment the main subject is already visible."),
+    ],
+    "pause": [
+        ("Cut the pause", "Trim the empty gap or deliver the line tighter so the section does not sag."),
+        ("Tighten the speech", "Compress the gap between words and keep only the line you need."),
+        ("Tighten the delivery", "Make the line shorter and closer to the action in the frame."),
+        ("Cover the dead air", "If you cannot remove the pause, cover it with action, a reaction, or a close-up."),
+        ("Break the long line", "Split the speech into short pieces and place each next to the right frame."),
+    ],
+}
+
+
+# Curve-alignment defaults (used by tribe_review.curve_alignment when the
+# editorial layer doesn't override them).
+CURVE_FOCUS_WINDOW_LABELS_RU: tuple[str, ...] = (
+    "Лучший кусок",
+    "Где чинить первым",
+    "Еще одна просадка",
+)
+CURVE_FOCUS_WINDOW_SUMMARIES_RU: tuple[str, ...] = (
+    "Используй этот участок как ориентир.",
+    "На графике здесь виден заметный спад.",
+    "Здесь на графике есть еще один заметный спад.",
+)
+CURVE_DROP_DEFAULT_REASON_RU = "На графике здесь виден заметный спад."
+CURVE_PLAN_TITLE_KEEP_RU = "Оставить"
+CURVE_PLAN_TITLE_FIRST_RU = "Сделать первым"
+CURVE_PLAN_TITLE_NEXT_RU = "Сделать потом"
+
+CURVE_FOCUS_WINDOW_LABELS_EN: tuple[str, ...] = (
+    "Best section",
+    "Weak window",
+    "Another drop",
+)
+CURVE_FOCUS_WINDOW_SUMMARIES_EN: tuple[str, ...] = (
+    "Use this section as the anchor.",
+    "There is a clear dip here on the curve.",
+    "There is another clear dip on the curve here.",
+)
+CURVE_DROP_DEFAULT_REASON_EN = "There is a clear dip here on the curve."
+CURVE_PLAN_TITLE_KEEP_EN = "Keep"
+CURVE_PLAN_TITLE_FIRST_EN = "Do first"
+CURVE_PLAN_TITLE_NEXT_EN = "Do next"
+
+
+def get_action_variants(language: str | None = None) -> dict[str, list[tuple[str, str]]]:
+    """Return the action-variant catalogue for the given language.
+
+    Defaults to Russian (the engine's source-of-truth language). Pass
+    ``"en"`` for the parallel English catalogue.
+    """
+
+    if (language or "").strip().lower() == "en":
+        return ACTION_VARIANTS_EN
+    return ACTION_VARIANTS_RU
+
+
+# Make every Russian action-item title and instruction translatable via the
+# existing ``_apply_known_labels`` machinery. We extend ``LABEL_MAP_EN`` here
+# (rather than rewriting the dict literal hundreds of lines above) so the
+# pre-existing translations stay authoritative when there's a clash.
+for _ru_metric_key, _ru_pairs in ACTION_VARIANTS_RU.items():
+    _en_pairs = ACTION_VARIANTS_EN.get(_ru_metric_key, [])
+    for (_ru_title, _ru_instruction), (_en_title, _en_instruction) in zip(_ru_pairs, _en_pairs):
+        LABEL_MAP_EN.setdefault(_ru_title, _en_title)
+        LABEL_MAP_EN.setdefault(_ru_instruction, _en_instruction)
+del _ru_metric_key, _ru_pairs, _en_pairs, _ru_title, _ru_instruction, _en_title, _en_instruction
+
+for _ru_label, _en_label in zip(CURVE_FOCUS_WINDOW_LABELS_RU, CURVE_FOCUS_WINDOW_LABELS_EN):
+    LABEL_MAP_EN.setdefault(_ru_label, _en_label)
+for _ru_summary, _en_summary in zip(CURVE_FOCUS_WINDOW_SUMMARIES_RU, CURVE_FOCUS_WINDOW_SUMMARIES_EN):
+    LABEL_MAP_EN.setdefault(_ru_summary, _en_summary)
+LABEL_MAP_EN.setdefault(CURVE_DROP_DEFAULT_REASON_RU, CURVE_DROP_DEFAULT_REASON_EN)
+LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_KEEP_RU, CURVE_PLAN_TITLE_KEEP_EN)
+LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_FIRST_RU, CURVE_PLAN_TITLE_FIRST_EN)
+LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_NEXT_RU, CURVE_PLAN_TITLE_NEXT_EN)
+del _ru_label, _en_label, _ru_summary, _en_summary

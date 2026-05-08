@@ -15,6 +15,15 @@ from typing import Any
 
 import numpy as np
 
+from report_localization import (
+    CURVE_DROP_DEFAULT_REASON_RU,
+    CURVE_FOCUS_WINDOW_LABELS_RU,
+    CURVE_FOCUS_WINDOW_SUMMARIES_RU,
+    CURVE_PLAN_TITLE_FIRST_RU,
+    CURVE_PLAN_TITLE_KEEP_RU,
+    CURVE_PLAN_TITLE_NEXT_RU,
+)
+
 
 def _extract_official_curve_points(
     official_result: dict[str, Any],
@@ -159,21 +168,15 @@ def _build_curve_focus_windows(
     if not seeds:
         return existing_windows
 
-    default_labels = ("Лучший кусок", "Где чинить первым", "Еще одна просадка")
-    default_summaries = (
-        "Используй этот участок как ориентир.",
-        "На графике здесь виден заметный спад.",
-        "Здесь на графике есть еще один заметный спад.",
-    )
     rewritten: list[dict[str, Any]] = []
     for index, point in enumerate(seeds):
         template = existing_windows[index] if index < len(existing_windows) else {}
         rewritten.append(
             {
-                "label": str(template.get("label") or default_labels[index]),
+                "label": str(template.get("label") or CURVE_FOCUS_WINDOW_LABELS_RU[index]),
                 "timestamp": point["timestamp"],
                 "seconds": point["seconds"],
-                "summary": str(template.get("summary") or default_summaries[index]),
+                "summary": str(template.get("summary") or CURVE_FOCUS_WINDOW_SUMMARIES_RU[index]),
             }
         )
     return rewritten
@@ -190,7 +193,7 @@ def _build_curve_drop_moments(
             {
                 "seconds": point["seconds"],
                 "timestamp": point["timestamp"],
-                "reason": str(template.get("reason") or "На графике здесь виден заметный спад."),
+                "reason": str(template.get("reason") or CURVE_DROP_DEFAULT_REASON_RU),
             }
         )
     return rewritten
@@ -252,21 +255,21 @@ def _rebuild_editorial_lists(review: dict[str, Any]) -> None:
     if keep_item:
         plan.append(
             {
-                "title": "Оставить",
+                "title": CURVE_PLAN_TITLE_KEEP_RU,
                 "detail": _timed_instruction_line(keep_item),
             }
         )
     if edit_items:
         plan.append(
             {
-                "title": "Сделать первым",
+                "title": CURVE_PLAN_TITLE_FIRST_RU,
                 "detail": _timed_instruction_line(edit_items[0]),
             }
         )
     if len(edit_items) > 1:
         plan.append(
             {
-                "title": "Сделать потом",
+                "title": CURVE_PLAN_TITLE_NEXT_RU,
                 "detail": _timed_instruction_line(edit_items[1]),
             }
         )
