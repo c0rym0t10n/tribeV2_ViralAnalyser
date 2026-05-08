@@ -7,36 +7,20 @@ from functools import lru_cache
 import re
 from typing import Any
 from urllib.error import URLError
-from urllib.request import Request, urlopen
+
+from ollama_http import (
+    OLLAMA_BASE_URL,  # noqa: F401  (re-exported for legacy ``ollama_runtime.OLLAMA_BASE_URL`` callers)
+    OLLAMA_TIMEOUT_SECONDS,  # noqa: F401  (re-exported for legacy callers)
+    request_json as _request_json,
+    rewrite_with_ollama as _rewrite_with_ollama,
+)
 
 
-OLLAMA_BASE_URL = "http://localhost:11434/api"
-OLLAMA_TIMEOUT_SECONDS = 90
 PREFERRED_MODELS = (
     "qwen3.5:9b",
     "qwen35-27b-q4km:latest",
     "qwen35-27b-q3km:latest",
 )
-TRANSLATION_MODELS = (
-    "qwen3.5:9b",
-    "qwen35-27b-q4km:latest",
-    "qwen35-27b-q3km:latest",
-)
-
-
-def _request_json(path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
-    body = None
-    headers: dict[str, str] = {}
-    method = "GET"
-    if payload is not None:
-        method = "POST"
-        headers["Content-Type"] = "application/json"
-        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    request = Request(f"{OLLAMA_BASE_URL}{path}", data=body, headers=headers, method=method)
-    with urlopen(request, timeout=OLLAMA_TIMEOUT_SECONDS) as response:
-        raw = response.read().decode("utf-8")
-    loaded = json.loads(raw)
-    return loaded if isinstance(loaded, dict) else {}
 
 
 @lru_cache(maxsize=1)
@@ -52,27 +36,6 @@ def get_preferred_model() -> str | None:
 
     names = [item.get("name") for item in models if isinstance(item, dict) and item.get("name")]
     for preferred in PREFERRED_MODELS:
-        if preferred in names:
-            return preferred
-    for name in names:
-        if "qwen" in str(name).lower():
-            return str(name)
-    return str(names[0]) if names else None
-
-
-@lru_cache(maxsize=1)
-def get_translation_model() -> str | None:
-    try:
-        response = _request_json("/tags")
-    except (OSError, URLError, json.JSONDecodeError):
-        return None
-
-    models = response.get("models")
-    if not isinstance(models, list):
-        return None
-
-    names = [item.get("name") for item in models if isinstance(item, dict) and item.get("name")]
-    for preferred in TRANSLATION_MODELS:
         if preferred in names:
             return preferred
     for name in names:
@@ -250,129 +213,6 @@ def _build_review_prompt_payload(review: dict[str, Any]) -> dict[str, Any]:
         "drop_moments": drop_moments[:4],
         "speech": _speech_prompt_payload(review.get("speech")),
     }
-
-
-def _rewrite_with_ollama(
-    model: str,
-    messages: list[dict[str, str]],
-    schema: dict[str, Any],
-    num_predict_values: tuple[int, ...] = (900, 1400),
-) -> dict[str, Any] | None:
-    for num_predict in num_predict_values:
-        try:
-            response = _request_json(
-                "/chat",
-                {
-                    "model": model,
-                    "stream": False,
-                    "think": False,
-                    "format": schema,
-                    "messages": messages,
-                    "options": {"temperature": 0.2, "num_predict": num_predict},
-                    "keep_alive": "15m",
-                },
-            )
-        except (OSError, URLError, json.JSONDecodeError):
-            continue
-
-        message = response.get("message") or {}
-        content = message.get("content")
-        if not isinstance(content, str) or not content.strip():
-            continue
-
-        parsed = _parse_json_object(content)
-        if isinstance(parsed, dict):
-            return parsed
-    return None
-
-
-def _parse_json_object(content: str) -> dict[str, Any] | None:
-    try:
-        parsed = json.loads(content)
-        return parsed if isinstance(parsed, dict) else None
-    except json.JSONDecodeError:
-        pass
-
-    start = content.find("{")
-    if start < 0:
-        return None
-
-    depth = 0
-    in_string = False
-    escaped = False
-    for index, char in enumerate(content[start:], start=start):
-        if in_string:
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == '"':
-                in_string = False
-            continue
-
-        if char == '"':
-            in_string = True
-        elif char == "{":
-            depth += 1
-        elif char == "}":
-            depth -= 1
-            if depth == 0:
-                candidate = content[start : index + 1]
-                try:
-                    parsed = json.loads(candidate)
-                except json.JSONDecodeError:
-                    return None
-                return parsed if isinstance(parsed, dict) else None
-    return None
-
-
-def translate_text_batch(texts: list[str], target_language: str = "en") -> list[str] | None:
-    cleaned = [" ".join(str(text).split()) for text in texts if isinstance(text, str)]
-    if not cleaned:
-        return []
-
-    model = get_translation_model()
-    if not model:
-        return None
-
-    translated: list[str] = []
-    for start in range(0, len(cleaned), 12):
-        chunk = cleaned[start : start + 12]
-        schema = {
-            "type": "object",
-            "properties": {
-                "translations": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                }
-            },
-            "required": ["translations"],
-        }
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You translate creative-review copy into natural English for YouTube editors, paid-social teams, "
-                    "and performance marketers. Prefer terms like Hook, Retention, Pacing, Visual Clarity, "
-                    "Visual Punch, cut, shot, frame, and CTA when they fit. Keep timestamps like 00:45 unchanged. "
-                    "Do not add explanations. Return JSON only."
-                    if target_language == "en"
-                    else "You translate creative-review copy into natural Russian. Return JSON only."
-                ),
-            },
-            {
-                "role": "user",
-                "content": json.dumps({"items": chunk, "target_language": target_language}, ensure_ascii=False),
-            },
-        ]
-        payload = _rewrite_with_ollama(model, messages, schema, num_predict_values=(450, 700))
-        if not isinstance(payload, dict):
-            return None
-        items = payload.get("translations")
-        if not isinstance(items, list) or len(items) != len(chunk):
-            return None
-        translated.extend(str(item).strip() for item in items)
-    return translated
 
 
 def _apply_simple_cleanup(review: dict[str, Any]) -> None:
