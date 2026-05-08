@@ -641,6 +641,32 @@
     .pill-row {
       gap: 8px;
     }
+    .mode-toggle {
+      padding: 4px;
+      gap: 4px;
+      min-height: 38px;
+    }
+    .mode-toggle-pill {
+      background: transparent;
+      border: 0;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      letter-spacing: -0.04em;
+      font-family: inherit;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+    .mode-toggle-pill:hover { color: var(--ink); }
+    .mode-toggle-pill.is-active {
+      background: var(--ink);
+      color: #ffffff;
+    }
+    body.theme-dark .mode-toggle-pill.is-active {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
     .nav-pill {
       text-decoration: none;
       transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
@@ -1720,12 +1746,16 @@
             <span class="pill">{{ "1 video = deep review" if language == "en" else "1 ролик = глубокий разбор" }}</span>
             <span class="pill">{{ "2–4 videos = comparison" if language == "en" else "2–4 ролика = сравнение" }}</span>
             <span class="pill">{{ "processed safely in sequence" if language == "en" else "безопасная обработка по очереди" }}</span>
+            <div class="pill mode-toggle" role="radiogroup" aria-label="{{ 'Analysis mode' if language == 'en' else 'Режим анализа' }}" data-analysis-toggle>
+              <input type="hidden" name="analysis_mode" value="deep" data-analysis-input>
+              <button type="button" class="mode-toggle-pill is-active" data-mode="deep" role="radio" aria-checked="true">{{ "Deep" if language == "en" else "Глубокий" }}</button>
+              <button type="button" class="mode-toggle-pill" data-mode="simplified" role="radio" aria-checked="false">{{ "Simplified" if language == "en" else "Упрощённый" }}</button>
+            </div>
           </div>
         </div>
         <div class="upload-grid">
           <div class="upload-field-col">
             <div class="field-stack" style="margin-top: 14px;">
-              <input type="hidden" name="analysis_mode" value="deep">
               <div class="file-picker" data-file-picker style="margin-top: 0;">
                 <input id="videos-input" class="native-file-input" type="file" name="videos" accept="video/*" multiple required>
                 <button type="button" class="file-picker-button" data-file-picker-trigger>{{ ui.choose_files }}</button>
@@ -1754,7 +1784,7 @@
 
       {% if result %}
       <div class="card">
-        {% set analysis_mode_key = "deep" %}
+        {% set analysis_mode_key = (result.analysis_mode.key if result.analysis_mode and result.analysis_mode.key else "deep") %}
         {% set editorial = result.editorial %}
         <div class="result-top">
           <div>
@@ -2245,6 +2275,25 @@
             return;
           }
           label.textContent = Array.from(input.files).map((file) => file.name).join(", ");
+        });
+      }
+
+      function bindAnalysisToggle() {
+        document.querySelectorAll("[data-analysis-toggle]").forEach((group) => {
+          const hidden = group.querySelector("[data-analysis-input]");
+          const buttons = group.querySelectorAll("[data-mode]");
+          if (!hidden || !buttons.length) return;
+          buttons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              buttons.forEach((b) => {
+                b.classList.remove("is-active");
+                b.setAttribute("aria-checked", "false");
+              });
+              btn.classList.add("is-active");
+              btn.setAttribute("aria-checked", "true");
+              hidden.value = btn.dataset.mode;
+            });
+          });
         });
       }
 
@@ -2988,6 +3037,7 @@
 
       bindFilePicker();
       bindSubmitProgress();
+      bindAnalysisToggle();
       bindThemeToggle();
       applyTimelineColors();
       bindDraggableBoards();
