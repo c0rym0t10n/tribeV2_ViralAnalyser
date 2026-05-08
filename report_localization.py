@@ -1531,3 +1531,203 @@ LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_KEEP_RU, CURVE_PLAN_TITLE_KEEP_EN)
 LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_FIRST_RU, CURVE_PLAN_TITLE_FIRST_EN)
 LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_NEXT_RU, CURVE_PLAN_TITLE_NEXT_EN)
 del _ru_label, _en_label, _ru_summary, _en_summary
+
+
+# ============================================================================
+# Conditional-copy banded summaries (Stage-2 / G3)
+# ----------------------------------------------------------------------------
+# Score-band copy for the five TRIBE metrics and value-band copy for the five
+# speech-side metrics. Both used to live as ternary chains / inline dicts in
+# ``tribe_review/copy_ru.py``; G3 lifts them here so ``copy_ru`` becomes a
+# thin delegator and EN translations live alongside RU.
+#
+# Bands:
+# * Metric-side (early_response / sustain / transition / stability / density):
+#   "high" if score >= 75, "mid" if score >= 60, else "low".
+# * Speech-side (speech_start / speech_pace / articulation / pause_ratio /
+#   confidence): per-metric thresholds, see ``SPEECH_BAND_RULES``. ``"high"``
+#   always means the desirable end of the spectrum.
+# ============================================================================
+
+
+METRIC_SUMMARY_LIBRARY_RU: dict[str, dict[str, str]] = {
+    "early_response": {
+        "high": "Ролик быстро набирает высокий уровень: главное видно рано и без долгого захода.",
+        "mid": "Старт рабочий, но главное можно показать раньше или крупнее.",
+        "low": "Начало набирает уровень поздно: зритель не сразу понимает, за что держаться.",
+    },
+    "sustain": {
+        "high": "После старта линия держится ровно: в ролике регулярно появляется новый повод смотреть дальше.",
+        "mid": "Линия держится не везде: часть отрезков можно сжать или оживить.",
+        "low": "После сильных мест график быстро проседает: ролику не хватает новых событий по ходу просмотра.",
+    },
+    "transition": {
+        "high": "Новые события появляются вовремя: кадр не застывает надолго.",
+        "mid": "Темп в целом рабочий, но отдельные планы можно менять раньше.",
+        "low": "Новых событий мало или они поздно появляются, поэтому некоторые участки начинают тянуться.",
+    },
+    "stability": {
+        "high": "Резких провалов немного: зрителю легче непрерывно следить за главным.",
+        "mid": "Есть заметные перепады: часть кадров слабее соседних и требует проверки.",
+        "low": "Просадки резкие: рядом с сильными моментами есть участки, которые быстро теряют уровень.",
+    },
+    "density": {
+        "high": "Средний уровень высокий: не только отдельные пики, но и большая часть ролика выглядит сильной.",
+        "mid": "Средний уровень нормальный, но лучшие места заметно сильнее остальных.",
+        "low": "Средний уровень низкий: ролик держится на отдельных удачных моментах, а не на всей конструкции.",
+    },
+}
+
+
+METRIC_SUMMARY_LIBRARY_EN: dict[str, dict[str, str]] = {
+    "early_response": {
+        "high": "The main thing is clear from the first shot.",
+        "mid": "The opening is okay, but the main subject could appear earlier and bigger.",
+        "low": "The hook is weak. The main thing shows up too late or is not clear enough right away.",
+    },
+    "sustain": {
+        "high": "The cut keeps introducing enough change to hold attention.",
+        "mid": "Retention is uneven. Some sections sit too long without anything new.",
+        "low": "There are sections with no new action or no new visual, so the cut feels skippable.",
+    },
+    "transition": {
+        "high": "The shots change at the right time.",
+        "mid": "The pacing is workable, but some shots hang a little too long.",
+        "low": "The shots change too late, so the cut starts to drag.",
+    },
+    "stability": {
+        "high": "The frame is easy to read. One main subject wins the attention quickly.",
+        "mid": "Some frames feel crowded with extra objects, small text, or a noisy background.",
+        "low": "Too many elements compete inside the frame, so the main point gets lost.",
+    },
+    "density": {
+        "high": "The visual is strong: the subject reads well, motion is visible, and contrast holds.",
+        "mid": "The visual is fine, but the subject gets small, motion is limited, or contrast is weak.",
+        "low": "The visual feels weak: not enough scale, motion, or contrast to really pull the eye.",
+    },
+}
+
+
+# Speech-side band thresholds. ``direction`` controls which side of each
+# threshold counts as the "high" (= desirable) band.
+SPEECH_BAND_RULES: dict[str, dict[str, Any]] = {
+    "speech_start": {"direction": "lower-is-better", "high": 0.8, "mid": 2.0},
+    "speech_pace": {"direction": "higher-is-better", "high": 2.8, "mid": 1.4},
+    "articulation": {"direction": "higher-is-better", "high": 3.0, "mid": 1.8},
+    "pause_ratio": {"direction": "lower-is-better", "high": 0.12, "mid": 0.28},
+    "confidence": {"direction": "higher-is-better", "high": 0.75, "mid": 0.55},
+}
+
+
+SPEECH_SUMMARY_LIBRARY_RU: dict[str, dict[str, str]] = {
+    "speech_start": {
+        "high": "Речь включается почти сразу. Текстовая опора приходит рано.",
+        "mid": "Речь стартует не мгновенно, но ещё в ранней фазе ролика.",
+        "low": "Речь приходит поздно. До этого ролик держится в основном на визуале и звуке без слов.",
+    },
+    "speech_pace": {
+        "high": "Речь подаётся плотно относительно длины ролика.",
+        "mid": "Темп речи умеренный, без сильной перегрузки текстом.",
+        "low": "Речевой слой редкий: слов мало относительно общей длины ролика.",
+    },
+    "articulation": {
+        "high": "Фразы произносятся плотно, без длинных растяжек внутри самой речи.",
+        "mid": "Артикуляция выглядит обычной по плотности.",
+        "low": "Речь звучит растянуто или очень разреженно внутри речевых отрезков.",
+    },
+    "pause_ratio": {
+        "high": "Длинных пауз мало. Речевой поток собранный.",
+        "mid": "Паузы есть, но они пока не доминируют в длительности ролика.",
+        "low": "Доля длинных пауз высокая. Между фразами много пустого воздуха.",
+    },
+    "confidence": {
+        "high": "ASR уверенно распознаёт речь. Аудиодорожка читается чисто.",
+        "mid": "Речь в целом читается, но местами качество дорожки ограничивает уверенность распознавания.",
+        "low": "Уверенность низкая: стоит проверить шум, громкость голоса и разборчивость дикции.",
+    },
+}
+
+
+SPEECH_SUMMARY_LIBRARY_EN: dict[str, dict[str, str]] = {
+    "speech_start": {
+        "high": "The voice enters almost immediately, so the text cue lands early.",
+        "mid": "The voice starts a beat later but still in the early part of the cut.",
+        "low": "The voice enters late; before that the cut leans on visual and audio without words.",
+    },
+    "speech_pace": {
+        "high": "Delivery is dense for the length of the cut.",
+        "mid": "Delivery pace is moderate, without overloading the cut with text.",
+        "low": "The speech layer is sparse: few words for the cut's length.",
+    },
+    "articulation": {
+        "high": "Phrases land tight, without long stretches inside the speech itself.",
+        "mid": "Articulation density looks ordinary.",
+        "low": "Speech feels stretched or very sparse inside the spoken stretches.",
+    },
+    "pause_ratio": {
+        "high": "Few long pauses; the speech flow stays tight.",
+        "mid": "There are pauses, but they don't dominate the cut's length yet.",
+        "low": "The share of long pauses is high — there is a lot of empty air between phrases.",
+    },
+    "confidence": {
+        "high": "ASR recognises speech confidently. The audio track reads cleanly.",
+        "mid": "Speech reads overall, but in places the audio quality limits recognition confidence.",
+        "low": "Confidence is low: check noise, voice loudness, and diction clarity.",
+    },
+}
+
+
+def _score_band(score: int) -> str:
+    """``"high"`` if score >= 75, ``"mid"`` if score >= 60, else ``"low"``."""
+    if score >= 75:
+        return "high"
+    if score >= 60:
+        return "mid"
+    return "low"
+
+
+def _speech_band(metric_key: str, value: float) -> str:
+    """Per-metric value banding for the speech-side summaries.
+
+    ``"high"`` always means the desirable end (early speech start / fast pace /
+    tight articulation / few pauses / strong confidence). The threshold sense
+    flips depending on whether the metric is "higher-is-better" (pace,
+    articulation, confidence) or "lower-is-better" (speech_start, pause_ratio).
+    """
+    rule = SPEECH_BAND_RULES.get(metric_key)
+    if rule is None:
+        return "low"
+    high = float(rule["high"])
+    mid = float(rule["mid"])
+    if rule["direction"] == "higher-is-better":
+        if value >= high:
+            return "high"
+        if value >= mid:
+            return "mid"
+        return "low"
+    # lower-is-better
+    if value <= high:
+        return "high"
+    if value <= mid:
+        return "mid"
+    return "low"
+
+
+def metric_band_summary(metric_key: str, score: int, language: str = "ru") -> str:
+    """Banded summary for a TRIBE metric. ``language`` is ``"ru"`` (default) or
+    ``"en"``. Unknown languages fall back to RU."""
+    if (language or "").strip().lower() == "en":
+        library = METRIC_SUMMARY_LIBRARY_EN
+    else:
+        library = METRIC_SUMMARY_LIBRARY_RU
+    return library.get(metric_key, {}).get(_score_band(score), "")
+
+
+def speech_metric_summary(metric_key: str, value: float, language: str = "ru") -> str:
+    """Banded summary for a speech-side metric (see ``SPEECH_BAND_RULES`` for
+    the per-metric thresholds). ``language`` is ``"ru"`` (default) or ``"en"``."""
+    if (language or "").strip().lower() == "en":
+        library = SPEECH_SUMMARY_LIBRARY_EN
+    else:
+        library = SPEECH_SUMMARY_LIBRARY_RU
+    return library.get(metric_key, {}).get(_speech_band(metric_key, value), "")
