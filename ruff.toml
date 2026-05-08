@@ -17,7 +17,11 @@ exclude = ["runtime_media", ".venv", "__pycache__"]
 # their English overlays. Reformatting them has a real chance of garbling
 # punctuation/whitespace inside the strings, so we leave E501 off here and
 # track the cleanup as a separate copy-localization PR (the F3-style move).
-"tribe_review/_engine.py" = ["E501"]
+# Stage-2 / G2 split ``_engine.py`` into thematic modules; the prose now
+# lives across ``copy_ru``, ``timeline``, ``recommendations`` and
+# ``comparison`` (G3 will lift it into ``report_localization``). Until G3
+# we exempt the whole ``tribe_review`` package, then narrow this back.
+"tribe_review/*.py" = ["E501"]
 "report_localization.py" = ["E501"]
 "ollama_runtime.py" = ["E501"]
 "analysis_settings.py" = ["E501"]
