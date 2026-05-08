@@ -138,7 +138,9 @@ def generate_review(
         "variant_name": info["title"],
         "overall_score": overall_score,
         "verdict": _build_verdict(overall_score, ordered_metrics, profile),
-        "executive_summary": _build_executive_summary(overall_score, top_metric, weak_metric, runner_metric, speech_layer, profile),
+        "executive_summary": _build_executive_summary(
+            overall_score, top_metric, weak_metric, runner_metric, speech_layer, profile,
+        ),
         "product_summary": _build_product_summary(overall_score, ordered_metrics, speech_layer, profile),
         "strengths": _build_strengths(ordered_metrics, speech_layer, profile),
         "weaknesses": _build_weaknesses(ordered_metrics, speech_layer, profile),
@@ -147,7 +149,9 @@ def generate_review(
         "drop_moments": drop_moments,
         "recommendations": recommendations,
         "recommendation_plan": _build_recommendation_plan(recommendations, top_metric, weak_metric, profile),
-        "action_items": _build_action_items(recommendations, focus_windows, drop_moments, speech_layer, metrics, profile),
+        "action_items": _build_action_items(
+            recommendations, focus_windows, drop_moments, speech_layer, metrics, profile,
+        ),
         "video": info,
         "device": run.device,
         "modalities": run.modalities,
