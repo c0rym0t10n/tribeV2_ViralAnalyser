@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 import json
 from copy import deepcopy
 from functools import lru_cache
@@ -251,24 +252,6 @@ def _build_review_prompt_payload(review: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _extract_main_problem(review: dict[str, Any]) -> str:
-    weaknesses = review.get("weaknesses")
-    if isinstance(weaknesses, list):
-        for item in weaknesses:
-            if isinstance(item, str) and item.strip():
-                return item
-    return ""
-
-
-def _extract_best_part(review: dict[str, Any]) -> str:
-    strengths = review.get("strengths")
-    if isinstance(strengths, list):
-        for item in strengths:
-            if isinstance(item, str) and item.strip():
-                return item
-    return ""
-
-
 def _rewrite_with_ollama(
     model: str,
     messages: list[dict[str, str]],
@@ -398,74 +381,6 @@ def _apply_simple_cleanup(review: dict[str, Any]) -> None:
     _simplify_focus_windows(review)
     _simplify_action_items(review)
     _simplify_speech(review)
-
-
-def _simplify_metrics(review: dict[str, Any]) -> None:
-    metrics = review.get("metrics")
-    if not isinstance(metrics, list):
-        return
-    key_label_map = {
-        "early_response": "Первый кадр",
-        "sustain": "Интерес держится",
-        "transition": "Смена кадров",
-        "stability": "Кадр без лишнего",
-        "density": "Сила картинки",
-    }
-    label_map = {
-        "Первые секунды": "Первый кадр",
-        "Держит внимание": "Интерес держится",
-        "Смена кадра": "Смена кадров",
-        "Ровность ролика": "Кадр без лишнего",
-        "Общая сила": "Сила картинки",
-        "Ранний отклик": "Первый кадр",
-        "Устойчивость отклика": "Интерес держится",
-        "Плотность переходов": "Смена кадров",
-        "Стабильность сигнала": "Кадр без лишнего",
-        "Плотность активации": "Сила картинки",
-        "Р Р°РЅРЅРёР№ РѕС‚РєР»РёРє": "Первый кадр",
-        "РЈСЃС‚РѕР№С‡РёРІРѕСЃС‚СЊ РѕС‚РєР»РёРєР°": "Интерес держится",
-        "РџР»РѕС‚РЅРѕСЃС‚СЊ РїРµСЂРµС…РѕРґРѕРІ": "Смена кадров",
-        "РЎС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ СЃРёРіРЅР°Р»Р°": "Кадр без лишнего",
-        "РџР»РѕС‚РЅРѕСЃС‚СЊ Р°РєС‚РёРІР°С†РёРё": "Сила картинки",
-    }
-    summary_map = {
-        "Первый кадр": {
-            "high": "С первых секунд уже понятно, на что смотреть.",
-            "mid": "Начало нормальное, но можно сделать яснее.",
-            "low": "Первые секунды слабые. Главное появляется слишком поздно.",
-        },
-        "Интерес держится": {
-            "high": "Ролик не сдувается по ходу.",
-            "mid": "Интерес держится не везде одинаково.",
-            "low": "Есть куски, где ролик хочется перемотать.",
-        },
-        "Смена кадров": {
-            "high": "Картинка меняется вовремя.",
-            "mid": "Смена кадров есть, но местами запаздывает.",
-            "low": "Кадр меняется слишком поздно, поэтому ролик тянется.",
-        },
-        "Кадр без лишнего": {
-            "high": "В кадре легко понять главное.",
-            "mid": "Иногда в кадре становится тесно или шумно.",
-            "low": "В кадре слишком много лишнего, и главное теряется.",
-        },
-        "Сила картинки": {
-            "high": "Визуально ролик выглядит уверенно.",
-            "mid": "Есть нормальные места, но не хватает яркости.",
-            "low": "Картинка слабая: мало крупности, движения или контраста.",
-        },
-    }
-
-    for item in metrics:
-        if not isinstance(item, dict):
-            continue
-        metric_key = str(item.get("key") or "")
-        label = str(item.get("label") or "")
-        simple_label = key_label_map.get(metric_key) or label_map.get(label, label)
-        item["label"] = simple_label
-        score = int(item.get("score") or 0)
-        bucket = "high" if score >= 75 else "mid" if score >= 60 else "low"
-        item["summary"] = summary_map.get(simple_label, {}).get(bucket, item.get("summary", ""))
 
 
 def _simplify_metrics(review: dict[str, Any]) -> None:
@@ -681,40 +596,6 @@ def _replace_plan_items(target: dict[str, Any], source: dict[str, Any]) -> None:
         cleaned.append({"title": title, "detail": detail})
     if cleaned:
         target["recommendation_plan"] = cleaned[:3]
-
-
-def _replace_action_items(target: dict[str, Any], source: dict[str, Any]) -> None:
-    items = source.get("action_items")
-    if isinstance(items, str):
-        items = _split_copy_lines(items)
-    if not isinstance(items, list):
-        return
-    cleaned: list[dict[str, str]] = []
-    for item in items:
-        if isinstance(item, str):
-            coerced = _coerce_action_line(item)
-            if coerced:
-                cleaned.append(coerced)
-            continue
-        if not isinstance(item, dict):
-            continue
-        timestamp = item.get("timestamp")
-        title = item.get("title")
-        instruction = item.get("instruction")
-        if not isinstance(timestamp, str) or not isinstance(title, str) or not isinstance(instruction, str):
-            continue
-        if not timestamp.strip() or not title.strip() or not instruction.strip():
-            continue
-        cleaned.append(
-            {
-                "timestamp": timestamp.strip(),
-                "title": _clean_sentence(title),
-                "instruction": _clean_sentence(instruction),
-                "why": "",
-            }
-        )
-    if cleaned:
-        target["action_items"] = cleaned[:4]
 
 
 def _split_copy_lines(value: str) -> list[str]:
@@ -1082,17 +963,6 @@ def _make_action_item(timestamp: str, metric_key: str, variant_index: int = 0) -
     }
 
 
-def _make_keep_item(timestamp: str, metric_key: str) -> dict[str, str]:
-    action = _action_library(metric_key)
-    instruction = action["keep"] or "Оставь этот кусок как ориентир. Он уже работает."
-    return {
-        "timestamp": timestamp,
-        "title": "Оставить как есть",
-        "instruction": instruction,
-        "why": "",
-    }
-
-
 def _rewrite_focus_windows(review: dict[str, Any], metrics: list[dict[str, Any]]) -> None:
     windows = review.get("focus_windows")
     if not isinstance(windows, list):
@@ -1208,12 +1078,6 @@ def _build_concrete_header(review: dict[str, Any]) -> tuple[str, str, str]:
     return verdict, executive_summary, product_summary
 
 
-def _timed_line(item: dict[str, Any]) -> str:
-    timestamp = str(item.get("timestamp") or "").strip()
-    instruction = _compact_instruction(str(item.get("instruction") or ""))
-    return f"{timestamp}: {instruction}" if timestamp else instruction
-
-
 def _metric_scores(review: dict[str, Any]) -> dict[str, int]:
     metrics = review.get("metrics")
     if not isinstance(metrics, list):
@@ -1282,25 +1146,11 @@ def _simple_banner_text(metric_scores: dict[str, int], has_keep_item: bool, edit
     return ". ".join(part[:1].upper() + part[1:] for part in parts) + "."
 
 
-def _banner_phrase(item: dict[str, Any]) -> str:
-    instruction = _compact_instruction(str(item.get("instruction") or ""))
-    head = instruction.split(",")[0].strip().rstrip(".")
-    return head[:80]
-
-
 def _compact_instruction(text: str) -> str:
     cleaned = _clean_sentence(text).strip()
     if not cleaned:
         return ""
     return cleaned if cleaned.endswith(".") else f"{cleaned}."
-
-
-def _fallback_action_timestamp(review: dict[str, Any]) -> str | None:
-    for item in (_window_at(review, 1), _window_at(review, 2), _window_at(review, 0)):
-        if item and item.get("timestamp"):
-            return str(item["timestamp"])
-    candidates = _drop_timestamp_candidates(review)
-    return candidates[0] if candidates else None
 
 
 def _format_seconds_for_copy(seconds: float) -> str:
