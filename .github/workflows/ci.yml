@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dev deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Ruff check
+        run: ruff check .
+
+  py-compile:
+    name: py_compile (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile project files
+        shell: bash
+        run: |
+          # Compile every top-level python module so a syntax error blocks the PR
+          # without needing the heavy TRIBE/torch dependency tree installed.
+          python -m py_compile $(ls *.py)
+
+  tests:
+    name: pytest (light, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dev deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Install runtime deps needed by the light test suite
+        # `pdf_report` (tested in `test_chrome_finder.py`) imports matplotlib at
+        # module scope. Everything else under `tests/` only touches stdlib +
+        # pure-Python modules. We deliberately skip the heavy runtime deps
+        # (torch, tribev2, moviepy) so CI stays fast.
+        run: |
+          pip install matplotlib numpy
+      - name: Run pytest (skip slow tier)
+        run: pytest -v -m "not slow"

@@ -1,0 +1,7 @@
+# Developer-only dependencies. Install on top of requirements.txt for the
+# full integration test suite, or alone for the lightweight (CI) suite.
+pytest>=7.4
+pytest-asyncio>=0.23
+pytest-cov>=4.1
+httpx>=0.26
+ruff>=0.4
