@@ -21,7 +21,7 @@ from analysis_settings import ANALYSIS_MODE_PROFILES, DEFAULT_ANALYSIS_MODE
 from brain_visualization import build_brain_simulation
 from ollama_runtime import simplify_review_copy
 from official_report import generate_official_report
-from pdf_report import render_html_pdf
+from pdf_report import render_html_pdf, render_pdf_report
 from report_localization import (
     get_ui_texts,
     localize_report,
@@ -74,15 +74,31 @@ async def get_report_pdf(report_id: str, lang: str | None = None) -> StreamingRe
         raise HTTPException(status_code=404, detail="Report not found")
     language = normalize_report_language(lang)
     localized_report = _get_localized_report(report, language)
+    renderer = "chrome"
     try:
         pdf_bytes = render_html_pdf(_render_pdf_html(localized_report, language))
     except RuntimeError as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        # Phase 4.1: when Chrome/Edge isn't installed (or can't render), fall
+        # back to the matplotlib PDF builder so users on macOS/Linux without a
+        # browser still get a downloadable report. The fallback path is also
+        # exercised by the `_find_chrome_executable` regression tests.
+        message = str(exc).lower()
+        if "chrome" in message:
+            try:
+                pdf_bytes = render_pdf_report(localized_report)
+                renderer = "matplotlib"
+            except Exception as fallback_exc:  # pragma: no cover - defensive
+                raise HTTPException(status_code=500, detail=str(fallback_exc)) from fallback_exc
+        else:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
     filename = f"tribe-report-{report_id}.pdf"
     return StreamingResponse(
         BytesIO(pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "X-PDF-Renderer": renderer,
+        },
     )
 
 
@@ -824,6 +840,78 @@ def _format_error(exc: Exception, language: str) -> str:
         or "access to model meta-llama/llama-3.2-3b is restricted" in lowered
         or "401 client error" in lowered
     )
+    is_chrome_missing = "chrome" in lowered and ("not found" in lowered or "required" in lowered)
+    is_whisper_download = (
+        "whisper" in lowered and ("download" in lowered or "connection" in lowered)
+    ) or "no module named 'whisperx'" in lowered or "uvx" in lowered
+    is_cuda_error = (
+        "cuda" in lowered
+        and ("out of memory" in lowered or "no kernel" in lowered or "not available" in lowered)
+    )
+
+    if is_chrome_missing:
+        if language == "ru":
+            return (
+                "PDF-отчет не может быть собран: Chrome / Edge / Chromium не найден.\n\n"
+                "Что сделать:\n"
+                "1. Установить любой из них (Chrome, Edge или Chromium).\n"
+                "2. Если установлен в нестандартное место — задать переменную окружения "
+                "TRIBE_CHROME_PATH с полным путем к исполняемому файлу.\n\n"
+                "Альтернатива: PDF можно скачать в режиме совместимости (matplotlib) — "
+                "ответ будет иметь header X-PDF-Renderer: matplotlib."
+            )
+        return (
+            "PDF report can't be built: Chrome / Edge / Chromium not found.\n\n"
+            "What to do:\n"
+            "1. Install any of them (Chrome, Edge, or Chromium).\n"
+            "2. If installed in a non-standard location, set the environment "
+            "variable TRIBE_CHROME_PATH to the full path of the executable.\n\n"
+            "Alternative: the PDF can still be downloaded in compatibility mode "
+            "(matplotlib) — the response will carry header X-PDF-Renderer: matplotlib."
+        )
+
+    if is_whisper_download:
+        if language == "ru":
+            return (
+                "Не удалось получить speech transcript.\n\n"
+                "Проверь:\n"
+                "1. Соединение с интернетом — модель WhisperX скачивается на лету.\n"
+                "2. Что установлен uvx (часть uv): pipx install uv или brew install uv.\n"
+                "3. Что папка TRIBE_CACHE_DIR доступна для записи.\n"
+                "4. Достаточно свободного места на диске для модели Whisper (~5 ГБ).\n\n"
+                "Если uvx установлен в нестандартное место — задай TRIBE_UVX_PATH."
+            )
+        return (
+            "Could not fetch the speech transcript.\n\n"
+            "Check:\n"
+            "1. Internet connectivity — WhisperX is downloaded on demand.\n"
+            "2. That uvx (part of uv) is installed: pipx install uv or brew install uv.\n"
+            "3. That TRIBE_CACHE_DIR is writable.\n"
+            "4. That you have ~5 GB of free disk space for the Whisper model.\n\n"
+            "If uvx lives in a non-standard location, set TRIBE_UVX_PATH."
+        )
+
+    if is_cuda_error:
+        if language == "ru":
+            return (
+                "GPU/CUDA не может выполнить инференс.\n\n"
+                "Возможные причины:\n"
+                "- Нехватка VRAM (TRIBE требует >= 6 ГБ).\n"
+                "- Драйвер NVIDIA устарел или PyTorch собран без поддержки твоей CUDA.\n"
+                "- Видеокарта не NVIDIA.\n\n"
+                "Решение: обнови драйвер NVIDIA до последнего, либо запусти приложение "
+                "без GPU — TRIBE автоматически переключится на CPU (медленнее, но работает)."
+            )
+        return (
+            "GPU/CUDA can't run inference.\n\n"
+            "Possible causes:\n"
+            "- Not enough VRAM (TRIBE needs >= 6 GB).\n"
+            "- NVIDIA driver is outdated, or PyTorch was built without your CUDA version.\n"
+            "- The GPU isn't NVIDIA.\n\n"
+            "Fix: update the NVIDIA driver to the latest, or run the app without GPU — "
+            "TRIBE will automatically fall back to CPU (slower, still works)."
+        )
+
     if not is_llama_gate_error:
         return message
 
