@@ -25,16 +25,23 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 
-import moviepy as mpy
 import numpy as np
 
 
 from analysis_settings import AnalysisModeProfile, get_analysis_mode_profile
-from speech_runtime import SpeechRunResult
-from tribe_runtime import TribeRunResult
+
+if TYPE_CHECKING:
+    # Heavy runtime modules (torch, tribev2, whisper, moviepy) are only needed
+    # by the production callers. The engine itself manipulates numpy arrays and
+    # plain dicts, so we keep the type names visible to type-checkers/IDEs but
+    # avoid importing the underlying packages at runtime. The CI light tier
+    # (and the snapshot-test fixtures in ``tests/fixtures/synthetic_run.py``)
+    # rely on this so the engine stays importable without torch/tribev2.
+    from speech_runtime import SpeechRunResult  # noqa: F401
+    from tribe_runtime import TribeRunResult  # noqa: F401
 
 
 @dataclass
@@ -427,6 +434,10 @@ def _build_seek_targets(focus_windows: list[FocusWindow], drop_moments: list[dic
 
 
 def _read_video_info(video_path: str | Path) -> dict[str, Any]:
+    # Lazy-import moviepy so the engine stays importable without it (CI light
+    # tier, snapshot tests). Production callers pay this cost once per review.
+    import moviepy as mpy
+
     clip = mpy.VideoFileClip(str(video_path))
     try:
         return {
