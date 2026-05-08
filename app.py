@@ -27,7 +27,7 @@ from report_localization import (
     localize_report,
     normalize_report_language,
 )
-from review_engine import generate_comparison_report, generate_review
+from tribe_review import generate_comparison_report, generate_review
 from speech_runtime import SpeechTranscriber
 from tribe_runtime import TribeVideoBackend
 

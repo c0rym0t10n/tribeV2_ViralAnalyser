@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from review_engine import generate_review
+from tribe_review import generate_review
 from speech_runtime import SpeechTranscriber
 from tribe_runtime import TribeVideoBackend
 
