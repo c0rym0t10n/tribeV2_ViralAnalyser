@@ -133,6 +133,35 @@ http://127.0.0.1:8000
 
 Full setup notes: [docs/INSTALL_WINDOWS.md](docs/INSTALL_WINDOWS.md)
 
+## Quick start on macOS / Linux
+
+The Windows launcher (`Start_TRIBE_Review.cmd`) has a POSIX equivalent. From the
+project root:
+
+```bash
+chmod +x start_mvp.sh
+./start_mvp.sh
+```
+
+On macOS you can also double-click `Start_TRIBE_Review.command`. The script
+detects Python 3.11, creates `.venv`, installs `requirements.txt`, and starts
+`uvicorn app:app` on port 8000.
+
+`uvx` (from `uv`) is required for the official TRIBE transcript helper. Install
+with `pipx install uv` or `brew install uv`. If your `uvx` lives in a
+non-standard place set `TRIBE_UVX_PATH` (see below).
+
+## Environment variables
+
+All variables are optional unless noted otherwise.
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `TRIBE_CACHE_DIR` | `~/Downloads/tribe_cache` | Where the TRIBE model snapshot, runtime model dir, and Hugging Face cache are stored. Point this at a fast SSD with 30 GB+ free. |
+| `TRIBE_CHROME_PATH` | auto-detect | Override path to a Chromium-based browser used for HTML→PDF rendering. The app probes Chrome / Edge / Chromium in standard install locations on Windows, macOS, and Linux. If none are found the PDF endpoint falls back to the matplotlib renderer (response includes header `X-PDF-Renderer: matplotlib`). |
+| `TRIBE_UVX_PATH` | auto-detect | Path to the `uvx` executable used by the official TRIBE transcript helper (WhisperX). Falls back to `shutil.which("uvx")` then to `~/.local/bin/uvx`, `/usr/local/bin/uvx`, `/opt/homebrew/bin/uvx`. |
+| `TRIBE_ENABLE_TEXT_EVENTS` | `false` | Set to `true`/`1`/`yes` to enable the official TRIBE Word-event encoder. Requires gated access to `meta-llama/Llama-3.2-3B` on Hugging Face plus ~10 GB additional disk for the encoder weights. Off by default for clean installs. |
+
 ## Requirements
 
 Recommended local setup:
