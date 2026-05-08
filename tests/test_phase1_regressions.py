@@ -6,7 +6,6 @@ without importing the heavy TRIBE/torch dependency tree.
 
 from __future__ import annotations
 
-import inspect
 from pathlib import Path
 
 

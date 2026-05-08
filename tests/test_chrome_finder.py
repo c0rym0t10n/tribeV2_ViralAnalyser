@@ -6,7 +6,6 @@ covers Windows, macOS, and Linux paths (regression for Phase 1.3).
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest
