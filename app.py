@@ -22,7 +22,6 @@ from brain_visualization import build_brain_simulation
 from ollama_runtime import simplify_review_copy
 from official_report import generate_official_report
 from pdf_report import render_html_pdf
-from review_engine_runtime_patch import apply as apply_review_engine_patch
 from report_localization import (
     get_ui_texts,
     localize_report,
@@ -32,8 +31,6 @@ from review_engine import generate_comparison_report, generate_review
 from speech_runtime import SpeechTranscriber
 from tribe_runtime import TribeVideoBackend
 
-
-apply_review_engine_patch()
 
 APP_DIR = Path(__file__).resolve().parent
 MEDIA_DIR = APP_DIR / "runtime_media"

@@ -4,12 +4,8 @@ import argparse
 from pathlib import Path
 
 from review_engine import generate_review
-from review_engine_runtime_patch import apply as apply_review_engine_patch
 from speech_runtime import SpeechTranscriber
 from tribe_runtime import TribeVideoBackend
-
-
-apply_review_engine_patch()
 
 
 def main() -> None:
