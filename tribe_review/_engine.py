@@ -24,15 +24,10 @@ import numpy as np
 from analysis_settings import get_analysis_mode_profile
 
 from tribe_review.copy_ru import (
-    _density_summary,
-    _early_response_summary,
     _metric_label,
-    _metric_summary,
     _signal_note,
-    _stability_summary,
-    _sustain_summary,
-    _transition_summary,
 )
+from report_localization import metric_band_summary
 from tribe_review.metrics import (
     ReviewMetric,
     _activation_density,
@@ -80,6 +75,7 @@ def generate_review(
     speech_error: str | None = None,
     analysis_mode: str | None = None,
     variant_name: str | None = None,
+    language: str = "ru",
 ) -> dict[str, Any]:
     profile = get_analysis_mode_profile(analysis_mode)
     preds = np.asarray(run.preds)
@@ -98,27 +94,33 @@ def generate_review(
     signal_stability = _signal_stability(novelty)
     activation_density = _activation_density(activation)
 
+    # specs: ``(metric_key, score, raw_value)`` per metric. The pre-G3 5-tuple
+    # also carried a hardcoded RU label and the ternary ``_*_summary`` strings,
+    # but both were unpacked into discard slots — ``label`` is computed by
+    # ``_metric_label`` and ``summary`` by ``_metric_summary``. G3 dropped
+    # those dead slots and the corresponding ``_early_response_summary`` etc.
+    # ternary helpers.
     specs = [
-        ("early_response", "Ранний отклик", _score_from_ratio(early_ratio, 1.05, 0.35), _early_response_summary(_score_from_ratio(early_ratio, 1.05, 0.35)), early_ratio),
-        ("sustain", "Устойчивость отклика", _score_from_ratio(sustain_ratio, 0.95, 0.30), _sustain_summary(_score_from_ratio(sustain_ratio, 0.95, 0.30)), sustain_ratio),
-        ("transition", "Плотность переходов", _score_from_value(transition_density, 0.22, 0.16), _transition_summary(_score_from_value(transition_density, 0.22, 0.16)), transition_density),
-        ("stability", "Стабильность сигнала", _score_from_value(signal_stability, 0.58, 0.20), _stability_summary(_score_from_value(signal_stability, 0.58, 0.20)), signal_stability),
-        ("density", "Плотность активации", _score_from_value(activation_density, 0.72, 0.18), _density_summary(_score_from_value(activation_density, 0.72, 0.18)), activation_density),
+        ("early_response", _score_from_ratio(early_ratio, 1.05, 0.35), early_ratio),
+        ("sustain", _score_from_ratio(sustain_ratio, 0.95, 0.30), sustain_ratio),
+        ("transition", _score_from_value(transition_density, 0.22, 0.16), transition_density),
+        ("stability", _score_from_value(signal_stability, 0.58, 0.20), signal_stability),
+        ("density", _score_from_value(activation_density, 0.72, 0.18), activation_density),
     ]
     metrics = [
         ReviewMetric(
             key=key,
             label=_metric_label(key, profile),
             score=score,
-            summary=_metric_summary(key, score, profile),
+            summary=metric_band_summary(key, score, language=language),
             raw_value=round(float(raw_value), 3),
         )
-        for key, _label, score, _summary, raw_value in specs
+        for key, score, raw_value in specs
     ]
 
     drop_indices = _find_drop_indices(run.timestamps, activation, novelty, profile)
     drop_moments = _build_drop_moments(run.timestamps, drop_indices, profile)
-    speech_layer = _build_speech_layer(info["duration_seconds"], speech, speech_error, profile)
+    speech_layer = _build_speech_layer(info["duration_seconds"], speech, speech_error, profile, language=language)
     recommendations = _build_recommendations(metrics, drop_moments, info["duration_seconds"], speech_layer, profile)
 
     overall_score = int(round(sum(metric.score for metric in metrics) / len(metrics)))

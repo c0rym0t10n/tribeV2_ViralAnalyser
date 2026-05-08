@@ -17,13 +17,8 @@ import numpy as np
 
 from analysis_settings import AnalysisModeProfile
 
-from tribe_review.copy_ru import (
-    _articulation_summary,
-    _confidence_summary,
-    _pause_summary,
-    _speech_pace_summary,
-    _speech_start_summary,
-)
+from report_localization import speech_metric_summary
+
 from tribe_review.metrics import (
     SpeechMetric,
     _build_svg_points,
@@ -52,6 +47,7 @@ def _build_speech_layer(
     speech: SpeechRunResult | None,
     speech_error: str | None,
     profile: AnalysisModeProfile,
+    language: str = "ru",
 ) -> dict[str, Any]:
     if speech_error:
         return {
@@ -96,12 +92,16 @@ def _build_speech_layer(
     confidence = float(np.mean([word.probability for word in speech.words]))
     pause_ratio = long_pause_total / max(duration_seconds, 1e-6)
 
+    # Note: speech-metric LABELS stay Russian even when language="en" — the
+    # F3 ``localize_report`` post-processor (specifically
+    # ``_speech_metric_label_en``) rewrites them into English at the report
+    # level. Direct EN labels in the engine would break that pipeline.
     metrics = [
-        SpeechMetric("speech_start", "Старт речи", f"{first_start:.2f} c", _speech_start_summary(first_start)),
-        SpeechMetric("speech_pace", "Слов в секунду", f"{pace:.2f}", _speech_pace_summary(pace)),
-        SpeechMetric("articulation", "Насколько плотно сказано", f"{articulation:.2f}", _articulation_summary(articulation)),
-        SpeechMetric("pause_ratio", "Доля пауз", f"{pause_ratio:.2f}", _pause_summary(pause_ratio)),
-        SpeechMetric("confidence", "Уверенность ASR", f"{confidence:.2f}", _confidence_summary(confidence)),
+        SpeechMetric("speech_start", "Старт речи", f"{first_start:.2f} c", speech_metric_summary("speech_start", first_start, language=language)),
+        SpeechMetric("speech_pace", "Слов в секунду", f"{pace:.2f}", speech_metric_summary("speech_pace", pace, language=language)),
+        SpeechMetric("articulation", "Насколько плотно сказано", f"{articulation:.2f}", speech_metric_summary("articulation", articulation, language=language)),
+        SpeechMetric("pause_ratio", "Доля пауз", f"{pause_ratio:.2f}", speech_metric_summary("pause_ratio", pause_ratio, language=language)),
+        SpeechMetric("confidence", "Уверенность ASR", f"{confidence:.2f}", speech_metric_summary("confidence", confidence, language=language)),
     ]
     segments = [{"start": round(segment.start, 2), "end": round(segment.end, 2), "text": segment.text} for segment in speech.segments]
 

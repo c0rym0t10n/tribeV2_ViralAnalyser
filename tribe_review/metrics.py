@@ -137,7 +137,13 @@ def _pick_extreme_index(values: np.ndarray, indices: list[int], mode: str) -> in
 
 
 def _build_svg_points(values: np.ndarray, width: int = 860, height: int = 210, padding: int = 18) -> str:
-    return " ".join(f"{_svg_xy(index, values, width, height, padding)[0]:.2f},{_svg_xy(index, values, width, height, padding)[1]:.2f}" for index in range(len(values))) if len(values) else ""
+    if not len(values):
+        return ""
+    return " ".join(
+        f"{_svg_xy(index, values, width, height, padding)[0]:.2f},"
+        f"{_svg_xy(index, values, width, height, padding)[1]:.2f}"
+        for index in range(len(values))
+    )
 
 
 def _svg_xy(index: int, values: np.ndarray, width: int, height: int, padding: int) -> tuple[float, float]:

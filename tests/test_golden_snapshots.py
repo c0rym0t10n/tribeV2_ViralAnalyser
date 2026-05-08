@@ -119,7 +119,15 @@ def _load_or_capture(name: str, payload: dict[str, Any]) -> dict[str, Any]:
     return normalized
 
 
-def _make_review(monkeypatch: pytest.MonkeyPatch, *, mode: str, variant_name: str, early_strong: bool, seed: int):
+def _make_review(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    mode: str,
+    variant_name: str,
+    early_strong: bool,
+    seed: int,
+    language: str = "ru",
+):
     monkeypatch.setattr("tribe_review._engine._read_video_info", _stub_video_info(f"{variant_name}.mp4"))
     return generate_review(
         video_path=f"{variant_name}.mp4",
@@ -128,6 +136,7 @@ def _make_review(monkeypatch: pytest.MonkeyPatch, *, mode: str, variant_name: st
         speech_error=None,
         analysis_mode=mode,
         variant_name=variant_name,
+        language=language,
     )
 
 
@@ -139,6 +148,33 @@ def test_generate_review_deep_matches_golden(monkeypatch: pytest.MonkeyPatch) ->
 def test_generate_review_simplified_matches_golden(monkeypatch: pytest.MonkeyPatch) -> None:
     review = _make_review(monkeypatch, mode="simplified", variant_name="variant_a", early_strong=True, seed=1234)
     _load_or_capture("golden_review_simplified.json", review)
+
+
+def test_generate_review_deep_en_matches_golden(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Engine must produce English banded summaries when ``language="en"``.
+
+    Other prose (executive summary, recommendations, comparison verdicts) is
+    still Russian — only the metric-side and speech-side banded summaries
+    are language-aware. The F3 ``localize_report`` pipeline handles the
+    remaining prose at the report level.
+    """
+    review = _make_review(monkeypatch, mode="deep", variant_name="variant_a", early_strong=True, seed=1234, language="en")
+    payload = _load_or_capture("golden_review_deep_en.json", review)
+
+    # Spot-check that the language threading actually flipped the banded
+    # summaries to English (not just the Russian copy with the same shape).
+    metric_summaries = {item["key"]: item["summary"] for item in payload["metrics"]}
+    assert any(
+        ascii_word in metric_summaries.get("early_response", "")
+        for ascii_word in ("hook", "main", "shot")
+    ), f"early_response summary should be English, got: {metric_summaries.get('early_response')!r}"
+
+    speech_summaries = {item["key"]: item["summary"] for item in payload["speech"]["metrics"]}
+    assert speech_summaries.get("speech_start"), "speech_start summary missing"
+    assert any(
+        ascii_word in speech_summaries["speech_start"]
+        for ascii_word in ("voice", "main", "cut")
+    ), f"speech_start summary should be English, got: {speech_summaries['speech_start']!r}"
 
 
 def test_generate_comparison_report_matches_golden(monkeypatch: pytest.MonkeyPatch) -> None:
