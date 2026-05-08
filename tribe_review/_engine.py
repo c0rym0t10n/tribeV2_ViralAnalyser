@@ -25,9 +25,9 @@ from analysis_settings import get_analysis_mode_profile
 
 from tribe_review.copy_ru import (
     _metric_label,
-    _metric_summary,
     _signal_note,
 )
+from report_localization import metric_band_summary
 from tribe_review.metrics import (
     ReviewMetric,
     _activation_density,
@@ -75,6 +75,7 @@ def generate_review(
     speech_error: str | None = None,
     analysis_mode: str | None = None,
     variant_name: str | None = None,
+    language: str = "ru",
 ) -> dict[str, Any]:
     profile = get_analysis_mode_profile(analysis_mode)
     preds = np.asarray(run.preds)
@@ -111,7 +112,7 @@ def generate_review(
             key=key,
             label=_metric_label(key, profile),
             score=score,
-            summary=_metric_summary(key, score, profile),
+            summary=metric_band_summary(key, score, language=language),
             raw_value=round(float(raw_value), 3),
         )
         for key, score, raw_value in specs
@@ -119,7 +120,7 @@ def generate_review(
 
     drop_indices = _find_drop_indices(run.timestamps, activation, novelty, profile)
     drop_moments = _build_drop_moments(run.timestamps, drop_indices, profile)
-    speech_layer = _build_speech_layer(info["duration_seconds"], speech, speech_error, profile)
+    speech_layer = _build_speech_layer(info["duration_seconds"], speech, speech_error, profile, language=language)
     recommendations = _build_recommendations(metrics, drop_moments, info["duration_seconds"], speech_layer, profile)
 
     overall_score = int(round(sum(metric.score for metric in metrics) / len(metrics)))
