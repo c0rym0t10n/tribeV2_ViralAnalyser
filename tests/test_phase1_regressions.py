@@ -18,9 +18,16 @@ def test_signal_note_duplicate_removed() -> None:
     dict. (The comparison-report dict in the same file legitimately has its
     own single ``signal_note`` key, so we look for *consecutive* duplicates,
     not the global count.)
+
+    Follow-up F1 moved the engine into ``tribe_review/_engine.py``; the file
+    we inspect changed accordingly.
     """
 
-    text = (REPO_ROOT / "review_engine.py").read_text(encoding="utf-8")
+    engine_path = REPO_ROOT / "tribe_review" / "_engine.py"
+    if not engine_path.exists():
+        # Pre-F1 layout: legacy review_engine.py at repo root.
+        engine_path = REPO_ROOT / "review_engine.py"
+    text = engine_path.read_text(encoding="utf-8")
     lines = text.splitlines()
     duplicates: list[int] = []
     for idx in range(len(lines) - 1):
