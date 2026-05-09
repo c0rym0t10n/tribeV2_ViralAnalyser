@@ -23,7 +23,7 @@ import numpy as np
 
 from analysis_settings import get_analysis_mode_profile
 
-from tribe_review.copy_ru import (
+from tribe_review.copy_es import (
     _metric_label,
     _signal_note,
 )
@@ -162,6 +162,7 @@ def generate_review(
             "description": profile.description,
             "note": profile.ui_note,
         },
+        "language": language,
         "signal_note": _signal_note(profile),
         "speech": speech_layer,
         "timeline": timeline,

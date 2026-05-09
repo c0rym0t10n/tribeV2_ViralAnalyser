@@ -2,7 +2,7 @@
 
 Owns ``generate_comparison_report`` plus all the helpers that aggregate
 per-variant numbers into a ranking, axis-winners list, common-gaps list,
-comparison rows, and prose summaries. Reads from :mod:`tribe_review.copy_ru`
+comparison rows, and prose summaries. Reads from :mod:`tribe_review.copy_es`
 for friendly metric labels and from :mod:`tribe_review.metrics` for the
 templated-prose helper.
 """
@@ -16,7 +16,7 @@ import numpy as np
 
 from analysis_settings import AnalysisModeProfile, get_analysis_mode_profile
 
-from tribe_review.copy_ru import _friendly_metric_label
+from tribe_review.copy_es import _friendly_metric_label
 from tribe_review.metrics import _pick_template
 
 
@@ -50,7 +50,7 @@ def generate_comparison_report(reviews: list[dict[str, Any]], analysis_mode: str
 
     return {
         "mode": "compare",
-        "title": f"Сравнение {len(ranked)} версий",
+        "title": f"Comparativa de {len(ranked)} versiones",
         "variant_count": len(ranked),
         "best_variant_key": best["variant_key"],
         "best_variant_name": best["title"],
@@ -72,7 +72,7 @@ def generate_comparison_report(reviews: list[dict[str, Any]], analysis_mode: str
         "common_gaps": common_gaps,
         "comparison_rows": comparison_rows,
         "variants": ranked,
-        "signal_note": "Сравнение строится по одному расчетному графику для всех версий. Выигрывает не разовый пик, а версия с более сильным стартом, более высоким средним уровнем и меньшим числом резких просадок.",
+        "signal_note": "La comparativa se mide en una sola curva para todas las versiones. Gana la que arranca más fuerte, mantiene mejor base y tiene menos bajones bruscos — no la del pico aislado.",
     }
 
 
@@ -194,7 +194,7 @@ def _build_axis_winners(comparison_rows: list[dict[str, Any]]) -> list[dict[str,
             "label": row["label"],
             "winner_name": row["winner_name"],
             "winner_score": row["winner_score"],
-            "summary": f"По показателю «{row['label'].lower()}» у этой версии самый заметный отрыв от остальных.",
+            "summary": f"En «{row['label'].lower()}» esta versión saca la diferencia más clara contra el resto.",
         }
         for row in comparison_rows[:4]
     ]
@@ -206,7 +206,7 @@ def _build_common_gaps(variants: list[dict[str, Any]], profile: AnalysisModeProf
     for key in metric_keys:
         scores = [int(variant["metric_lookup"].get(key, 0)) for variant in variants]
         if scores and mean(scores) < profile.recommendation_cutoff:
-            gaps.append(f"Во всех версиях слабее выглядит «{_friendly_metric_label(key).lower()}». Даже лидер не дает там уверенного запаса, поэтому это хороший кандидат для отдельного теста.")
+            gaps.append(f"En todas las versiones flojea «{_friendly_metric_label(key).lower()}». Ni el líder da margen ahí — buen candidato para una prueba aparte.")
     return gaps[:3]
 
 
@@ -243,16 +243,16 @@ def _variant_compare_summary(variant: dict[str, Any], delta: int) -> str:
     floor = _comparison_value(variant, "comparison_floor", avg)
     score = _comparison_score_value(variant)
     candidates = [
-        (delta == 0 and early >= 65 and avg >= 60, f"Лидер сравнения: быстро набирает уровень и держит хороший средний график. Главная опора - «{strongest['label'].lower()}»."),
-        (delta == 0 and floor < 35, f"Лидер по итоговому score, но не без риска: есть глубокие просадки. Следующая правка - «{weakest['label'].lower()}»."),
-        (delta == 0, f"Лидер сравнения. Версия выигрывает не одним всплеском, а суммой показателей; сильнее всего выглядит «{strongest['label'].lower()}»."),
-        (delta <= 3 and early >= avg + 8, f"Почти лидер за счет сильного старта, но дальше средний уровень не добирает. Проверь «{weakest['label'].lower()}»."),
-        (delta <= 3, f"Почти рядом с лидером: разница небольшая. В следующем тесте сравни именно старт и середину, а не отдельные пики."),
-        (delta <= 7 and avg >= 55, f"Версия конкурентная по среднему уровню, но уступает лидеру в деталях. Главный резерв - «{weakest['label'].lower()}»."),
-        (early < 45, "Версия проигрывает старт: график поздно набирает уровень, поэтому даже сильные моменты дальше не спасают итог полностью."),
-        (floor < 30, f"Основная проблема - глубокие провалы. Сильная сторона «{strongest['label'].lower()}» есть, но «{weakest['label'].lower()}» тянет результат вниз."),
-        (score >= 55, f"У версии есть рабочая база, но лидер выглядит ровнее. Сохрани «{strongest['label'].lower()}» и отдельно проверь «{weakest['label'].lower()}»."),
-        (True, f"Версия заметно уступает лидеру. Лучшее в ней - «{strongest['label'].lower()}», но общий график пока слишком неровный."),
+        (delta == 0 and early >= 65 and avg >= 60, f"Líder del A/B: arranca rápido y mantiene buena base. La fortaleza principal es «{strongest['label'].lower()}»."),
+        (delta == 0 and floor < 35, f"Líder por score total, pero con riesgo: hay bajones profundos. Siguiente ajuste: «{weakest['label'].lower()}»."),
+        (delta == 0, f"Líder del A/B. Esta versión gana por suma de métricas, no por un pico aislado; lo más fuerte es «{strongest['label'].lower()}»."),
+        (delta <= 3 and early >= avg + 8, f"Casi líder gracias al arranque fuerte, pero la base no alcanza después. Revisa «{weakest['label'].lower()}»."),
+        (delta <= 3, f"Casi pegado al líder: la diferencia es chica. En la siguiente prueba compara arranque y mitad, no picos aislados."),
+        (delta <= 7 and avg >= 55, f"Versión competitiva por base, pero pierde con el líder en detalles. La reserva principal está en «{weakest['label'].lower()}»."),
+        (early < 45, "La versión pierde el arranque: la curva sube tarde, así que ni los buenos momentos posteriores rescatan el total."),
+        (floor < 30, f"El problema central son los bajones profundos. La fortaleza «{strongest['label'].lower()}» está, pero «{weakest['label'].lower()}» jala el resultado abajo."),
+        (score >= 55, f"La versión tiene base que jala, pero el líder está más parejo. Amarra «{strongest['label'].lower()}» y revisa aparte «{weakest['label'].lower()}»."),
+        (True, f"La versión queda claramente abajo del líder. Lo mejor es «{strongest['label'].lower()}», pero la curva total está demasiado dispareja."),
     ]
     return _pick_template(candidates, "")
 
@@ -263,18 +263,18 @@ def _build_compare_verdict(best: dict[str, Any], runner_up: dict[str, Any], vari
     best_early = _comparison_value(best, "comparison_early_avg", best_avg)
     runner_avg = _comparison_value(runner_up, "comparison_signal_avg", _comparison_score_value(runner_up))
     window = best.get("comparison_window_seconds")
-    window_line = f" Сравнение идет по общему окну примерно до {window} с; последние 5 секунд не участвуют." if window else ""
+    window_line = f" La comparativa corre en una ventana común hasta los {window}s; los últimos 5 segundos quedan fuera." if window else ""
     candidates = [
-        (delta >= 12 and best_early >= 65, f"Из {variant_count} версий явнее всего лидирует «{best['title']}»: она быстро набирает график и сохраняет отрыв по среднему уровню.{window_line}"),
-        (delta >= 12, f"«{best['title']}» сейчас заметно впереди по общему score сравнения. Главная причина - более высокий средний уровень, а не один случайный пик.{window_line}"),
-        (delta >= 7 and runner_avg >= best_avg - 5, f"«{best['title']}» лидирует, но «{runner_up['title']}» остается близким контролем. Разницу лучше перепроверить новым A/B, особенно в начале и середине.{window_line}"),
-        (delta >= 7, f"«{best['title']}» выглядит первым кандидатом для следующего теста: у нее сильнее рабочая часть графика и меньше цена слабых окон.{window_line}"),
-        (delta <= 3 and best_early < runner_avg, f"Лидерство «{best['title']}» минимальное. Это не окончательный победитель, а версия, которую стоит проверить против «{runner_up['title']}» еще раз.{window_line}"),
-        (delta <= 3, f"Разрыв между «{best['title']}» и «{runner_up['title']}» небольшой. Решение лучше принимать после следующего сравнительного прогона с одной точечной правкой.{window_line}"),
-        (best_early >= 70 and best_avg < 55, f"«{best['title']}» выигрывает за счет сильного старта, но средний уровень пока не дает большого запаса. Нужна проверка середины ролика.{window_line}"),
-        (best_avg >= 65, f"«{best['title']}» лидирует за счет более высокого среднего уровня графика. Это надежнее, чем победа за счет одного позднего всплеска.{window_line}"),
-        (best_avg < 50, f"Даже лидер «{best['title']}» пока не выглядит уверенным. Сравнение показывает лучший из текущих вариантов, но не финальную версию.{window_line}"),
-        (True, f"Сейчас первым стоит брать «{best['title']}», а «{runner_up['title']}» оставить ближайшим контролем для следующего A/B.{window_line}"),
+        (delta >= 12 and best_early >= 65, f"De las {variant_count} versiones, la que más claro lidera es «{best['title']}»: arranca rápido y mantiene la diferencia por base.{window_line}"),
+        (delta >= 12, f"«{best['title']}» va claramente adelante en el score de comparación. La razón es base más alta, no un pico aislado.{window_line}"),
+        (delta >= 7 and runner_avg >= best_avg - 5, f"«{best['title']}» va al frente, pero «{runner_up['title']}» queda como control cercano. Vale revalidarlo con otro A/B, sobre todo en arranque y mitad.{window_line}"),
+        (delta >= 7, f"«{best['title']}» se ve como el primer candidato para la siguiente prueba: la parte buena de la curva es más fuerte y los baches pesan menos.{window_line}"),
+        (delta <= 3 and best_early < runner_avg, f"El liderazgo de «{best['title']}» es mínimo. No es la ganadora final — vale volverla a probar contra «{runner_up['title']}».{window_line}"),
+        (delta <= 3, f"La diferencia entre «{best['title']}» y «{runner_up['title']}» es chica. Mejor decidir después de otra corrida con un ajuste puntual.{window_line}"),
+        (best_early >= 70 and best_avg < 55, f"«{best['title']}» gana por arranque fuerte, pero la base todavía no da margen. Hay que revisar la mitad del video.{window_line}"),
+        (best_avg >= 65, f"«{best['title']}» lidera por base más alta de la curva. Es más confiable que ganar por un solo pico tardío.{window_line}"),
+        (best_avg < 50, f"Ni el líder «{best['title']}» se ve sólido todavía. La comparativa marca la mejor entre las actuales, no la versión final.{window_line}"),
+        (True, f"Ahorita el primer candidato es «{best['title']}»; deja «{runner_up['title']}» como control cercano para el siguiente A/B.{window_line}"),
     ]
     return _pick_template(candidates, "")
 
@@ -289,16 +289,16 @@ def _build_compare_executive_summary(best: dict[str, Any], runner_up: dict[str, 
     runner_avg = round(_comparison_value(runner_up, "comparison_signal_avg", runner_score), 1)
     top_axis = str(axis_winners[0]["label"]).lower() if axis_winners else _variant_metric(best, "max")["label"].lower()
     candidates = [
-        (delta >= 12 and best_early >= 65, f"Лучший кандидат - «{best['title']}»: старт {best_early}, средний уровень {best_avg}. Отрыв от «{runner_up['title']}» - {delta} пунктов, поэтому ее логично брать базой."),
-        (delta >= 12, f"«{best['title']}» впереди на {delta} пунктов. Важнее всего не пик, а средний уровень {best_avg} против {runner_avg} у ближайшей версии."),
-        (delta <= 3, f"«{best['title']}» пока впереди всего на {delta} пункта. Это близкая гонка: «{runner_up['title']}» стоит оставить в контроле и сравнить еще раз после точечной правки."),
-        (best_early < 50, f"Лидер выбран по сумме графика, но старт у него не идеален: {best_early}. Следующий тест должен усилить первые секунды, а не только середину."),
-        (best_avg < 50, f"Даже лучшая версия пока не дает высокого среднего уровня. «{best['title']}» выигрывает текущий набор, но весь пакет нуждается в усилении."),
-        (top_axis == "старт графика", f"Разница лучше всего видна в старте: «{best['title']}» быстрее набирает график и за счет этого обходит «{runner_up['title']}»."),
-        (top_axis == "средний уровень", f"Ключевой плюс лидера - средний уровень. «{best['title']}» выглядит полезнее как база, потому что держится не только на отдельных всплесках."),
-        (top_axis == "резкие просадки", f"Лидер выигрывает тем, что меньше проваливается между сильными местами. Для следующей версии важно сохранить эту ровность."),
-        (top_axis == "темп событий", f"Главное отличие лидера - темп событий. Он чаще дает зрителю новый повод смотреть дальше."),
-        (True, f"«{best['title']}» сейчас первый кандидат, «{runner_up['title']}» - контроль. Сравнивайте старт, средний уровень и просадки, а не только самый высокий пик."),
+        (delta >= 12 and best_early >= 65, f"Mejor candidato: «{best['title']}» — arranque {best_early}, base {best_avg}. Saca {delta} puntos a «{runner_up['title']}», así que tiene sentido tomarla como base."),
+        (delta >= 12, f"«{best['title']}» va adelante por {delta} puntos. Lo que pesa no es el pico — es la base {best_avg} contra {runner_avg} de la versión más cercana."),
+        (delta <= 3, f"«{best['title']}» va adelante apenas por {delta} puntos. Es una carrera pegada: deja «{runner_up['title']}» en el control y compara otra vez después de un ajuste puntual."),
+        (best_early < 50, f"El líder se eligió por suma de la curva, pero el arranque no es ideal: {best_early}. La siguiente prueba debe reforzar los primeros segundos, no solo la mitad."),
+        (best_avg < 50, f"Ni la mejor versión da una base alta todavía. «{best['title']}» gana el set actual, pero todo el paquete necesita refuerzo."),
+        (top_axis == "arranque de la curva", f"La diferencia se ve mejor en el arranque: «{best['title']}» sube la curva más rápido y por eso pasa a «{runner_up['title']}»."),
+        (top_axis == "fuerza visual", f"La ventaja clave del líder es la base. «{best['title']}» se ve más útil como punto de partida porque no depende solo de picos aislados."),
+        (top_axis == "bajones bruscos", f"El líder gana porque cae menos entre los tramos fuertes. En la siguiente versión hay que conservar esa parejidad."),
+        (top_axis == "ritmo del cambio", f"La diferencia central del líder es el ritmo. Da más seguido un motivo nuevo para seguir viendo."),
+        (True, f"«{best['title']}» es el primer candidato, «{runner_up['title']}» queda de control. Comparen arranque, base y baches, no solo el pico más alto."),
     ]
     return _pick_template(candidates, "")
 
@@ -311,16 +311,16 @@ def _build_compare_product_summary(best: dict[str, Any], runner_up: dict[str, An
     weakest = _variant_metric(best, "min")["label"].lower()
     gap_line = common_gaps[0] if common_gaps else ""
     candidates = [
-        (delta >= 10 and best_floor >= 45, f"Для следующего теста бери «{best['title']}» как основную версию: она выигрывает не только пиком, но и более устойчивым графиком без глубоких провалов."),
-        (delta >= 10, f"«{best['title']}» лучше текущего набора, но слабые окна все еще есть. Перед масштабированием отдельно проверь «{weakest}»."),
-        (delta <= 3, f"Не называй победителя финальным. «{best['title']}» и «{runner_up['title']}» близко, поэтому следующий тест должен менять один конкретный элемент."),
-        (best_avg < 50, f"Даже лидер пока слабоват по среднему уровню. Нужно не выбирать победителя, а поднять базовую силу всех версий."),
-        (bool(gap_line), f"Первой базой бери «{best['title']}», но общий риск одинаков для всех: {gap_line}"),
-        (_variant_metric(runner_up, "max")["key"] == _variant_metric(best, "min")["key"], f"У «{runner_up['title']}» есть полезная подсказка по слабому месту лидера. Сравни, как она решает «{weakest}», и перенеси прием в «{best['title']}»."),
-        (_comparison_value(best, "comparison_early_avg", 0) < 55, f"Лидерство есть, но старт можно усилить. Следующая итерация «{best['title']}» должна быстрее показывать главный объект или результат."),
-        (_comparison_value(best, "comparison_floor", 0) < 35, f"Главная задача - убрать глубокие провалы у лидера. Не добавляй новые эффекты, пока слабые окна не станут понятнее."),
-        (delta >= 5, f"«{best['title']}» можно нести первой, а «{runner_up['title']}» оставить контрольной версией для проверки следующей правки."),
-        (True, f"Следующий шаг - A/B между «{best['title']}» и «{runner_up['title']}». Смотрите, какая версия лучше держит старт, середину и слабые окна."),
+        (delta >= 10 and best_floor >= 45, f"Para la siguiente prueba toma «{best['title']}» como versión principal: gana no solo por el pico, también por una curva más estable sin bajones profundos."),
+        (delta >= 10, f"«{best['title']}» le gana al set actual, pero los baches siguen ahí. Antes de escalar, revisa aparte «{weakest}»."),
+        (delta <= 3, f"No declares ganador final. «{best['title']}» y «{runner_up['title']}» están pegadas — la siguiente prueba debe mover un solo elemento concreto."),
+        (best_avg < 50, f"Ni el líder está sólido en base todavía. No se trata de elegir ganador — hay que subir la base de todas las versiones."),
+        (bool(gap_line), f"Toma «{best['title']}» como primera base, pero el riesgo común es igual para todas: {gap_line}"),
+        (_variant_metric(runner_up, "max")["key"] == _variant_metric(best, "min")["key"], f"«{runner_up['title']}» trae una pista útil sobre el bache del líder. Mira cómo resuelve «{weakest}» y pasa la técnica a «{best['title']}»."),
+        (_comparison_value(best, "comparison_early_avg", 0) < 55, f"Hay liderazgo, pero el arranque puede subir. La siguiente iteración de «{best['title']}» debe mostrar el objeto principal o el resultado más rápido."),
+        (_comparison_value(best, "comparison_floor", 0) < 35, f"La tarea principal es quitar los bajones profundos del líder. No metas efectos nuevos hasta que los baches se vean más claros."),
+        (delta >= 5, f"Puedes llevar «{best['title']}» de primera y dejar «{runner_up['title']}» como versión de control para validar el siguiente ajuste."),
+        (True, f"Siguiente paso: A/B entre «{best['title']}» y «{runner_up['title']}». Comparen cuál aguanta mejor arranque, mitad y baches."),
     ]
     return _pick_template(candidates, "")
 
@@ -334,16 +334,16 @@ def _build_comparison_recommendations(best: dict[str, Any], runner_up: dict[str,
     weakest = _variant_metric(best, "min")["label"].lower()
     strongest = _variant_metric(best, "max")["label"].lower()
     candidates = [
-        (True, f"В следующий тест неси «{best['title']}» как базу: сейчас у нее лучший score по общему окну сравнения."),
-        (delta <= 3, f"Отрыв маленький. Не делай вывод по одному прогону: сравни «{best['title']}» и «{runner_up['title']}» еще раз после одной точечной правки."),
-        (delta >= 8, f"Сохрани у лидера «{strongest}» без лишних изменений. Это главный прием, который сейчас дает отрыв."),
-        (best_early < 55, "У лидера есть запас в первых секундах. Попробуй раньше показать главный объект, результат или конфликт."),
-        (best_avg < 55, "Средний уровень у лидера недостаточно высокий. Нужна правка не одного пика, а нескольких обычных кадров между сильными моментами."),
-        (best_floor < 35, f"У лидера есть глубокие просадки. Начни с «{weakest}» и сравни слабые окна с соседними сильными местами."),
-        (runner_avg >= best_avg - 5, f"«{runner_up['title']}» оставь ближайшим контролем: по среднему уровню она близко и может подсказать, что именно переносить в лидера."),
+        (True, f"En la siguiente prueba lleva «{best['title']}» como base: ahorita tiene el mejor score en la ventana común."),
+        (delta <= 3, f"La ventaja es chica. No saques conclusión de una sola corrida: compara «{best['title']}» y «{runner_up['title']}» otra vez después de un ajuste puntual."),
+        (delta >= 8, f"Conserva «{strongest}» del líder sin cambios extra. Es la técnica principal que está dando la diferencia."),
+        (best_early < 55, "El líder tiene margen en los primeros segundos. Prueba mostrar el objeto principal, el resultado o el conflicto antes."),
+        (best_avg < 55, "La base del líder no está lo bastante alta. No es un solo pico — hay que ajustar varios frames promedio entre los buenos momentos."),
+        (best_floor < 35, f"El líder tiene bajones profundos. Empieza por «{weakest}» y compara los baches con los tramos fuertes vecinos."),
+        (runner_avg >= best_avg - 5, f"Deja «{runner_up['title']}» como control cercano: en base está pegado al líder y puede mostrar qué pasar a la versión principal."),
         (bool(common_gaps), common_gaps[0] if common_gaps else ""),
-        (_comparison_value(runner_up, "comparison_early_avg", 0) > best_early + 5, f"У «{runner_up['title']}» старт лучше, чем у лидера. Проверь, можно ли перенести ее первый кадр или заход в «{best['title']}»."),
-        (True, "Последние 5 секунд не используй как главный аргумент. Смотри старт, середину и провалы в общем окне сравнения."),
+        (_comparison_value(runner_up, "comparison_early_avg", 0) > best_early + 5, f"«{runner_up['title']}» tiene mejor arranque que el líder. Revisa si puedes pasar su primer frame o entrada a «{best['title']}»."),
+        (True, "No uses los últimos 5 segundos como argumento principal. Mira arranque, mitad y bajones en la ventana común."),
     ]
     recs: list[str] = []
     for condition, text in candidates:

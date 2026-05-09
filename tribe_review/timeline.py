@@ -53,8 +53,8 @@ def _build_speech_layer(
         return {
             "available": False,
             "title": "Speech layer",
-            "message": f"Транскрипция не поднялась: {speech_error}",
-            "note": "Это отдельная локальная транскрипция Whisper. Она помогает сопоставлять слабые места графика с конкретными фразами и паузами.",
+            "message": f"La transcripción no levantó: {speech_error}",
+            "note": "Esta es una transcripción local con Whisper. Sirve para cruzar baches de la curva con frases y pausas específicas.",
             "metrics": [],
             "text": "",
             "segments": [],
@@ -70,8 +70,8 @@ def _build_speech_layer(
         return {
             "available": False,
             "title": "Speech layer",
-            "message": "Надёжная речь не обнаружена. В текущем режиме строгости блок речи лучше скрыть, чем показать случайную галлюцинацию ASR.",
-            "note": f"Отдельная локальная транскрипция Whisper. Сейчас включён режим «{profile.label}»: {profile.ui_note.lower()}",
+            "message": "No se detectó voz confiable. En el modo actual mejor ocultar el bloque de voz que mostrar una alucinación del ASR.",
+            "note": f"Transcripción local con Whisper. Modo activo: «{profile.label}» — {profile.ui_note.lower()}",
             "metrics": [],
             "text": "",
             "segments": [],
@@ -92,16 +92,15 @@ def _build_speech_layer(
     confidence = float(np.mean([word.probability for word in speech.words]))
     pause_ratio = long_pause_total / max(duration_seconds, 1e-6)
 
-    # Note: speech-metric LABELS stay Russian even when language="en" — the
-    # F3 ``localize_report`` post-processor (specifically
-    # ``_speech_metric_label_en``) rewrites them into English at the report
-    # level. Direct EN labels in the engine would break that pipeline.
+    # Speech-metric labels are emitted in Spanish; the F3 ``localize_report``
+    # post-processor (``_speech_metric_label_en``) keys off ``metric_key``,
+    # not the label string, so it still works for ``language="en"``.
     metrics = [
-        SpeechMetric("speech_start", "Старт речи", f"{first_start:.2f} c", speech_metric_summary("speech_start", first_start, language=language)),
-        SpeechMetric("speech_pace", "Слов в секунду", f"{pace:.2f}", speech_metric_summary("speech_pace", pace, language=language)),
-        SpeechMetric("articulation", "Насколько плотно сказано", f"{articulation:.2f}", speech_metric_summary("articulation", articulation, language=language)),
-        SpeechMetric("pause_ratio", "Доля пауз", f"{pause_ratio:.2f}", speech_metric_summary("pause_ratio", pause_ratio, language=language)),
-        SpeechMetric("confidence", "Уверенность ASR", f"{confidence:.2f}", speech_metric_summary("confidence", confidence, language=language)),
+        SpeechMetric("speech_start", "Entrada de voz", f"{first_start:.2f}s", speech_metric_summary("speech_start", first_start, language=language)),
+        SpeechMetric("speech_pace", "Palabras por segundo", f"{pace:.2f}", speech_metric_summary("speech_pace", pace, language=language)),
+        SpeechMetric("articulation", "Densidad del texto", f"{articulation:.2f}", speech_metric_summary("articulation", articulation, language=language)),
+        SpeechMetric("pause_ratio", "Pausas largas", f"{pause_ratio:.2f}", speech_metric_summary("pause_ratio", pause_ratio, language=language)),
+        SpeechMetric("confidence", "Confianza del ASR", f"{confidence:.2f}", speech_metric_summary("confidence", confidence, language=language)),
     ]
     segments = [{"start": round(segment.start, 2), "end": round(segment.end, 2), "text": segment.text} for segment in speech.segments]
 
@@ -109,7 +108,7 @@ def _build_speech_layer(
         "available": True,
         "title": "Speech layer",
         "message": None,
-        "note": f"Отдельная локальная транскрипция Whisper в режиме «{profile.label}». Она помогает проверить, какие слова и паузы совпадают со слабыми местами графика.",
+        "note": f"Transcripción local con Whisper en modo «{profile.label}». Sirve para cruzar palabras y pausas con los baches de la curva.",
         "metrics": [metric.__dict__ for metric in metrics],
         "text": speech.text,
         "segments": segments,
@@ -170,17 +169,17 @@ def _build_timeline(
 
 def _build_phase_notes(activation: np.ndarray) -> list[str]:
     chunks = np.array_split(activation, 3)
-    labels = ["Старт", "Середина", "Финал"]
+    labels = ["Arranque", "Mitad", "Cierre"]
     summaries: list[str] = []
     baseline = float(np.mean(activation) + 1e-6)
     for label, chunk in zip(labels, chunks):
         ratio = float(np.mean(chunk) / baseline)
         if ratio >= 1.08:
-            summaries.append(f"{label}: выше среднего по ролику. Здесь сигнал держится уверенно.")
+            summaries.append(f"{label}: arriba del promedio del video. Aquí la señal se mantiene firme.")
         elif ratio >= 0.92:
-            summaries.append(f"{label}: близко к среднему уровню. Без сильного усиления и без явной просадки.")
+            summaries.append(f"{label}: cerca del promedio. Sin levantón claro ni bache marcado.")
         else:
-            summaries.append(f"{label}: ниже среднего по ролику. Есть смысл посмотреть монтаж и подачу именно в этой фазе.")
+            summaries.append(f"{label}: abajo del promedio del video. Vale la pena revisar montaje y entrega en esta fase.")
     return summaries
 
 
@@ -190,7 +189,7 @@ def _build_seek_targets(focus_windows: list[FocusWindow], drop_moments: list[dic
         for item in focus_windows
     ]
     for item in drop_moments:
-        targets.append({"label": "Подозрительный момент", "timestamp": item["timestamp"], "seconds": item["seconds"], "kind": "drop", "summary": item["reason"]})
+        targets.append({"label": "Momento sospechoso", "timestamp": item["timestamp"], "seconds": item["seconds"], "kind": "drop", "summary": item["reason"]})
     for segment in speech_layer.get("segments", [])[:6]:
         targets.append({"label": "Speech segment", "timestamp": _format_ts(segment["start"]), "seconds": segment["start"], "kind": "speech", "summary": segment["text"]})
     return targets
@@ -224,9 +223,9 @@ def _speech_line(speech_layer: dict[str, Any]) -> str:
     if speech_layer.get("available"):
         start = speech_layer.get("speech_start_seconds")
         if isinstance(start, (int, float)) and float(start) > 2.0:
-            return f"Речь распознана, но первая значимая фраза начинается только около {float(start):.1f} с, поэтому старт лучше проверить отдельно."
-        return "Речь распознана: слабые места можно сверять не только по кадру, но и по словам рядом с ними."
-    return "Речь сейчас не даёт надежной опоры, поэтому выводы лучше читать через монтаж, кадр и звук."
+            return f"Whisper reconoció voz, pero la primera frase relevante entra hasta los {float(start):.1f}s. El arranque conviene revisarlo aparte."
+        return "Whisper reconoció voz: los baches puedes cruzarlos contra el frame y contra las palabras cercanas."
+    return "La voz no da apoyo confiable; lee las conclusiones desde el montaje, el frame y el audio."
 
 
 def _build_focus_windows(
@@ -251,9 +250,9 @@ def _build_focus_windows(
         dynamic_candidates = list(range(1, len(timestamps))) or [0]
     dynamic_idx = _pick_extreme_index(smoothed_novelty, dynamic_candidates, mode="max")
     return [
-        FocusWindow("Лучший участок", _format_ts(timestamps[strongest_idx]), round(float(timestamps[strongest_idx]), 2), "Здесь график выше соседних точек. Используй этот момент как ориентир по кадру, темпу и крупности."),
-        FocusWindow("Слабое окно", _format_ts(timestamps[weakest_idx]), round(float(timestamps[weakest_idx]), 2), "Здесь график проседает относительно соседних точек. Проверь, не затянут ли план и не потерялся ли главный объект."),
-        FocusWindow("Резкая смена", _format_ts(timestamps[dynamic_idx]), round(float(timestamps[dynamic_idx]), 2), "Здесь график меняется сильнее всего. Проверь, помогает ли переход удержать внимание или выглядит случайным скачком."),
+        FocusWindow("Tramo fuerte", _format_ts(timestamps[strongest_idx]), round(float(timestamps[strongest_idx]), 2), "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto."),
+        FocusWindow("Bache", _format_ts(timestamps[weakest_idx]), round(float(timestamps[weakest_idx]), 2), "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde."),
+        FocusWindow("Cambio brusco", _format_ts(timestamps[dynamic_idx]), round(float(timestamps[dynamic_idx]), 2), "Aquí la curva cambia más fuerte que en otros puntos. Revisa si el cut sostiene la atención o se siente aleatorio."),
     ]
 
 
@@ -263,7 +262,7 @@ def _build_drop_moments(timestamps: list[float], indices: list[int], profile: An
         {
             "seconds": round(float(timestamps[index]), 2),
             "timestamp": _format_ts(float(timestamps[index])),
-            "reason": "локальная просадка графика",
+            "reason": "bache local en la curva",
         }
         for index in indices
         if 0 <= index < len(timestamps)
