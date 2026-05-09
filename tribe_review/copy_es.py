@@ -26,12 +26,7 @@ from analysis_settings import AnalysisModeProfile
 # Re-export ACTION_VARIANTS from report_localization (the F3 follow-up moved
 # the table there). ``noqa: F401`` because the alias name differs from the
 # imported symbol — ruff doesn't auto-classify that as a re-export.
-#
-# TODO(s1-followup): pull from ``ACTION_VARIANTS_ES`` once the ES table lands
-# in ``report_localization``. The next commit in this PR adds it and drops
-# the RU table entirely; we keep the RU alias here for one commit so the
-# package stays importable through the translation roll-out.
-from report_localization import ACTION_VARIANTS_RU as ACTION_VARIANTS  # noqa: F401
+from report_localization import ACTION_VARIANTS_ES as ACTION_VARIANTS  # noqa: F401
 
 if TYPE_CHECKING:
     # ``_simple_metric_action`` only reads ``metric.key``; we don't need the

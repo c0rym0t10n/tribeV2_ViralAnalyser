@@ -1,9 +1,9 @@
 {
   "action_items": [
     {
-      "instruction": "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию.",
+      "instruction": "Tumba 1-2 segundos antes de este punto, o brinca más rápido al siguiente beat.",
       "timestamp": "00:02",
-      "title": "Подрежь затянутый отрезок",
+      "title": "Acorta el tramo arrastrado",
       "why": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto."
     }
   ],

@@ -184,9 +184,9 @@
     {
       "action_items": [
         {
-          "instruction": "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию.",
+          "instruction": "Tumba 1-2 segundos antes de este punto, o brinca más rápido al siguiente beat.",
           "timestamp": "00:02",
-          "title": "Подрежь затянутый отрезок",
+          "title": "Acorta el tramo arrastrado",
           "why": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto."
         }
       ],
@@ -489,15 +489,15 @@
     {
       "action_items": [
         {
-          "instruction": "Поставь перед этой точкой кадр, где сразу видно главный объект, результат или конфликт.",
+          "instruction": "Mete antes de este punto un frame donde se vea de volada el objeto principal, el resultado o el conflicto.",
           "timestamp": "00:01",
-          "title": "Усиль первый кадр",
+          "title": "Refuerza el primer frame",
           "why": "bache local en la curva"
         },
         {
-          "instruction": "Усиль не один пик, а обычные кадры вокруг этой точки: крупнее объект, чище фон, заметнее действие.",
+          "instruction": "Refuerza no solo el pico sino los frames de a diario alrededor de este punto: objeto más grande, fondo más limpio, acción más visible.",
           "timestamp": "00:02",
-          "title": "Подними средний уровень",
+          "title": "Sube el nivel promedio",
           "why": "bache local en la curva"
         }
       ],
