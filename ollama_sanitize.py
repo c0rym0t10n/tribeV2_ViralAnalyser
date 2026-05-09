@@ -138,16 +138,13 @@ def _simplify_metrics(review: dict[str, Any], language: str = "es") -> None:
 # title_map below normalises a few legacy / mojibake-corrupted titles to the
 # canonical ES form first; the EN dispatch then translates from ES.
 _FOCUS_WINDOW_TITLE_NORMALISE = {
-    "Сильный момент": "Tramo fuerte",
-    "Слабое место": "Bache",
-    "Резкая смена": "Cambio brusco",
-    "Пик сигнала": "Tramo fuerte",
-    "Слабое окно": "Bache",
-    "Самый резкий переход": "Cambio brusco",
-    "Лучший участок": "Tramo fuerte",
     "Tramo fuerte": "Tramo fuerte",
     "Bache": "Bache",
     "Cambio brusco": "Cambio brusco",
+    # Legacy English aliases (LLM occasionally emits these).
+    "Strong section": "Tramo fuerte",
+    "Where to fix first": "Bache",
+    "Where to speed up": "Cambio brusco",
 }
 
 _FOCUS_WINDOW_TITLE_EN = {
@@ -194,10 +191,6 @@ def _simplify_focus_windows(review: dict[str, Any], language: str = "es") -> Non
 # to EN when needed. The instruction rewrites strip TRIBE-specific jargon and
 # drop "Why:" prefixes regardless of language.
 _ACTION_ITEM_TITLE_NORMALISE = {
-    "Исправить слабое место": "Arreglar este tramo",
-    "Сохранить сильный кусок": "Dejar como está",
-    "Подтянуть локальную просадку": "Revisar este tramo",
-    "Подключить речь раньше": "Decir lo principal antes",
     "Arreglar este tramo": "Arreglar este tramo",
     "Dejar como está": "Dejar como está",
     "Revisar este tramo": "Revisar este tramo",
@@ -211,12 +204,14 @@ _ACTION_ITEM_TITLE_EN = {
     "Decir lo principal antes": "Say the key line earlier",
 }
 
+# Instruction rewrites: only the language-agnostic strips remain. The
+# RU substring rewrites that lived here pre-S1 fired against legacy
+# LLM RU output; ``ollama_runtime`` still prompts the LLM in Russian
+# until S2, so we keep the ``TRIBE`` / ``Почему`` strips so that
+# brand jargon does not leak. S2 retires this whole block.
 _ACTION_ITEM_INSTRUCTION_REWRITES = (
-    ("локальную просадку", "el bache"),
-    ("TRIBE-сигнала", "del cut"),
+    ("TRIBE-сигнала", ""),
     ("TRIBE", ""),
-    ("сигнал", "cut"),
-    ("просад", "bache"),
     ("Почему:", ""),
     ("Почему", ""),
 )
@@ -261,11 +256,6 @@ _SPEECH_MESSAGE_UNAVAILABLE = {
 # Speech-metric labels follow the engine-side ES wording (Entrada de voz,
 # Palabras por segundo, …); the EN dispatch translates them.
 _SPEECH_LABEL_NORMALISE = {
-    "Старт речи": "Entrada de voz",
-    "Слов в секунду": "Palabras por segundo",
-    "Плотность артикуляции": "Densidad del texto",
-    "Доля пауз": "Pausas largas",
-    "Уверенность ASR": "Confianza del ASR",
     "Entrada de voz": "Entrada de voz",
     "Palabras por segundo": "Palabras por segundo",
     "Densidad del texto": "Densidad del texto",
@@ -333,7 +323,7 @@ def _replace_plan_items(target: dict[str, Any], source: dict[str, Any]) -> None:
     if not isinstance(items, list):
         return
     cleaned: list[dict[str, str]] = []
-    titles = ("Сделать первым", "Сделать потом", "Проверить после правок")
+    titles = ("Hacer primero", "Hacer después", "Revisar después")
     for item in items:
         if isinstance(item, dict):
             title = item.get("title")
@@ -388,7 +378,7 @@ def _short_action_title(instruction: str) -> str:
     head = instruction.split(".", 1)[0].split(",", 1)[0].strip()
     words = head.split()
     if not words:
-        return "Что сделать"
+        return "Qué hacer"
     compact = " ".join(words[:4])
     return compact[:42].rstrip(" -,:.")
 

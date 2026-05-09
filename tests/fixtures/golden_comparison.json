@@ -185,9 +185,9 @@
       "action_items": [
         {
           "instruction": "Tumba 1-2 segundos antes de este punto, o brinca más rápido al siguiente beat.",
-          "timestamp": "00:02",
+          "timestamp": "00:04",
           "title": "Acorta el tramo arrastrado",
-          "why": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto."
+          "why": "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde."
         }
       ],
       "analysis_mode": {
@@ -331,14 +331,14 @@
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 0.4,
-          "summary": "Привет, это первый сегмент.",
+          "summary": "Hola, este es el primer segmento.",
           "timestamp": "00:00"
         },
         {
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 2.6,
-          "summary": "Здесь второй сегмент с паузой.",
+          "summary": "Aquí va el segundo segmento con pausa.",
           "timestamp": "00:03"
         }
       ],
@@ -387,16 +387,16 @@
           {
             "end": 1.9,
             "start": 0.4,
-            "text": "Привет, это первый сегмент."
+            "text": "Hola, este es el primer segmento."
           },
           {
             "end": 5.0,
             "start": 2.6,
-            "text": "Здесь второй сегмент с паузой."
+            "text": "Aquí va el segundo segmento con pausa."
           }
         ],
         "speech_start_seconds": 0.4,
-        "text": "Привет, это первый сегмент. Здесь второй сегмент с паузой.",
+        "text": "Hola, este es el primer segmento. Aquí va el segundo segmento con pausa.",
         "title": "Speech layer",
         "word_count": 6
       },
@@ -667,14 +667,14 @@
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 0.4,
-          "summary": "Привет, это первый сегмент.",
+          "summary": "Hola, este es el primer segmento.",
           "timestamp": "00:00"
         },
         {
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 2.6,
-          "summary": "Здесь второй сегмент с паузой.",
+          "summary": "Aquí va el segundo segmento con pausa.",
           "timestamp": "00:03"
         }
       ],
@@ -723,16 +723,16 @@
           {
             "end": 1.9,
             "start": 0.4,
-            "text": "Привет, это первый сегмент."
+            "text": "Hola, este es el primer segmento."
           },
           {
             "end": 5.0,
             "start": 2.6,
-            "text": "Здесь второй сегмент с паузой."
+            "text": "Aquí va el segundo segmento con pausa."
           }
         ],
         "speech_start_seconds": 0.4,
-        "text": "Привет, это первый сегмент. Здесь второй сегмент с паузой.",
+        "text": "Hola, este es el primer segmento. Aquí va el segundo segmento con pausa.",
         "title": "Speech layer",
         "word_count": 6
       },

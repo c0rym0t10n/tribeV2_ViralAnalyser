@@ -215,7 +215,7 @@ def _rebase_action_items_to_curve(
 
     for item in actions:
         title = str(item.get("title") or "").strip().lower()
-        is_keep = title in {"оставить как есть", "keep as is"}
+        is_keep = title in {"dejar como está", "keep as is"}
         if is_keep:
             if reference_ts:
                 item["timestamp"] = reference_ts
@@ -294,7 +294,7 @@ def _build_editorial_seek_targets(review: dict[str, Any]) -> list[dict[str, Any]
         if isinstance(item, dict):
             targets.append(
                 {
-                    "label": "Подозрительный момент",
+                    "label": "Momento sospechoso",
                     "timestamp": str(item.get("timestamp") or ""),
                     "seconds": item.get("seconds"),
                     "kind": "drop",
@@ -324,8 +324,8 @@ def _build_editorial_seek_targets(review: dict[str, Any]) -> list[dict[str, Any]
 def _is_keep_action(item: dict[str, Any]) -> bool:
     title = str(item.get("title") or "").strip().lower()
     return (
-        title in {"оставить как есть", "keep as is"}
-        or "сохран" in title
+        title in {"dejar como está", "keep as is"}
+        or "deja" in title
         or "keep" in title
     )
 

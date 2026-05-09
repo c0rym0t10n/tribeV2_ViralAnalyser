@@ -233,7 +233,7 @@ def _build_action_items(
                 (
                     item
                     for item in focus_windows
-                    if "лаб" in str(getattr(item, "label", "")).lower()
+                    if "bache" in str(getattr(item, "label", "")).lower()
                 ),
                 focus_windows[0],
             )
