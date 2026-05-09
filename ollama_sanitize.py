@@ -204,16 +204,13 @@ _ACTION_ITEM_TITLE_EN = {
     "Decir lo principal antes": "Say the key line earlier",
 }
 
-# Instruction rewrites: only the language-agnostic strips remain. The
-# RU substring rewrites that lived here pre-S1 fired against legacy
-# LLM RU output; ``ollama_runtime`` still prompts the LLM in Russian
-# until S2, so we keep the ``TRIBE`` / ``Почему`` strips so that
-# brand jargon does not leak. S2 retires this whole block.
+# Instruction rewrites: language-agnostic brand + "Why:" prefix strips.
+# Post-S2 the LLM writes ES, so the legacy RU substring rewrites are gone.
 _ACTION_ITEM_INSTRUCTION_REWRITES = (
-    ("TRIBE-сигнала", ""),
     ("TRIBE", ""),
+    ("Why:", ""),
+    ("Por qué:", ""),
     ("Почему:", ""),
-    ("Почему", ""),
 )
 
 
@@ -385,17 +382,15 @@ def _short_action_title(instruction: str) -> str:
 
 def _clean_sentence(value: str) -> str:
     text = " ".join(str(value).strip().split())
+    # Brand + explanation-prefix strips. Post-S2 the LLM is prompted in ES
+    # so the legacy RU-specific bans are gone. We keep ``TRIBE`` (brand)
+    # and the EN/ES/RU "Why:" prefixes the model occasionally drops in.
     banned = (
         "TRIBE",
-        "сигнал",
-        "просад",
-        "турбул",
-        "payoff",
-        "сюжет",
-        "финал",
-        "конец видео",
-        "вираль",
-        "артефакт",
+        "Why:",
+        "Why",
+        "Por qué:",
+        "Por qué",
         "Почему:",
         "Почему",
     )
@@ -405,57 +400,23 @@ def _clean_sentence(value: str) -> str:
 
 
 def _sanitize_generated_copy(review: dict[str, Any]) -> None:
-    speech = review.get("speech") if isinstance(review.get("speech"), dict) else {}
-    speech_available = bool(speech.get("available"))
+    """Strip brand + explanation-prefix tokens from every LLM-produced field.
 
-    replacements = [
-        ("убери лишний текст из кадра", "убери лишнее из кадра"),
-        ("лишний текст", "лишнее"),
-        ("текст на экране", "лишние детали"),
-        ("очисти кадр от лишнего", "сделай главное заметнее"),
-        ("убери лишнее из кадра", "сделай главное заметнее"),
-        ("кадр перегружен деталями", "главное считывается неуверенно"),
-        ("смени кадр раньше", "добавь более раннюю смену плана"),
-        ("смени сцену раньше", "добавь более раннюю смену плана"),
-        ("ускорь переходы", "собери темп плотнее"),
-        ("переходы между сценами", "темп этого куска"),
-        ("смены кадров", "новых визуальных моментов"),
-        ("смена кадров", "новые визуальные моменты"),
-        ("отсутствие смены кадров", "мало новых визуальных моментов"),
-        ("грязный кадр", "нечёткий визуальный акцент"),
-        ("дрожит", "читается неуверенно"),
-        ("темный", "менее читаемый"),
-    ]
-    if not speech_available:
-        replacements.extend(
-            [
-                ("сократи паузы", "сократи затянутый кусок"),
-                ("убери паузу", "подрежь пустой промежуток"),
-                ("паузы", "затянутые места"),
-                ("скажи главную фразу раньше", "покажи главное раньше"),
-                ("речь", "подача"),
-            ]
-        )
-
-    def transform(text: str) -> str:
-        updated = str(text)
-        updated = re.sub(r"\bвидео начинается(\s+только)?\s+с\b", r"Речь начинается\1 с", updated, flags=re.IGNORECASE)
-        updated = re.sub(r"\bвидео начинается(\s+только)?\s+на\b", r"Речь начинается\1 на", updated, flags=re.IGNORECASE)
-        updated = re.sub(r"\bвидео стартует(\s+только)?\s+с\b", r"Речь начинается\1 с", updated, flags=re.IGNORECASE)
-        updated = re.sub(r"\bвидео стартует(\s+только)?\s+на\b", r"Речь начинается\1 на", updated, flags=re.IGNORECASE)
-        for old, new in replacements:
-            updated = re.sub(re.escape(old), new, updated, flags=re.IGNORECASE)
-        return _clean_sentence(updated)
+    Post-S2 the LLM is prompted in ES; the legacy RU regex-rewrite block
+    that lived here is dead and was removed. ``_clean_sentence`` is
+    language-agnostic and handles the brand / "Why:" prefix scrub for both
+    languages.
+    """
 
     for key in ("verdict", "executive_summary", "product_summary"):
         value = review.get(key)
         if isinstance(value, str) and value.strip():
-            review[key] = transform(value)
+            review[key] = _clean_sentence(value)
 
     for key in ("strengths", "weaknesses"):
         items = review.get(key)
         if isinstance(items, list):
-            review[key] = [transform(item) for item in items if isinstance(item, str) and transform(item)]
+            review[key] = [_clean_sentence(item) for item in items if isinstance(item, str) and _clean_sentence(item)]
 
     plan = review.get("recommendation_plan")
     if isinstance(plan, list):
@@ -464,7 +425,7 @@ def _sanitize_generated_copy(review: dict[str, Any]) -> None:
             if not isinstance(item, dict):
                 continue
             title = str(item.get("title") or "").strip()
-            detail = transform(str(item.get("detail") or ""))
+            detail = _clean_sentence(str(item.get("detail") or ""))
             if title and detail:
                 cleaned_plan.append({"title": title, "detail": detail})
         review["recommendation_plan"] = cleaned_plan[:3]
@@ -476,8 +437,8 @@ def _sanitize_generated_copy(review: dict[str, Any]) -> None:
             if not isinstance(item, dict):
                 continue
             timestamp = str(item.get("timestamp") or "").strip()
-            title = transform(str(item.get("title") or ""))
-            instruction = transform(str(item.get("instruction") or ""))
+            title = _clean_sentence(str(item.get("title") or ""))
+            instruction = _clean_sentence(str(item.get("instruction") or ""))
             if timestamp and title and instruction:
                 cleaned_actions.append(
                     {
