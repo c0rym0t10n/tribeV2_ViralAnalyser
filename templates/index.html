@@ -2056,8 +2056,8 @@
             {% if not pdf_mode and result.brain_simulation and result.brain_simulation.available %}
             <div class="brain-region-column workspace-panel">
               <div class="brain-region-panel is-visible" data-brain-region-panel-for="video-{{ result.variant_key }}">
-                <h3 style="font-size: 18px;">{{ brain_region_panel.title_en if language == "en" else brain_region_panel.title_ru }}</h3>
-                <p class="muted" style="margin-top: 8px; line-height: 1.2;">{{ brain_region_panel.hint_en if language == "en" else brain_region_panel.hint_ru }}</p>
+                <h3 style="font-size: 18px;">{{ brain_region_panel.title_en if language == "en" else brain_region_panel.title_es }}</h3>
+                <p class="muted" style="margin-top: 8px; line-height: 1.2;">{{ brain_region_panel.hint_en if language == "en" else brain_region_panel.hint_es }}</p>
                 <div class="brain-region-grid" data-brain-region-grid-for="video-{{ result.variant_key }}"></div>
               </div>
             </div>
@@ -2790,8 +2790,8 @@
           if (!regionGrid || !regions.length) return;
           if (regionCardNodes.length === regions.length) return;
           regionGrid.innerHTML = regions.map((item) => {
-            const label = sceneData.language === "en" ? item.label_en : item.label_ru;
-            const description = sceneData.language === "en" ? item.description_en : item.description_ru;
+            const label = sceneData.language === "en" ? item.label_en : item.label_es;
+            const description = sceneData.language === "en" ? item.description_en : item.description_es;
             return `
               <article class="brain-region-card" data-region-card>
                 <div class="brain-region-head">
