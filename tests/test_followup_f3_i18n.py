@@ -68,23 +68,25 @@ def test_label_map_en_covers_all_action_variant_titles() -> None:
     assert not missing, f"missing EN translations for: {missing[:5]}"
 
 
-def test_copy_ru_reexports_action_variants_from_localization() -> None:
-    """``tribe_review.copy_ru.ACTION_VARIANTS`` must be the same object as
-    ``report_localization.ACTION_VARIANTS_RU`` (no separate copy living in
-    the package). After G2, ``copy_ru`` is the canonical home for this
-    re-export — the legacy ``tribe_review._engine.ACTION_VARIANTS`` path
-    still resolves via re-export but copy_ru is the source of truth.
+def test_copy_es_reexports_action_variants_from_localization() -> None:
+    """``tribe_review.copy_es.ACTION_VARIANTS`` must resolve to the canonical
+    ``report_localization`` table. Stage 3 / S1 renamed the module from
+    ``copy_ru`` to ``copy_es``; the alias still points to ``ACTION_VARIANTS_RU``
+    for one commit while the ES table lands, then the next commit in this PR
+    flips it to ``ACTION_VARIANTS_ES`` and drops the RU table.
 
     Skips when the package can't be imported (e.g. heavy deps absent in a
     minimal sandbox).
     """
 
     try:
-        from tribe_review.copy_ru import ACTION_VARIANTS as copy_ru_variants
+        from tribe_review.copy_es import ACTION_VARIANTS as copy_es_variants
     except ModuleNotFoundError as exc:
-        pytest.skip(f"tribe_review.copy_ru cannot be imported: {exc!r}")
+        pytest.skip(f"tribe_review.copy_es cannot be imported: {exc!r}")
 
-    assert copy_ru_variants is ACTION_VARIANTS_RU
+    # Mid-roll-out: the alias still points at the RU table. The follow-up
+    # commit in this PR flips it to ACTION_VARIANTS_ES.
+    assert copy_es_variants is ACTION_VARIANTS_RU
 
 
 def test_package_root_reexports_action_variants() -> None:
@@ -105,24 +107,29 @@ def test_action_variants_dict_literal_not_reintroduced() -> None:
     ``report_localization``. Guards against regressions where someone
     re-inlines the table.
 
-    Post-G2 the canonical import lives in ``copy_ru.py`` rather than
-    ``_engine.py``; we still want the assertion that the literal isn't
-    sitting in source anywhere.
+    Stage 3 / S1 renamed ``copy_ru.py`` to ``copy_es.py``; the canonical
+    import line is checked there. The dict-literal sentinel is still the RU
+    one until the ES table lands (next commit in this PR), at which point
+    this test gets a parallel ES sentinel.
     """
 
     from pathlib import Path
 
     pkg_dir = Path(__file__).resolve().parent.parent / "tribe_review"
-    copy_ru_text = (pkg_dir / "copy_ru.py").read_text(encoding="utf-8")
+    copy_es_text = (pkg_dir / "copy_es.py").read_text(encoding="utf-8")
 
-    assert "ACTION_VARIANTS_RU as ACTION_VARIANTS" in copy_ru_text, (
-        "F3 regression: tribe_review/copy_ru.py is no longer importing "
+    assert "ACTION_VARIANTS_RU as ACTION_VARIANTS" in copy_es_text or "ACTION_VARIANTS_ES as ACTION_VARIANTS" in copy_es_text, (
+        "F3 regression: tribe_review/copy_es.py is no longer importing "
         "ACTION_VARIANTS from report_localization."
     )
 
-    sentinel = '"early_response": [\n        ("Усиль первый кадр"'
+    ru_sentinel = '"early_response": [\n        ("Усиль первый кадр"'
+    es_sentinel = '"early_response": [\n        ("Mete el hook desde'
     for module in pkg_dir.glob("*.py"):
         text = module.read_text(encoding="utf-8")
-        assert sentinel not in text, (
-            f"F3 regression: ACTION_VARIANTS dict literal returned to {module.name}"
+        assert ru_sentinel not in text, (
+            f"F3 regression: RU ACTION_VARIANTS dict literal in {module.name}"
+        )
+        assert es_sentinel not in text, (
+            f"F3 regression: ES ACTION_VARIANTS dict literal in {module.name}"
         )

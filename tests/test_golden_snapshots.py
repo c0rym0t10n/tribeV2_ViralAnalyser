@@ -126,7 +126,7 @@ def _make_review(
     variant_name: str,
     early_strong: bool,
     seed: int,
-    language: str = "ru",
+    language: str = "es",
 ):
     monkeypatch.setattr("tribe_review._engine._read_video_info", _stub_video_info(f"{variant_name}.mp4"))
     return generate_review(
@@ -154,15 +154,16 @@ def test_generate_review_deep_en_matches_golden(monkeypatch: pytest.MonkeyPatch)
     """Engine must produce English banded summaries when ``language="en"``.
 
     Other prose (executive summary, recommendations, comparison verdicts) is
-    still Russian — only the metric-side and speech-side banded summaries
-    are language-aware. The F3 ``localize_report`` pipeline handles the
-    remaining prose at the report level.
+    Spanish post-S1 — only the metric-side and speech-side banded summaries
+    are language-aware in the engine itself. The F3 ``localize_report``
+    pipeline handles the remaining prose at the report level (degraded
+    coverage post-S1; full retraining lives in S5).
     """
     review = _make_review(monkeypatch, mode="deep", variant_name="variant_a", early_strong=True, seed=1234, language="en")
     payload = _load_or_capture("golden_review_deep_en.json", review)
 
     # Spot-check that the language threading actually flipped the banded
-    # summaries to English (not just the Russian copy with the same shape).
+    # summaries to English (not just leaked the ES default through).
     metric_summaries = {item["key"]: item["summary"] for item in payload["metrics"]}
     assert any(
         ascii_word in metric_summaries.get("early_response", "")

@@ -23,7 +23,7 @@ exclude = ["runtime_media", ".venv", "__pycache__"]
 # compare-summary blurbs). ``_engine`` is also kept exempt because the
 # orchestrator still has a couple of inline prose strings on the speech-layer
 # fallback paths. ``copy_ru`` and ``metrics`` no longer need the exemption.
-"tribe_review/copy_ru.py" = ["E501"]
+"tribe_review/copy_es.py" = ["E501"]
 "tribe_review/timeline.py" = ["E501"]
 "tribe_review/recommendations.py" = ["E501"]
 "tribe_review/comparison.py" = ["E501"]

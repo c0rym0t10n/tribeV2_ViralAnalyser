@@ -4,11 +4,77 @@ from copy import deepcopy
 from typing import Any
 
 from analysis_settings import ANALYSIS_MODE_PROFILES
-SUPPORTED_REPORT_LANGUAGES = ("en",)
-DEFAULT_REPORT_LANGUAGE = "en"
+SUPPORTED_REPORT_LANGUAGES = ("es", "en")
+DEFAULT_REPORT_LANGUAGE = "es"
 
 
 UI_TEXTS: dict[str, dict[str, str]] = {
+    "es": {
+        "language": "Idioma",
+        "report_language": "Idioma del reporte",
+        "language_ru": "Ruso",
+        "language_en": "English",
+        "open_json": "Abrir JSON",
+        "download_pdf": "Descargar PDF",
+        "overall_score": "Score total",
+        "overall_score_note_single": "Score final del cut.",
+        "overall_score_note_compare": "Score de la versión líder.",
+        "mode": "Modo",
+        "format": "Formato",
+        "single_review": "Un solo cut",
+        "versions_suffix": "versiones",
+        "video_jump_simple": "Video y salto rápido",
+        "video_jump": "Video y jump-to-time",
+        "timeline_simple": "Curva creativa",
+        "timeline_deep": "TRIBE Timeline",
+        "timeline_hint": "Pasa el cursor para ver el tiempo. Click en la curva para saltar a ese punto del video.",
+        "timeline_level": "Nivel",
+        "timeline_signal": "Nivel",
+        "avg": "Prom",
+        "max": "Máx",
+        "min": "Mín",
+        "seconds": "s",
+        "brain_title": "Simulación de actividad cortical",
+        "brain_status": "Ventana actual",
+        "frames": "Frames",
+        "brain_activity": "Actividad",
+        "brain_hotspots": "Hotspots",
+        "brain_normal": "Normal",
+        "brain_inflated": "Expandido",
+        "brain_unavailable": "La vista 3D del cerebro no está disponible para esta corrida.",
+        "what_to_do": "Qué cambiar en el video",
+        "what_to_keep_change": "Qué dejar y qué cambiar",
+        "strengths": "Lo que jala",
+        "weaknesses": "Lo que no jala",
+        "next_step": "Siguiente paso",
+        "open_numbers": "Partes del timeline",
+        "open_speech": "Abrir voz y texto",
+        "good_bad": "Lo que jala / lo que estorba",
+        "already_good": "Lo que jala",
+        "gets_in_way": "Lo que estorba",
+        "signal_metrics": "Métricas de la curva",
+        "windows_phases": "Ventanas y fases clave",
+        "speech_title": "Voz",
+        "full_text": "Transcripción completa",
+        "words": "palabras",
+        "speech_chunks": "Segmentos de voz",
+        "fix_first": "Qué arreglar primero",
+        "footer_simple": "Modo simple: muestra qué dejar en el cut y qué arreglar primero.",
+        "footer_deep": "Esta vista trae el reporte completo más una capa de voz/transcript aparte.",
+        "compare_summary": "Resumen de la comparativa",
+        "compare_axes": "Dónde gana cada versión",
+        "compare_table": "Tabla comparativa",
+        "variant_breakdown": "Desglose por versión",
+        "winner": "Ganadora",
+        "strong_block": "Área fuerte",
+        "weak_block": "Área floja",
+        "new_run": "Corrida nueva",
+        "run_hint": "Sube un video para review completo o de 2 a 5 videos y la app compara los cuts.",
+        "analysis_mode": "Modo de review",
+        "run_analysis": "Correr análisis",
+        "choose_files": "Elegir archivos",
+        "no_files_selected": "Ningún archivo elegido",
+    },
     "ru": {
         "language": "Язык",
         "report_language": "Язык отчета",
@@ -145,6 +211,20 @@ UI_TEXTS: dict[str, dict[str, str]] = {
 
 
 ANALYSIS_MODE_TEXTS: dict[str, dict[str, dict[str, str]]] = {
+    "es": {
+        "simplified": {
+            "label": "Simplificado",
+            "description": "Habla directo: qué dejar, qué arreglar y dónde hacerlo.",
+            "note": "Útil cuando quieres un resultado corto sin análisis extra.",
+            "comparison_note": "Solo saca las diferencias que se traducen fácil en el siguiente cambio.",
+        },
+        "deep": {
+            "label": "Análisis a profundidad",
+            "description": "Detalla todo: dónde aguanta el cut, dónde se cae y por qué.",
+            "note": "Útil cuando quieres el desglose completo, no solo una lista de ajustes.",
+            "comparison_note": "Muestra al líder y por qué métricas saca la diferencia.",
+        },
+    },
     "ru": {
         "simplified": {
             "label": "Упрощенный",
@@ -1579,6 +1659,35 @@ METRIC_SUMMARY_LIBRARY_RU: dict[str, dict[str, str]] = {
 }
 
 
+METRIC_SUMMARY_LIBRARY_ES: dict[str, dict[str, str]] = {
+    "early_response": {
+        "high": "Desde el primer shot ya está claro qué ver: el objeto principal o la acción se notan de volada.",
+        "mid": "El arranque está bien, pero el objeto principal o la acción se podría mostrar antes y más grande.",
+        "low": "Los primeros segundos están flojos: lo principal aparece muy tarde o no se ve claro de entrada.",
+    },
+    "sustain": {
+        "high": "A lo largo del cut hay frames o acciones nuevas, así que el interés no se cae.",
+        "mid": "El interés no aguanta parejo: hay tramos donde no pasa nada nuevo por mucho tiempo.",
+        "low": "Hay tramos sin acción nueva o sin imagen nueva, así que el cut se quiere saltar.",
+    },
+    "transition": {
+        "high": "Los shots cambian a tiempo: ningún plano se queda más de lo necesario.",
+        "mid": "El cambio de shots está, pero a veces un plano se queda un poco más de lo que debería.",
+        "low": "Los shots cambian muy tarde: un mismo plano se atora y el cut empieza a arrastrar.",
+    },
+    "stability": {
+        "high": "El frame se lee fácil: un objeto principal o una acción jalan la atención de volada.",
+        "mid": "A veces el frame trae demasiado de un jalón: varios objetos, texto chico o un fondo cargado.",
+        "low": "Hay demasiado en el frame: fondo, texto y detalles pelean entre ellos y se pierde lo principal.",
+    },
+    "density": {
+        "high": "La imagen está fuerte: el objeto se ve bien, el movimiento se lee, el contraste aguanta.",
+        "mid": "La imagen está bien, pero a veces el objeto sale chico, hay poco movimiento o falta contraste.",
+        "low": "La imagen está floja: poco tamaño, poco movimiento o poco contraste para jalar el ojo.",
+    },
+}
+
+
 METRIC_SUMMARY_LIBRARY_EN: dict[str, dict[str, str]] = {
     "early_response": {
         "high": "The main thing is clear from the first shot.",
@@ -1648,6 +1757,35 @@ SPEECH_SUMMARY_LIBRARY_RU: dict[str, dict[str, str]] = {
 }
 
 
+SPEECH_SUMMARY_LIBRARY_ES: dict[str, dict[str, str]] = {
+    "speech_start": {
+        "high": "La voz entra casi de volada — la pista de texto llega temprano.",
+        "mid": "La voz arranca un beat después, pero todavía en la parte temprana del cut.",
+        "low": "La voz entra tarde — antes de eso el cut se aguanta solo en imagen y audio.",
+    },
+    "speech_pace": {
+        "high": "La entrega está densa para lo que dura el cut.",
+        "mid": "El ritmo de entrega está moderado, sin saturar el cut con texto.",
+        "low": "La capa de voz está dispersa: pocas palabras para lo que dura el cut.",
+    },
+    "articulation": {
+        "high": "Las frases entran apretadas, sin estiramientos largos dentro del habla.",
+        "mid": "La densidad de la articulación se ve normal.",
+        "low": "El habla se siente estirada o muy dispersa dentro de los tramos hablados.",
+    },
+    "pause_ratio": {
+        "high": "Pocas pausas largas; el flujo de la voz se mantiene apretado.",
+        "mid": "Hay pausas, pero todavía no dominan lo que dura el cut.",
+        "low": "El porcentaje de pausas largas está alto — entre frases hay mucho aire.",
+    },
+    "confidence": {
+        "high": "El ASR reconoce voz con confianza. La pista de audio se lee limpia.",
+        "mid": "La voz se lee en general, pero a veces la calidad del audio limita la confianza.",
+        "low": "La confianza está baja: revisa ruido, volumen y dicción.",
+    },
+}
+
+
 SPEECH_SUMMARY_LIBRARY_EN: dict[str, dict[str, str]] = {
     "speech_start": {
         "high": "The voice enters almost immediately, so the text cue lands early.",
@@ -1713,21 +1851,37 @@ def _speech_band(metric_key: str, value: float) -> str:
     return "low"
 
 
-def metric_band_summary(metric_key: str, score: int, language: str = "ru") -> str:
-    """Banded summary for a TRIBE metric. ``language`` is ``"ru"`` (default) or
-    ``"en"``. Unknown languages fall back to RU."""
-    if (language or "").strip().lower() == "en":
+def metric_band_summary(metric_key: str, score: int, language: str = "es") -> str:
+    """Banded summary for a TRIBE metric. ``language`` is ``"es"`` (default,
+    Mexican coloquial) or ``"en"``. Unknown languages fall back to ES.
+
+    Stage 3 / S1 flipped the default from RU to ES. The RU table is still
+    present (``METRIC_SUMMARY_LIBRARY_RU``) for any downstream code that has
+    not migrated yet; that table will go away in the S5 cleanup PR.
+    """
+    lang = (language or "").strip().lower()
+    if lang == "en":
         library = METRIC_SUMMARY_LIBRARY_EN
-    else:
+    elif lang == "ru":
         library = METRIC_SUMMARY_LIBRARY_RU
+    else:
+        library = METRIC_SUMMARY_LIBRARY_ES
     return library.get(metric_key, {}).get(_score_band(score), "")
 
 
-def speech_metric_summary(metric_key: str, value: float, language: str = "ru") -> str:
+def speech_metric_summary(metric_key: str, value: float, language: str = "es") -> str:
     """Banded summary for a speech-side metric (see ``SPEECH_BAND_RULES`` for
-    the per-metric thresholds). ``language`` is ``"ru"`` (default) or ``"en"``."""
-    if (language or "").strip().lower() == "en":
+    the per-metric thresholds). ``language`` is ``"es"`` (default, Mexican
+    coloquial) or ``"en"``. Unknown languages fall back to ES.
+
+    Stage 3 / S1 flipped the default from RU to ES; the RU table is kept
+    around until the S5 cleanup PR.
+    """
+    lang = (language or "").strip().lower()
+    if lang == "en":
         library = SPEECH_SUMMARY_LIBRARY_EN
-    else:
+    elif lang == "ru":
         library = SPEECH_SUMMARY_LIBRARY_RU
+    else:
+        library = SPEECH_SUMMARY_LIBRARY_ES
     return library.get(metric_key, {}).get(_speech_band(metric_key, value), "")
