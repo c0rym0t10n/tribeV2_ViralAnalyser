@@ -128,16 +128,16 @@ def _build_simple_readout(timestamps: np.ndarray, display_score: np.ndarray) -> 
     weak_reference = weak_windows[0] if weak_windows else None
 
     return {
-        "ru": {
-            "title": "Простой перевод",
-            "summary_title": "Что это значит",
-            "summary_body": _summary_text_ru(phase_states),
-            "keep_title": "Что оставить как ориентир",
-            "keep_body": _keep_text_ru(strong_reference),
-            "check_title": "Что проверить первым",
-            "check_body": _check_text_ru(weak_reference, strong_reference),
-            "steps_title": "Как этим пользоваться",
-            "steps": _steps_text_ru(weak_reference, strong_reference),
+        "es": {
+            "title": "Lectura sencilla",
+            "summary_title": "Qué significa",
+            "summary_body": _summary_text_es(phase_states),
+            "keep_title": "Qué dejar como referencia",
+            "keep_body": _keep_text_es(strong_reference),
+            "check_title": "Qué revisar primero",
+            "check_body": _check_text_es(weak_reference, strong_reference),
+            "steps_title": "Cómo usar esto",
+            "steps": _steps_text_es(weak_reference, strong_reference),
         },
         "en": {
             "title": "Plain-language readout",
@@ -164,10 +164,10 @@ def _build_practical_readout(
     secondary_weak = weak_windows[1] if len(weak_windows) > 1 else None
 
     return {
-        "ru": {
-            "title": "Практические рекомендации",
-            "summary": _practical_summary_ru(phase_states, weak_reference),
-            "cards": _practical_cards_ru(strong_reference, weak_reference, secondary_weak, modalities),
+        "es": {
+            "title": "Recomendaciones prácticas",
+            "summary": _practical_summary_es(phase_states, weak_reference),
+            "cards": _practical_cards_es(strong_reference, weak_reference, secondary_weak, modalities),
         },
         "en": {
             "title": "Practical recommendations",
@@ -272,21 +272,21 @@ def _window_phase(window: dict[str, Any] | None) -> str:
     return "middle"
 
 
-def _summary_text_ru(phase_states: dict[str, str]) -> str:
+def _summary_text_es(phase_states: dict[str, str]) -> str:
     opening = {
-        "stronger": "В начале кривая выглядит сильнее среднего по этому же ролику.",
-        "steady": "В начале кривая держится примерно на уровне остального ролика.",
-        "weaker": "В начале кривая выглядит слабее остального ролика.",
+        "stronger": "El arranque está arriba del promedio del mismo cut.",
+        "steady": "El arranque se mantiene cerca del resto del cut.",
+        "weaker": "El arranque está abajo del resto del cut.",
     }[phase_states.get("opening", "steady")]
     middle = {
-        "stronger": "В середине ролик держится сильнее своего среднего уровня.",
-        "steady": "В середине сильного срыва не видно.",
-        "weaker": "В середине видна просадка относительно остального ролика.",
+        "stronger": "La mitad aguanta arriba del promedio del cut.",
+        "steady": "La mitad se mantiene pareja, sin caída clara.",
+        "weaker": "La mitad es donde la curva cae respecto al resto del cut.",
     }[phase_states.get("middle", "steady")]
     ending = {
-        "stronger": "В конце кривая снова усиливается.",
-        "steady": "Финал держится примерно на уровне ролика.",
-        "weaker": "В конце ролик выглядит слабее своего среднего уровня.",
+        "stronger": "El cierre vuelve a subir.",
+        "steady": "El cierre se mantiene cerca del promedio del cut.",
+        "weaker": "El cierre se ve más flojo que el resto del cut.",
     }[phase_states.get("ending", "steady")]
     return f"{opening} {middle} {ending}"
 
@@ -310,13 +310,13 @@ def _summary_text_en(phase_states: dict[str, str]) -> str:
     return f"{opening} {middle} {ending}"
 
 
-def _keep_text_ru(strong_reference: dict[str, Any] | None) -> str:
+def _keep_text_es(strong_reference: dict[str, Any] | None) -> str:
     if not strong_reference:
-        return "Сначала смотри на самые сильные места как на ориентир. Их не стоит трогать первыми."
+        return "Toma los tramos más fuertes como referencia y no los muevas primero."
     label = _window_label(strong_reference)
     return (
-        f"Участок {label} выглядит сильнее остальных частей ролика. "
-        "Используй его как ориентир и не меняй его первым."
+        f"El tramo en {label} se ve más fuerte que el resto del cut. "
+        "Tómalo de referencia y no le muevas primero."
     )
 
 
@@ -330,22 +330,22 @@ def _keep_text_en(strong_reference: dict[str, Any] | None) -> str:
     )
 
 
-def _check_text_ru(
+def _check_text_es(
     weak_reference: dict[str, Any] | None,
     strong_reference: dict[str, Any] | None,
 ) -> str:
     if not weak_reference:
-        return "Сначала проверь участок, где кривая падает ниже среднего, и сравни его с более сильным местом."
+        return "Revisa primero el tramo donde la curva cae abajo del promedio y compáralo con un tramo más fuerte."
     weak_label = _window_label(weak_reference)
     if strong_reference:
         strong_label = _window_label(strong_reference)
         return (
-            f"Сначала проверь участок {weak_label}. Здесь кривая проседает относительно этого же ролика. "
-            f"Сравни его с более сильным участком {strong_label}: что меняется в кадре, движении, звуке или речи."
+            f"Revisa primero el tramo en {weak_label}. Aquí la curva cae respecto al mismo cut. "
+            f"Compáralo con el tramo más fuerte en {strong_label}: qué cambia en encuadre, movimiento, audio o voz."
         )
     return (
-        f"Сначала проверь участок {weak_label}. Здесь кривая проседает относительно этого же ролика. "
-        "Посмотри, что меняется в кадре, движении, звуке или речи."
+        f"Revisa primero el tramo en {weak_label}. Aquí la curva cae respecto al mismo cut. "
+        "Mira qué cambia en encuadre, movimiento, audio o voz."
     )
 
 
@@ -368,7 +368,7 @@ def _check_text_en(
     )
 
 
-def _steps_text_ru(
+def _steps_text_es(
     weak_reference: dict[str, Any] | None,
     strong_reference: dict[str, Any] | None,
 ) -> list[str]:
@@ -376,11 +376,11 @@ def _steps_text_ru(
     strong_label = _window_label(strong_reference)
     steps = []
     if weak_label and strong_label:
-        steps.append(f"Сравни слабый участок {weak_label} с более сильным участком {strong_label}.")
+        steps.append(f"Compara el tramo flojo en {weak_label} con el tramo fuerte en {strong_label}.")
     elif weak_label:
-        steps.append(f"Начни с участка {weak_label}: он выглядит слабее остального ролика.")
-    steps.append("Если вносишь правки, начинай со слабых мест, а не с самых сильных.")
-    steps.append("Не считай этот экран итогом по вирусности или удержанию YouTube.")
+        steps.append(f"Arranca por el tramo en {weak_label}: se ve más flojo que el resto del cut.")
+    steps.append("Si vas a editar, arranca por los tramos flojos, no por los más fuertes.")
+    steps.append("No leas esta pantalla como veredicto final de virality o retention de YouTube.")
     return steps
 
 
@@ -400,15 +400,15 @@ def _steps_text_en(
     return steps
 
 
-def _practical_summary_ru(phase_states: dict[str, str], weak_reference: dict[str, Any] | None) -> str:
+def _practical_summary_es(phase_states: dict[str, str], weak_reference: dict[str, Any] | None) -> str:
     weak_label = _window_label(weak_reference)
     if phase_states.get("opening") == "weaker":
-        return "Главная проблема сейчас в старте. Начни с первых секунд: покажи главное раньше и убери лишнюю подводку."
+        return "El problema central está en el arranque. Arranca por los primeros segundos: muestra lo principal antes y tumba el setup extra."
     if phase_states.get("ending") == "weaker":
-        return f"Ролик слабеет ближе к концу. Начни с участка {weak_label or 'с просадкой'}: его стоит ускорить или закончить раньше."
+        return f"El cut se cae cerca del cierre. Arranca por el tramo en {weak_label or 'el bache'}: conviene apurarlo o cerrar antes."
     if phase_states.get("middle") == "weaker":
-        return f"Главная просадка в середине. Начни с участка {weak_label or 'в середине'}: его стоит сократить или раньше перейти к следующему моменту."
-    return f"Сначала правь участок {weak_label or 'с просадкой'}: он выглядит слабее остального ролика."
+        return f"El bache central está en la mitad. Arranca por el tramo en {weak_label or 'la mitad'}: conviene acortarlo o brincar antes al siguiente beat."
+    return f"Arranca por el tramo en {weak_label or 'el bache'}: se ve más flojo que el resto del cut."
 
 
 def _practical_summary_en(phase_states: dict[str, str], weak_reference: dict[str, Any] | None) -> str:
@@ -422,7 +422,7 @@ def _practical_summary_en(phase_states: dict[str, str], weak_reference: dict[str
     return f"Start with {weak_label or 'the weak section'} first: it looks weaker than the rest of the cut."
 
 
-def _practical_cards_ru(
+def _practical_cards_es(
     strong_reference: dict[str, Any] | None,
     weak_reference: dict[str, Any] | None,
     secondary_weak: dict[str, Any] | None,
@@ -430,11 +430,11 @@ def _practical_cards_ru(
 ) -> list[dict[str, str]]:
     cards = [
         {
-            "title": "Оставь как ориентир",
-            "detail": _keep_text_ru(strong_reference),
+            "title": "Deja como referencia",
+            "detail": _keep_text_es(strong_reference),
         },
-        _primary_fix_card_ru(weak_reference),
-        _next_test_card_ru(weak_reference, secondary_weak, strong_reference, modalities),
+        _primary_fix_card_es(weak_reference),
+        _next_test_card_es(weak_reference, secondary_weak, strong_reference, modalities),
     ]
     return cards
 
@@ -456,22 +456,22 @@ def _practical_cards_en(
     return cards
 
 
-def _primary_fix_card_ru(weak_reference: dict[str, Any] | None) -> dict[str, str]:
+def _primary_fix_card_es(weak_reference: dict[str, Any] | None) -> dict[str, str]:
     weak_label = _window_label(weak_reference)
     phase = _window_phase(weak_reference)
     if phase == "opening":
         return {
-            "title": "Усиль начало",
-            "detail": f"На участке {weak_label or 'в начале'} быстрее покажи главное: сократи подводку, начни с более понятного кадра или перенеси смысл ближе к старту.",
+            "title": "Refuerza el arranque",
+            "detail": f"En el tramo en {weak_label or 'el arranque'}, muestra lo principal más rápido: tumba el setup, empieza con un shot más claro o jala el mensaje hacia el inicio.",
         }
     if phase == "ending":
         return {
-            "title": "Ускорь финал",
-            "detail": f"На участке {weak_label or 'в конце'} ролик слабеет. Проверь, не лучше ли закончить раньше или быстрее перейти к финальному моменту.",
+            "title": "Apura el cierre",
+            "detail": f"En el tramo en {weak_label or 'el cierre'}, el cut se cae. Prueba un cierre más temprano o brinca más rápido al beat final.",
         }
     return {
-        "title": "Подрежь затянутый отрезок",
-        "detail": f"На участке {weak_label or 'в середине'} кривая проседает. Убери лишние секунды перед этой точкой или раньше переведи ролик к новому действию.",
+        "title": "Acorta el tramo arrastrado",
+        "detail": f"En el tramo en {weak_label or 'la mitad'}, la curva cae. Tumba segundos antes de este punto o brinca más temprano a la acción nueva.",
     }
 
 
@@ -494,7 +494,7 @@ def _primary_fix_card_en(weak_reference: dict[str, Any] | None) -> dict[str, str
     }
 
 
-def _next_test_card_ru(
+def _next_test_card_es(
     weak_reference: dict[str, Any] | None,
     secondary_weak: dict[str, Any] | None,
     strong_reference: dict[str, Any] | None,
@@ -505,13 +505,13 @@ def _next_test_card_ru(
     text_modalities = {"word", "sentence", "text"}
     if text_modalities.intersection({item.lower() for item in modalities}):
         return {
-            "title": "Следующий тест",
-            "detail": f"Если главная мысль держится на словах, попробуй вариант, где ключевая фраза звучит до или в начале участка {weak_label or 'с просадкой'}. Сравни результат с более сильным местом {strong_label or 'на кривой'}.",
+            "title": "Siguiente test",
+            "detail": f"Si el mensaje vive en las palabras, prueba una versión donde la frase clave aterrice antes o justo al inicio del tramo en {weak_label or 'el bache'}. Compara con el tramo más fuerte en {strong_label or 'la curva'}.",
         }
-    target = _window_label(secondary_weak) or weak_label or "с просадкой"
+    target = _window_label(secondary_weak) or weak_label or "el bache"
     return {
-        "title": "Следующий тест",
-        "detail": f"После первой правки проверь участок {target}. Сравни его с более сильным местом {strong_label or 'на кривой'} и посмотри, помогает ли более ранняя смена кадра, ракурса или действия.",
+        "title": "Siguiente test",
+        "detail": f"Después del primer ajuste, revisa el tramo en {target}. Compáralo con el tramo más fuerte en {strong_label or 'la curva'} y mira si un cambio de shot, ángulo o acción más temprano ayuda.",
     }
 
 
