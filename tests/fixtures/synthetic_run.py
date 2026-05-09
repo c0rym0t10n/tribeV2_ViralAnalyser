@@ -108,13 +108,13 @@ def make_synthetic_speech_run() -> SyntheticSpeechRun:
         SyntheticWord(start=4.50, end=5.00, probability=0.79),
     ]
     segments = [
-        SyntheticSegment(start=0.40, end=1.90, text="Привет, это первый сегмент."),
-        SyntheticSegment(start=2.60, end=5.00, text="Здесь второй сегмент с паузой."),
+        SyntheticSegment(start=0.40, end=1.90, text="Hola, este es el primer segmento."),
+        SyntheticSegment(start=2.60, end=5.00, text="Aquí va el segundo segmento con pausa."),
     ]
     return SyntheticSpeechRun(
         words=words,
         segments=segments,
-        text="Привет, это первый сегмент. Здесь второй сегмент с паузой.",
+        text="Hola, este es el primer segmento. Aquí va el segundo segmento con pausa.",
         language="ru",
         model_name="whisper-tiny",
     )

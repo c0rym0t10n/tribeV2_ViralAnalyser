@@ -1,34 +1,34 @@
 {
   "analysis_mode": {
-    "comparison_note": "Режим более чувствительный: он показывает не только грубого победителя, но и за счёт каких показателей одна версия обходит другую.",
-    "description": "Разжёвывает максимум информации: подробнее объясняет график, слабые места и разницу между версиями.",
+    "comparison_note": "Modo más sensible: muestra no solo al ganador, sino por qué métricas una versión le gana a la otra.",
+    "description": "Explica todo a detalle: la curva, los baches y la diferencia entre versiones.",
     "key": "deep",
-    "label": "Глубокий анализ",
-    "note": "Подходит, когда нужно внимательно понять, за счёт чего ролик выигрывает или проседает, а не просто получить короткий список правок.",
+    "label": "Análisis a profundidad",
+    "note": "Útil cuando quieres entender por qué el video aguanta o se cae, no solo una lista corta de ajustes.",
     "short_label": "Deep"
   },
   "axis_winners": [
     {
-      "label": "Старт графика",
-      "summary": "По показателю «старт графика» у этой версии самый заметный отрыв от остальных.",
+      "label": "Arranque de la curva",
+      "summary": "En «arranque de la curva» esta versión saca la diferencia más clara contra el resto.",
       "winner_name": "variant_a",
       "winner_score": 100
     },
     {
-      "label": "Как держится график",
-      "summary": "По показателю «как держится график» у этой версии самый заметный отрыв от остальных.",
+      "label": "Cómo aguanta la curva",
+      "summary": "En «cómo aguanta la curva» esta versión saca la diferencia más clara contra el resto.",
       "winner_name": "variant_b",
       "winner_score": 100
     },
     {
-      "label": "Темп событий",
-      "summary": "По показателю «темп событий» у этой версии самый заметный отрыв от остальных.",
+      "label": "Ritmo del cambio",
+      "summary": "En «ritmo del cambio» esta versión saca la diferencia más clara contra el resto.",
       "winner_name": "variant_a",
       "winner_score": 77
     },
     {
-      "label": "Средний уровень",
-      "summary": "По показателю «средний уровень» у этой версии самый заметный отрыв от остальных.",
+      "label": "Fuerza visual",
+      "summary": "En «fuerza visual» esta versión saca la diferencia más clara contra el resto.",
       "winner_name": "variant_a",
       "winner_score": 36
     }
@@ -36,14 +36,14 @@
   "best_variant_key": "v1",
   "best_variant_name": "variant_a",
   "common_gaps": [
-    "Во всех версиях слабее выглядит «старт графика». Даже лидер не дает там уверенного запаса, поэтому это хороший кандидат для отдельного теста.",
-    "Во всех версиях слабее выглядит «как держится график». Даже лидер не дает там уверенного запаса, поэтому это хороший кандидат для отдельного теста.",
-    "Во всех версиях слабее выглядит «резкие просадки». Даже лидер не дает там уверенного запаса, поэтому это хороший кандидат для отдельного теста."
+    "En todas las versiones flojea «arranque de la curva». Ni el líder da margen ahí — buen candidato para una prueba aparte.",
+    "En todas las versiones flojea «cómo aguanta la curva». Ni el líder da margen ahí — buen candidato para una prueba aparte.",
+    "En todas las versiones flojea «bajones bruscos». Ni el líder da margen ahí — buen candidato para una prueba aparte."
   ],
   "comparison_rows": [
     {
       "key": "early_response",
-      "label": "Старт графика",
+      "label": "Arranque de la curva",
       "scores": [
         {
           "name": "variant_a",
@@ -62,7 +62,7 @@
     },
     {
       "key": "sustain",
-      "label": "Как держится график",
+      "label": "Cómo aguanta la curva",
       "scores": [
         {
           "name": "variant_a",
@@ -81,7 +81,7 @@
     },
     {
       "key": "transition",
-      "label": "Темп событий",
+      "label": "Ritmo del cambio",
       "scores": [
         {
           "name": "variant_a",
@@ -100,7 +100,7 @@
     },
     {
       "key": "density",
-      "label": "Средний уровень",
+      "label": "Fuerza visual",
       "scores": [
         {
           "name": "variant_a",
@@ -119,7 +119,7 @@
     },
     {
       "key": "stability",
-      "label": "Резкие просадки",
+      "label": "Bajones bruscos",
       "scores": [
         {
           "name": "variant_a",
@@ -137,10 +137,10 @@
       "winner_score": 58
     }
   ],
-  "executive_summary": "«variant_a» впереди на 24 пунктов. Важнее всего не пик, а средний уровень 42.6 против 42.4 у ближайшей версии.",
+  "executive_summary": "«variant_a» va adelante por 24 puntos. Lo que pesa no es el pico — es la base 42.6 contra 42.4 de la versión más cercana.",
   "mode": "compare",
   "overall_score": 47,
-  "product_summary": "«variant_a» лучше текущего набора, но слабые окна все еще есть. Перед масштабированием отдельно проверь «как держится график».",
+  "product_summary": "«variant_a» le gana al set actual, pero los baches siguen ahí. Antes de escalar, revisa aparte «cómo aguanta la curva».",
   "ranking": [
     {
       "analysis_score": 53,
@@ -151,10 +151,10 @@
       "name": "variant_a",
       "overall_score": 47,
       "rank": 1,
-      "strongest": "Старт графика",
-      "summary": "Лидер по итоговому score, но не без риска: есть глубокие просадки. Следующая правка - «как держится график».",
+      "strongest": "Arranque de la curva",
+      "summary": "Líder por score total, pero con riesgo: hay bajones profundos. Siguiente ajuste: «cómo aguanta la curva».",
       "variant_key": "v1",
-      "weakest": "Как держится график"
+      "weakest": "Cómo aguanta la curva"
     },
     {
       "analysis_score": 48,
@@ -165,36 +165,36 @@
       "name": "variant_b",
       "overall_score": 23,
       "rank": 2,
-      "strongest": "Как держится график",
-      "summary": "Версия проигрывает старт: график поздно набирает уровень, поэтому даже сильные моменты дальше не спасают итог полностью.",
+      "strongest": "Cómo aguanta la curva",
+      "summary": "La versión pierde el arranque: la curva sube tarde, así que ni los buenos momentos posteriores rescatan el total.",
       "variant_key": "v2",
-      "weakest": "Старт графика"
+      "weakest": "Arranque de la curva"
     }
   ],
   "recommendations": [
-    "В следующий тест неси «variant_a» как базу: сейчас у нее лучший score по общему окну сравнения.",
-    "Сохрани у лидера «старт графика» без лишних изменений. Это главный прием, который сейчас дает отрыв.",
-    "Средний уровень у лидера недостаточно высокий. Нужна правка не одного пика, а нескольких обычных кадров между сильными моментами.",
-    "У лидера есть глубокие просадки. Начни с «как держится график» и сравни слабые окна с соседними сильными местами."
+    "En la siguiente prueba lleva «variant_a» como base: ahorita tiene el mejor score en la ventana común.",
+    "Conserva «arranque de la curva» del líder sin cambios extra. Es la técnica principal que está dando la diferencia.",
+    "La base del líder no está lo bastante alta. No es un solo pico — hay que ajustar varios frames promedio entre los buenos momentos.",
+    "El líder tiene bajones profundos. Empieza por «cómo aguanta la curva» y compara los baches con los tramos fuertes vecinos."
   ],
-  "signal_note": "Сравнение строится по одному расчетному графику для всех версий. Выигрывает не разовый пик, а версия с более сильным стартом, более высоким средним уровнем и меньшим числом резких просадок.",
-  "title": "Сравнение 2 версий",
+  "signal_note": "La comparativa se mide en una sola curva para todas las versiones. Gana la que arranca más fuerte, mantiene mejor base y tiene menos bajones bruscos — no la del pico aislado.",
+  "title": "Comparativa de 2 versiones",
   "variant_count": 2,
   "variants": [
     {
       "action_items": [
         {
-          "instruction": "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию.",
+          "instruction": "Tumba 1-2 segundos antes de este punto, o brinca más rápido al siguiente beat.",
           "timestamp": "00:04",
-          "title": "Подрежь затянутый отрезок",
-          "why": "Здесь график проседает относительно соседних точек. Проверь, не затянут ли план и не потерялся ли главный объект."
+          "title": "Acorta el tramo arrastrado",
+          "why": "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde."
         }
       ],
       "analysis_mode": {
-        "description": "Разжёвывает максимум информации: подробнее объясняет график, слабые места и разницу между версиями.",
+        "description": "Explica todo a detalle: la curva, los baches y la diferencia entre versiones.",
         "key": "deep",
-        "label": "Глубокий анализ",
-        "note": "Подходит, когда нужно внимательно понять, за счёт чего ролик выигрывает или проседает, а не просто получить короткий список правок.",
+        "label": "Análisis a profundidad",
+        "note": "Útil cuando quieres entender por qué el video aguanta o se cae, no solo una lista corta de ajustes.",
         "short_label": "Deep"
       },
       "analysis_score": 53,
@@ -205,27 +205,28 @@
       "comparison_window_seconds": 7.0,
       "device": "cpu",
       "drop_moments": [],
-      "executive_summary": "Старт и отдельные кадры работают лучше, чем продолжение. Нужно понять, где график начинает падать, и дать там новый поворот. Речь распознана: слабые места можно сверять не только по кадру, но и по словам рядом с ними.",
+      "executive_summary": "El arranque y algunos frames jalan mejor que la continuación. Hay que ver dónde empieza a caerse la curva y meter un giro nuevo ahí. Whisper reconoció voz: los baches puedes cruzarlos contra el frame y contra las palabras cercanas.",
       "focus_windows": [
         {
-          "label": "Лучший участок",
+          "label": "Tramo fuerte",
           "seconds": 2.0,
-          "summary": "Здесь график выше соседних точек. Используй этот момент как ориентир по кадру, темпу и крупности.",
+          "summary": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto.",
           "timestamp": "00:02"
         },
         {
-          "label": "Слабое окно",
+          "label": "Bache",
           "seconds": 4.0,
-          "summary": "Здесь график проседает относительно соседних точек. Проверь, не затянут ли план и не потерялся ли главный объект.",
+          "summary": "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde.",
           "timestamp": "00:04"
         },
         {
-          "label": "Резкая смена",
+          "label": "Cambio brusco",
           "seconds": 2.0,
-          "summary": "Здесь график меняется сильнее всего. Проверь, помогает ли переход удержать внимание или выглядит случайным скачком.",
+          "summary": "Aquí la curva cambia más fuerte que en otros puntos. Revisa si el cut sostiene la atención o se siente aleatorio.",
           "timestamp": "00:02"
         }
       ],
+      "language": "es",
       "metric_lookup": {
         "density": 36,
         "early_response": 100,
@@ -236,38 +237,38 @@
       "metrics": [
         {
           "key": "early_response",
-          "label": "Старт графика",
+          "label": "Arranque de la curva",
           "raw_value": 1.886,
           "score": 100,
-          "summary": "Ролик быстро набирает высокий уровень: главное видно рано и без долгого захода."
+          "summary": "Desde el primer shot ya está claro qué ver: el objeto principal o la acción se notan de volada."
         },
         {
           "key": "sustain",
-          "label": "Как держится график",
+          "label": "Cómo aguanta la curva",
           "raw_value": 0.218,
           "score": 0,
-          "summary": "После сильных мест график быстро проседает: ролику не хватает новых событий по ходу просмотра."
+          "summary": "Hay tramos sin acción nueva o sin imagen nueva, así que el cut se quiere saltar."
         },
         {
           "key": "transition",
-          "label": "Темп событий",
+          "label": "Ritmo del cambio",
           "raw_value": 0.375,
           "score": 77,
-          "summary": "Новые события появляются вовремя: кадр не застывает надолго."
+          "summary": "Los shots cambian a tiempo: ningún plano se queda más de lo necesario."
         },
         {
           "key": "stability",
-          "label": "Резкие просадки",
+          "label": "Bajones bruscos",
           "raw_value": 0.585,
           "score": 51,
-          "summary": "Просадки резкие: рядом с сильными моментами есть участки, которые быстро теряют уровень."
+          "summary": "Hay demasiado en el frame: fondo, texto y detalles pelean entre ellos y se pierde lo principal."
         },
         {
           "key": "density",
-          "label": "Средний уровень",
+          "label": "Fuerza visual",
           "raw_value": 0.629,
           "score": 36,
-          "summary": "Средний уровень низкий: ролик держится на отдельных удачных моментах, а не на всей конструкции."
+          "summary": "La imagen está floja: poco tamaño, poco movimiento o poco contraste para jalar el ojo."
         }
       ],
       "modalities": [
@@ -277,71 +278,71 @@
       "mode": "single",
       "overall_score": 47,
       "phase_notes": [
-        "Старт: выше среднего по ролику. Здесь сигнал держится уверенно.",
-        "Середина: близко к среднему уровню. Без сильного усиления и без явной просадки.",
-        "Финал: ниже среднего по ролику. Есть смысл посмотреть монтаж и подачу именно в этой фазе."
+        "Arranque: arriba del promedio del video. Aquí la señal se mantiene firme.",
+        "Mitad: cerca del promedio. Sin levantón claro ni bache marcado.",
+        "Cierre: abajo del promedio del video. Vale la pena revisar montaje y entrega en esta fase."
       ],
-      "product_summary": "Версия теряет темп после удачных моментов. Добавь в середину новый смысловой шаг: действие, реакцию, деталь или payoff. Речь распознана: слабые места можно сверять не только по кадру, но и по словам рядом с ними.",
+      "product_summary": "La versión pierde ritmo después de los buenos momentos. Mete en la mitad un paso nuevo de significado: acción, reacción, detalle o payoff. Whisper reconoció voz: los baches puedes cruzarlos contra el frame y contra las palabras cercanas.",
       "recommendation_plan": [
         {
-          "detail": "Не ломай сильную часть «старт графика»: она уже дает ролику рабочую опору.",
-          "title": "Что оставить"
+          "detail": "No le muevas a la parte fuerte «arranque de la curva»: ya le está dando base al video.",
+          "title": "Qué dejar"
         },
         {
-          "detail": "После сильных мест график быстро падает. Перед просадкой добавь новый поворот, смену крупности или сократи отрезок, который не двигает сцену.",
-          "title": "Что проверить первым"
+          "detail": "Después de los picos la curva se cae rápido. Antes del bache mete un giro nuevo, cambio de plano, o acorta el tramo que no mueve la escena.",
+          "title": "Qué revisar primero"
         },
         {
-          "detail": "После правки сравни старую и новую версии по графику: старт, средний уровень и резкие просадки должны стать лучше.",
-          "title": "Как перепроверить"
+          "detail": "Después del ajuste, compara la versión vieja con la nueva en la curva: arranque, base y bajones bruscos deben mejorar.",
+          "title": "Cómo revalidar"
         }
       ],
       "recommendations": [
-        "После сильных мест график быстро падает. Перед просадкой добавь новый поворот, смену крупности или сократи отрезок, который не двигает сцену.",
-        "Есть резкие просадки. Сравни слабые окна с соседними сильными местами и убери лишние детали, которые размывают главный фокус.",
-        "Средний уровень ниже пиков. Подними базу ролика: крупнее главный объект, чище фон, заметнее движение или сильнее контраст.",
-        "Начало уже можно оставить как ориентир, а правку начинать с середины: там нужно добавить новый информационный или визуальный повод смотреть дальше.",
-        "Событий хватает, но линия все равно падает. Значит, проблема не только в частоте смен, а в том, насколько новые кадры дают понятный смысл.",
-        "Разрыв между сильной и слабой стороной большой. Не перепридумывай весь ролик: сохрани «старт графика» и отдельно чини «как держится график»."
+        "Después de los picos la curva se cae rápido. Antes del bache mete un giro nuevo, cambio de plano, o acorta el tramo que no mueve la escena.",
+        "Hay bajones bruscos. Compara los baches con los tramos fuertes vecinos y tumba detalles que están diluyendo el foco principal.",
+        "La base está abajo de los picos. Sube la base del video: objeto principal más grande, fondo más limpio, movimiento más claro o más contraste.",
+        "El arranque ya jala como referencia; el ajuste va por la mitad: ahí mete un motivo nuevo (info o visual) para seguir viendo.",
+        "Eventos hay, pero la curva igual se cae. El problema no es solo la frecuencia de cambios — es qué tanto significado claro aportan los frames nuevos.",
+        "La brecha entre lo fuerte y lo flojo está grande. No reescribas todo el video: amarra «arranque de la curva» y arregla aparte «cómo aguanta la curva»."
       ],
       "seek_targets": [
         {
           "kind": "focus",
-          "label": "Лучший участок",
+          "label": "Tramo fuerte",
           "seconds": 2.0,
-          "summary": "Здесь график выше соседних точек. Используй этот момент как ориентир по кадру, темпу и крупности.",
+          "summary": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto.",
           "timestamp": "00:02"
         },
         {
           "kind": "focus",
-          "label": "Слабое окно",
+          "label": "Bache",
           "seconds": 4.0,
-          "summary": "Здесь график проседает относительно соседних точек. Проверь, не затянут ли план и не потерялся ли главный объект.",
+          "summary": "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde.",
           "timestamp": "00:04"
         },
         {
           "kind": "focus",
-          "label": "Резкая смена",
+          "label": "Cambio brusco",
           "seconds": 2.0,
-          "summary": "Здесь график меняется сильнее всего. Проверь, помогает ли переход удержать внимание или выглядит случайным скачком.",
+          "summary": "Aquí la curva cambia más fuerte que en otros puntos. Revisa si el cut sostiene la atención o se siente aleatorio.",
           "timestamp": "00:02"
         },
         {
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 0.4,
-          "summary": "Привет, это первый сегмент.",
+          "summary": "Hola, este es el primer segmento.",
           "timestamp": "00:00"
         },
         {
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 2.6,
-          "summary": "Здесь второй сегмент с паузой.",
+          "summary": "Aquí va el segundo segmento con pausa.",
           "timestamp": "00:03"
         }
       ],
-      "signal_note": "Ниже показан расчетный график ролика: где уровень выше, где есть просадки и какие места стоит проверить в монтаже. Это подсказка для сравнительных тестов, а не обещание результата.",
+      "signal_note": "Esta curva es una pista para tu A/B, no garantía.",
       "speech": {
         "available": true,
         "language": "ru",
@@ -349,60 +350,60 @@
         "metrics": [
           {
             "key": "speech_start",
-            "label": "Старт речи",
-            "summary": "Речь включается почти сразу. Текстовая опора приходит рано.",
-            "value": "0.40 c"
+            "label": "Entrada de voz",
+            "summary": "La voz entra casi de volada — la pista de texto llega temprano.",
+            "value": "0.40s"
           },
           {
             "key": "speech_pace",
-            "label": "Слов в секунду",
-            "summary": "Речевой слой редкий: слов мало относительно общей длины ролика.",
+            "label": "Palabras por segundo",
+            "summary": "La capa de voz está dispersa: pocas palabras para lo que dura el cut.",
             "value": "0.86"
           },
           {
             "key": "articulation",
-            "label": "Насколько плотно сказано",
-            "summary": "Артикуляция выглядит обычной по плотности.",
+            "label": "Densidad del texto",
+            "summary": "La densidad de la articulación se ve normal.",
             "value": "2.22"
           },
           {
             "key": "pause_ratio",
-            "label": "Доля пауз",
-            "summary": "Паузы есть, но они пока не доминируют в длительности ролика.",
+            "label": "Pausas largas",
+            "summary": "Hay pausas, pero todavía no dominan lo que dura el cut.",
             "value": "0.19"
           },
           {
             "key": "confidence",
-            "label": "Уверенность ASR",
-            "summary": "ASR уверенно распознаёт речь. Аудиодорожка читается чисто.",
+            "label": "Confianza del ASR",
+            "summary": "El ASR reconoce voz con confianza. La pista de audio se lee limpia.",
             "value": "0.83"
           }
         ],
         "model_name": "whisper-tiny",
-        "note": "Отдельная локальная транскрипция Whisper в режиме «Глубокий анализ». Она помогает проверить, какие слова и паузы совпадают со слабыми местами графика.",
+        "note": "Transcripción local con Whisper en modo «Análisis a profundidad». Sirve para cruzar palabras y pausas con los baches de la curva.",
         "pause_ratio": 0.186,
         "segment_count": 2,
         "segments": [
           {
             "end": 1.9,
             "start": 0.4,
-            "text": "Привет, это первый сегмент."
+            "text": "Hola, este es el primer segmento."
           },
           {
             "end": 5.0,
             "start": 2.6,
-            "text": "Здесь второй сегмент с паузой."
+            "text": "Aquí va el segundo segmento con pausa."
           }
         ],
         "speech_start_seconds": 0.4,
-        "text": "Привет, это первый сегмент. Здесь второй сегмент с паузой.",
+        "text": "Hola, este es el primer segmento. Aquí va el segundo segmento con pausa.",
         "title": "Speech layer",
         "word_count": 6
       },
       "strengths": [
-        "Сильнее всего сейчас «старт графика»: ролик быстро набирает высокий уровень: главное видно рано и без долгого захода.",
-        "Второй рабочий ориентир - «темп событий»: новые события появляются вовремя: кадр не застывает надолго.",
-        "Речь распознана, поэтому сильные места можно сверить с конкретными фразами и подачей."
+        "Lo más fuerte ahorita es «arranque de la curva»: desde el primer shot ya está claro qué ver: el objeto principal o la acción se notan de volada.",
+        "Segunda referencia útil — «ritmo del cambio»: los shots cambian a tiempo: ningún plano se queda más de lo necesario.",
+        "Whisper reconoció voz; los tramos fuertes los cruzas con frases y entrega específicas."
       ],
       "timeline": {
         "avg_score": 42.6,
@@ -472,7 +473,7 @@
       "title": "variant_a",
       "variant_key": "v1",
       "variant_name": "variant_a",
-      "verdict": "Начало работает лучше середины. Не ломай старт, а добавь новый поворот перед первым заметным провалом графика.",
+      "verdict": "El arranque jala mejor que la mitad. No le muevas al inicio; mete un giro nuevo antes del primer bache visible.",
       "video": {
         "duration_seconds": 7.0,
         "filename": "variant_a.mp4",
@@ -481,30 +482,30 @@
         "title": "variant_a"
       },
       "weaknesses": [
-        "Главное слабое место - «как держится график»: после сильных мест график быстро проседает: ролику не хватает новых событий по ходу просмотра.",
-        "Следом проверь «средний уровень»: там есть следующий понятный запас для правки."
+        "El bache principal está en «cómo aguanta la curva»: hay tramos sin acción nueva o sin imagen nueva, así que el cut se quiere saltar.",
+        "Sigue con «fuerza visual»: ahí está el siguiente margen claro para mover."
       ]
     },
     {
       "action_items": [
         {
-          "instruction": "Поставь перед этой точкой кадр, где сразу видно главный объект, результат или конфликт.",
+          "instruction": "Mete antes de este punto un frame donde se vea de volada el objeto principal, el resultado o el conflicto.",
           "timestamp": "00:01",
-          "title": "Усиль первый кадр",
-          "why": "локальная просадка графика"
+          "title": "Refuerza el primer frame",
+          "why": "bache local en la curva"
         },
         {
-          "instruction": "Усиль не один пик, а обычные кадры вокруг этой точки: крупнее объект, чище фон, заметнее действие.",
+          "instruction": "Refuerza no solo el pico sino los frames de a diario alrededor de este punto: objeto más grande, fondo más limpio, acción más visible.",
           "timestamp": "00:02",
-          "title": "Подними средний уровень",
-          "why": "локальная просадка графика"
+          "title": "Sube el nivel promedio",
+          "why": "bache local en la curva"
         }
       ],
       "analysis_mode": {
-        "description": "Разжёвывает максимум информации: подробнее объясняет график, слабые места и разницу между версиями.",
+        "description": "Explica todo a detalle: la curva, los baches y la diferencia entre versiones.",
         "key": "deep",
-        "label": "Глубокий анализ",
-        "note": "Подходит, когда нужно внимательно понять, за счёт чего ролик выигрывает или проседает, а не просто получить короткий список правок.",
+        "label": "Análisis a profundidad",
+        "note": "Útil cuando quieres entender por qué el video aguanta o se cae, no solo una lista corta de ajustes.",
         "short_label": "Deep"
       },
       "analysis_score": 48,
@@ -516,37 +517,38 @@
       "device": "cpu",
       "drop_moments": [
         {
-          "reason": "локальная просадка графика",
+          "reason": "bache local en la curva",
           "seconds": 1.0,
           "timestamp": "00:01"
         },
         {
-          "reason": "локальная просадка графика",
+          "reason": "bache local en la curva",
           "seconds": 2.0,
           "timestamp": "00:02"
         }
       ],
-      "executive_summary": "Главный вопрос - старт: ролик поздно набирает уровень. Сохрани «как держится график», но перенеси более понятный кадр или смысл ближе к первым секундам. Речь распознана: слабые места можно сверять не только по кадру, но и по словам рядом с ними.",
+      "executive_summary": "El tema central es el arranque: el video sube de nivel tarde. Amarra «cómo aguanta la curva», pero jala el frame o el mensaje más legible hacia los primeros segundos. Whisper reconoció voz: los baches puedes cruzarlos contra el frame y contra las palabras cercanas.",
       "focus_windows": [
         {
-          "label": "Лучший участок",
+          "label": "Tramo fuerte",
           "seconds": 4.0,
-          "summary": "Здесь график выше соседних точек. Используй этот момент как ориентир по кадру, темпу и крупности.",
+          "summary": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto.",
           "timestamp": "00:04"
         },
         {
-          "label": "Слабое окно",
+          "label": "Bache",
           "seconds": 1.0,
-          "summary": "Здесь график проседает относительно соседних точек. Проверь, не затянут ли план и не потерялся ли главный объект.",
+          "summary": "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde.",
           "timestamp": "00:01"
         },
         {
-          "label": "Резкая смена",
+          "label": "Cambio brusco",
           "seconds": 4.0,
-          "summary": "Здесь график меняется сильнее всего. Проверь, помогает ли переход удержать внимание или выглядит случайным скачком.",
+          "summary": "Aquí la curva cambia más fuerte que en otros puntos. Revisa si el cut sostiene la atención o se siente aleatorio.",
           "timestamp": "00:04"
         }
       ],
+      "language": "es",
       "metric_lookup": {
         "density": 27,
         "early_response": 0,
@@ -557,38 +559,38 @@
       "metrics": [
         {
           "key": "early_response",
-          "label": "Старт графика",
+          "label": "Arranque de la curva",
           "raw_value": 0.364,
           "score": 0,
-          "summary": "Начало набирает уровень поздно: зритель не сразу понимает, за что держаться."
+          "summary": "Los primeros segundos están flojos: lo principal aparece muy tarde o no se ve claro de entrada."
         },
         {
           "key": "sustain",
-          "label": "Как держится график",
+          "label": "Cómo aguanta la curva",
           "raw_value": 3.931,
           "score": 100,
-          "summary": "После старта линия держится ровно: в ролике регулярно появляется новый повод смотреть дальше."
+          "summary": "A lo largo del cut hay frames o acciones nuevas, así que el interés no se cae."
         },
         {
           "key": "transition",
-          "label": "Темп событий",
+          "label": "Ritmo del cambio",
           "raw_value": 0.25,
           "score": 55,
-          "summary": "Новых событий мало или они поздно появляются, поэтому некоторые участки начинают тянуться."
+          "summary": "Los shots cambian muy tarde: un mismo plano se atora y el cut empieza a arrastrar."
         },
         {
           "key": "stability",
-          "label": "Резкие просадки",
+          "label": "Bajones bruscos",
           "raw_value": 0.637,
           "score": 58,
-          "summary": "Просадки резкие: рядом с сильными моментами есть участки, которые быстро теряют уровень."
+          "summary": "Hay demasiado en el frame: fondo, texto y detalles pelean entre ellos y se pierde lo principal."
         },
         {
           "key": "density",
-          "label": "Средний уровень",
+          "label": "Fuerza visual",
           "raw_value": 0.572,
           "score": 27,
-          "summary": "Средний уровень низкий: ролик держится на отдельных удачных моментах, а не на всей конструкции."
+          "summary": "La imagen está floja: poco tamaño, poco movimiento o poco contraste para jalar el ojo."
         }
       ],
       "modalities": [
@@ -598,85 +600,85 @@
       "mode": "single",
       "overall_score": 23,
       "phase_notes": [
-        "Старт: ниже среднего по ролику. Есть смысл посмотреть монтаж и подачу именно в этой фазе.",
-        "Середина: выше среднего по ролику. Здесь сигнал держится уверенно.",
-        "Финал: выше среднего по ролику. Здесь сигнал держится уверенно."
+        "Arranque: abajo del promedio del video. Vale la pena revisar montaje y entrega en esta fase.",
+        "Mitad: arriba del promedio del video. Aquí la señal se mantiene firme.",
+        "Cierre: arriba del promedio del video. Aquí la señal se mantiene firme."
       ],
-      "product_summary": "Для продукта сейчас важнее всего быстрее объяснить ценность. Перенеси результат, товар или конфликт ближе к началу. Речь распознана: слабые места можно сверять не только по кадру, но и по словам рядом с ними.",
+      "product_summary": "Para el producto, ahorita lo más importante es explicar el valor más rápido. Jala el resultado, producto o conflicto hacia el inicio. Whisper reconoció voz: los baches puedes cruzarlos contra el frame y contra las palabras cercanas.",
       "recommendation_plan": [
         {
-          "detail": "Не ломай сильную часть «как держится график»: она уже дает ролику рабочую опору.",
-          "title": "Что оставить"
+          "detail": "No le muevas a la parte fuerte «cómo aguanta la curva»: ya le está dando base al video.",
+          "title": "Qué dejar"
         },
         {
-          "detail": "Старт набирает уровень поздно. Проверь первый кадр: главное должно появиться раньше, крупнее или с более ясным результатом.",
-          "title": "Что проверить первым"
+          "detail": "El arranque sube de nivel tarde. Revisa el primer shot: lo principal debe aparecer antes, más grande, o con un resultado más claro.",
+          "title": "Qué revisar primero"
         },
         {
-          "detail": "После правки сравни старую и новую версии по графику: старт, средний уровень и резкие просадки должны стать лучше.",
-          "title": "Как перепроверить"
+          "detail": "Después del ajuste, compara la versión vieja con la nueva en la curva: arranque, base y bajones bruscos deben mejorar.",
+          "title": "Cómo revalidar"
         }
       ],
       "recommendations": [
-        "Старт набирает уровень поздно. Проверь первый кадр: главное должно появиться раньше, крупнее или с более ясным результатом.",
-        "Темп событий слабый: кадр слишком долго остается в одном состоянии. Добавь смену плана, жест, действие или короткий текст раньше.",
-        "Есть резкие просадки. Сравни слабые окна с соседними сильными местами и убери лишние детали, которые размывают главный фокус.",
-        "Средний уровень ниже пиков. Подними базу ролика: крупнее главный объект, чище фон, заметнее движение или сильнее контраст.",
-        "Сначала открой окна 00:01, 00:02: там график проседает относительно соседних точек. Проверь, что в эти секунды меняется в кадре, тексте и темпе.",
-        "Разрыв между сильной и слабой стороной большой. Не перепридумывай весь ролик: сохрани «как держится график» и отдельно чини «старт графика»."
+        "El arranque sube de nivel tarde. Revisa el primer shot: lo principal debe aparecer antes, más grande, o con un resultado más claro.",
+        "El ritmo está flojo: el frame se queda en un mismo estado demasiado tiempo. Mete cambio de shot, gesto, acción o un caption corto antes.",
+        "Hay bajones bruscos. Compara los baches con los tramos fuertes vecinos y tumba detalles que están diluyendo el foco principal.",
+        "La base está abajo de los picos. Sube la base del video: objeto principal más grande, fondo más limpio, movimiento más claro o más contraste.",
+        "Empieza por revisar las ventanas 00:01, 00:02: ahí la curva se cae respecto a los puntos vecinos. Checa qué cambia en frame, caption y ritmo en esos segundos.",
+        "La brecha entre lo fuerte y lo flojo está grande. No reescribas todo el video: amarra «cómo aguanta la curva» y arregla aparte «arranque de la curva»."
       ],
       "seek_targets": [
         {
           "kind": "focus",
-          "label": "Лучший участок",
+          "label": "Tramo fuerte",
           "seconds": 4.0,
-          "summary": "Здесь график выше соседних точек. Используй этот момент как ориентир по кадру, темпу и крупности.",
+          "summary": "Aquí la curva está arriba de los puntos vecinos. Tómalo de referencia para el frame, el tempo y el tamaño del objeto.",
           "timestamp": "00:04"
         },
         {
           "kind": "focus",
-          "label": "Слабое окно",
+          "label": "Bache",
           "seconds": 1.0,
-          "summary": "Здесь график проседает относительно соседних точек. Проверь, не затянут ли план и не потерялся ли главный объект.",
+          "summary": "Aquí la curva está abajo de los puntos vecinos. Revisa si el shot se alarga o si el objeto principal se pierde.",
           "timestamp": "00:01"
         },
         {
           "kind": "focus",
-          "label": "Резкая смена",
+          "label": "Cambio brusco",
           "seconds": 4.0,
-          "summary": "Здесь график меняется сильнее всего. Проверь, помогает ли переход удержать внимание или выглядит случайным скачком.",
+          "summary": "Aquí la curva cambia más fuerte que en otros puntos. Revisa si el cut sostiene la atención o se siente aleatorio.",
           "timestamp": "00:04"
         },
         {
           "kind": "drop",
-          "label": "Подозрительный момент",
+          "label": "Momento sospechoso",
           "seconds": 1.0,
-          "summary": "локальная просадка графика",
+          "summary": "bache local en la curva",
           "timestamp": "00:01"
         },
         {
           "kind": "drop",
-          "label": "Подозрительный момент",
+          "label": "Momento sospechoso",
           "seconds": 2.0,
-          "summary": "локальная просадка графика",
+          "summary": "bache local en la curva",
           "timestamp": "00:02"
         },
         {
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 0.4,
-          "summary": "Привет, это первый сегмент.",
+          "summary": "Hola, este es el primer segmento.",
           "timestamp": "00:00"
         },
         {
           "kind": "speech",
           "label": "Speech segment",
           "seconds": 2.6,
-          "summary": "Здесь второй сегмент с паузой.",
+          "summary": "Aquí va el segundo segmento con pausa.",
           "timestamp": "00:03"
         }
       ],
-      "signal_note": "Ниже показан расчетный график ролика: где уровень выше, где есть просадки и какие места стоит проверить в монтаже. Это подсказка для сравнительных тестов, а не обещание результата.",
+      "signal_note": "Esta curva es una pista para tu A/B, no garantía.",
       "speech": {
         "available": true,
         "language": "ru",
@@ -684,60 +686,60 @@
         "metrics": [
           {
             "key": "speech_start",
-            "label": "Старт речи",
-            "summary": "Речь включается почти сразу. Текстовая опора приходит рано.",
-            "value": "0.40 c"
+            "label": "Entrada de voz",
+            "summary": "La voz entra casi de volada — la pista de texto llega temprano.",
+            "value": "0.40s"
           },
           {
             "key": "speech_pace",
-            "label": "Слов в секунду",
-            "summary": "Речевой слой редкий: слов мало относительно общей длины ролика.",
+            "label": "Palabras por segundo",
+            "summary": "La capa de voz está dispersa: pocas palabras para lo que dura el cut.",
             "value": "0.86"
           },
           {
             "key": "articulation",
-            "label": "Насколько плотно сказано",
-            "summary": "Артикуляция выглядит обычной по плотности.",
+            "label": "Densidad del texto",
+            "summary": "La densidad de la articulación se ve normal.",
             "value": "2.22"
           },
           {
             "key": "pause_ratio",
-            "label": "Доля пауз",
-            "summary": "Паузы есть, но они пока не доминируют в длительности ролика.",
+            "label": "Pausas largas",
+            "summary": "Hay pausas, pero todavía no dominan lo que dura el cut.",
             "value": "0.19"
           },
           {
             "key": "confidence",
-            "label": "Уверенность ASR",
-            "summary": "ASR уверенно распознаёт речь. Аудиодорожка читается чисто.",
+            "label": "Confianza del ASR",
+            "summary": "El ASR reconoce voz con confianza. La pista de audio se lee limpia.",
             "value": "0.83"
           }
         ],
         "model_name": "whisper-tiny",
-        "note": "Отдельная локальная транскрипция Whisper в режиме «Глубокий анализ». Она помогает проверить, какие слова и паузы совпадают со слабыми местами графика.",
+        "note": "Transcripción local con Whisper en modo «Análisis a profundidad». Sirve para cruzar palabras y pausas con los baches de la curva.",
         "pause_ratio": 0.186,
         "segment_count": 2,
         "segments": [
           {
             "end": 1.9,
             "start": 0.4,
-            "text": "Привет, это первый сегмент."
+            "text": "Hola, este es el primer segmento."
           },
           {
             "end": 5.0,
             "start": 2.6,
-            "text": "Здесь второй сегмент с паузой."
+            "text": "Aquí va el segundo segmento con pausa."
           }
         ],
         "speech_start_seconds": 0.4,
-        "text": "Привет, это первый сегмент. Здесь второй сегмент с паузой.",
+        "text": "Hola, este es el primer segmento. Aquí va el segundo segmento con pausa.",
         "title": "Speech layer",
         "word_count": 6
       },
       "strengths": [
-        "Сильнее всего сейчас «как держится график»: после старта линия держится ровно: в ролике регулярно появляется новый повод смотреть дальше.",
-        "Второй рабочий ориентир - «резкие просадки»: просадки резкие: рядом с сильными моментами есть участки, которые быстро теряют уровень.",
-        "Речь распознана, поэтому сильные места можно сверить с конкретными фразами и подачей."
+        "Lo más fuerte ahorita es «cómo aguanta la curva»: a lo largo del cut hay frames o acciones nuevas, así que el interés no se cae.",
+        "Segunda referencia útil — «bajones bruscos»: hay demasiado en el frame: fondo, texto y detalles pelean entre ellos y se pierde lo principal.",
+        "Whisper reconoció voz; los tramos fuertes los cruzas con frases y entrega específicas."
       ],
       "timeline": {
         "avg_score": 42.4,
@@ -820,7 +822,7 @@
       "title": "variant_b",
       "variant_key": "v2",
       "variant_name": "variant_b",
-      "verdict": "Ролик слишком медленно набирает уровень. Первый приоритет - старт, затем уже правка «старт графика».",
+      "verdict": "El video sube de nivel muy despacio. Prioridad uno: el arranque; después «arranque de la curva».",
       "video": {
         "duration_seconds": 7.0,
         "filename": "variant_b.mp4",
@@ -829,10 +831,10 @@
         "title": "variant_b"
       },
       "weaknesses": [
-        "Главное слабое место - «старт графика»: начало набирает уровень поздно: зритель не сразу понимает, за что держаться.",
-        "Следом проверь «средний уровень»: там есть следующий понятный запас для правки."
+        "El bache principal está en «arranque de la curva»: los primeros segundos están flojos: lo principal aparece muy tarde o no se ve claro de entrada.",
+        "Sigue con «fuerza visual»: ahí está el siguiente margen claro para mover."
       ]
     }
   ],
-  "verdict": "«variant_a» сейчас заметно впереди по общему score сравнения. Главная причина - более высокий средний уровень, а не один случайный пик. Сравнение идет по общему окну примерно до 7.0 с; последние 5 секунд не участвуют."
+  "verdict": "«variant_a» va claramente adelante en el score de comparación. La razón es base más alta, no un pico aislado. La comparativa corre en una ventana común hasta los 7.0s; los últimos 5 segundos quedan fuera."
 }

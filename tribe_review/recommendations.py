@@ -3,7 +3,7 @@
 Owns all the prose-level outputs of a single-variant review: strengths,
 weaknesses, the verdict line, the executive + product summaries, the long
 recommendation list, the recommendation plan, and the action-item builder.
-Pulls labels and copy from :mod:`tribe_review.copy_ru`, score helpers from
+Pulls labels and copy from :mod:`tribe_review.copy_es`, score helpers from
 :mod:`tribe_review.metrics`, and timeline-shape helpers from
 :mod:`tribe_review.timeline`.
 """
@@ -14,7 +14,7 @@ from typing import Any
 
 from analysis_settings import AnalysisModeProfile, get_analysis_mode_profile
 
-from tribe_review.copy_ru import (
+from tribe_review.copy_es import (
     ACTION_VARIANTS,
     _friendly_metric_label,
     _simple_metric_action,
@@ -34,24 +34,24 @@ from tribe_review.timeline import (
 def _build_strengths(metrics: list[ReviewMetric], speech_layer: dict[str, Any], profile: AnalysisModeProfile) -> list[str]:
     del profile
     strengths = [
-        f"Сильнее всего сейчас «{_metric_display(metrics[0])}»: {metrics[0].summary.lower()}",
-        f"Второй рабочий ориентир - «{_metric_display(metrics[1])}»: {metrics[1].summary.lower()}",
+        f"Lo más fuerte ahorita es «{_metric_display(metrics[0])}»: {metrics[0].summary.lower()}",
+        f"Segunda referencia útil — «{_metric_display(metrics[1])}»: {metrics[1].summary.lower()}",
     ]
     if speech_layer.get("available"):
-        strengths.append("Речь распознана, поэтому сильные места можно сверить с конкретными фразами и подачей.")
+        strengths.append("Whisper reconoció voz; los tramos fuertes los cruzas con frases y entrega específicas.")
     else:
-        strengths.append("Без надежной речи сильные места лучше проверять по картинке, темпу и звуку.")
+        strengths.append("Sin voz confiable, los tramos fuertes se revisan por imagen, ritmo y audio.")
     return strengths
 
 
 def _build_weaknesses(metrics: list[ReviewMetric], speech_layer: dict[str, Any], profile: AnalysisModeProfile) -> list[str]:
     del profile
     items = [
-        f"Главное слабое место - «{_metric_display(metrics[-1])}»: {metrics[-1].summary.lower()}",
-        f"Следом проверь «{_metric_display(metrics[-2])}»: там есть следующий понятный запас для правки.",
+        f"El bache principal está en «{_metric_display(metrics[-1])}»: {metrics[-1].summary.lower()}",
+        f"Sigue con «{_metric_display(metrics[-2])}»: ahí está el siguiente margen claro para mover.",
     ]
     if speech_layer.get("available") and isinstance(speech_layer.get("speech_start_seconds"), float) and speech_layer["speech_start_seconds"] > 2.0:
-        items.append("Речь начинается поздно, поэтому первые секунды должны держаться на картинке и действии без словесной опоры.")
+        items.append("La voz entra tarde — los primeros segundos se aguantan en imagen y acción, sin apoyarse en palabras.")
     return items
 
 
@@ -64,7 +64,7 @@ def _build_recommendations(metrics: list[ReviewMetric], drop_moments: list[dict[
     speech_start = speech.get("speech_start_seconds")
     speech_start_is_late = isinstance(speech_start, (int, float)) and float(speech_start) > 2.0
     speech_start_text = (
-        f"Речь начинается около {float(speech_start):.2f} с. Если ключевой смысл в словах, перенеси главную фразу ближе к старту."
+        f"La voz entra cerca de los {float(speech_start):.2f}s. Si el mensaje clave está en palabras, jala la frase principal hacia el arranque."
         if speech_start_is_late
         else ""
     )
@@ -72,21 +72,21 @@ def _build_recommendations(metrics: list[ReviewMetric], drop_moments: list[dict[
     pause_ratio_is_high = isinstance(pause_ratio, (int, float)) and float(pause_ratio) > 0.28
 
     candidates = [
-        (scores.get("early_response", 0) < cutoff, "Старт набирает уровень поздно. Проверь первый кадр: главное должно появиться раньше, крупнее или с более ясным результатом."),
-        (scores.get("sustain", 0) < cutoff, "После сильных мест график быстро падает. Перед просадкой добавь новый поворот, смену крупности или сократи отрезок, который не двигает сцену."),
-        (scores.get("transition", 0) < cutoff, "Темп событий слабый: кадр слишком долго остается в одном состоянии. Добавь смену плана, жест, действие или короткий текст раньше."),
-        (scores.get("stability", 0) < cutoff, "Есть резкие просадки. Сравни слабые окна с соседними сильными местами и убери лишние детали, которые размывают главный фокус."),
-        (scores.get("density", 0) < cutoff, "Средний уровень ниже пиков. Подними базу ролика: крупнее главный объект, чище фон, заметнее движение или сильнее контраст."),
-        (bool(drops), f"Сначала открой окна {drops}: там график проседает относительно соседних точек. Проверь, что в эти секунды меняется в кадре, тексте и темпе."),
+        (scores.get("early_response", 0) < cutoff, "El arranque sube de nivel tarde. Revisa el primer shot: lo principal debe aparecer antes, más grande, o con un resultado más claro."),
+        (scores.get("sustain", 0) < cutoff, "Después de los picos la curva se cae rápido. Antes del bache mete un giro nuevo, cambio de plano, o acorta el tramo que no mueve la escena."),
+        (scores.get("transition", 0) < cutoff, "El ritmo está flojo: el frame se queda en un mismo estado demasiado tiempo. Mete cambio de shot, gesto, acción o un caption corto antes."),
+        (scores.get("stability", 0) < cutoff, "Hay bajones bruscos. Compara los baches con los tramos fuertes vecinos y tumba detalles que están diluyendo el foco principal."),
+        (scores.get("density", 0) < cutoff, "La base está abajo de los picos. Sube la base del video: objeto principal más grande, fondo más limpio, movimiento más claro o más contraste."),
+        (bool(drops), f"Empieza por revisar las ventanas {drops}: ahí la curva se cae respecto a los puntos vecinos. Checa qué cambia en frame, caption y ritmo en esos segundos."),
         (bool(speech.get("available")) and speech_start_is_late, speech_start_text),
-        (bool(speech.get("available")) and pause_ratio_is_high, "В речи много пустых промежутков. Подрежь паузы или сделай подачу плотнее, особенно рядом со слабыми окнами графика."),
-        (not speech.get("available"), "Если слова важны для смысла, проверь громкость, шум и разборчивость: сейчас текстовый слой не дает надежной опоры для разбора."),
-        (duration_seconds > 30, "После основной правки протестируй короткую версию. Так проще понять, выигрывает ли график от сокращения или теряется важный контекст."),
-        (scores.get("early_response", 0) >= cutoff and scores.get("sustain", 0) < cutoff, "Начало уже можно оставить как ориентир, а правку начинать с середины: там нужно добавить новый информационный или визуальный повод смотреть дальше."),
-        (scores.get("density", 0) >= 75 and scores.get("stability", 0) < cutoff, "Картинка в среднем сильная, но есть резкие провалы. Не усиливай все подряд - точечно сглади слабые окна, чтобы не потерять сильные кадры."),
-        (scores.get("transition", 0) >= 75 and scores.get("sustain", 0) < cutoff, "Событий хватает, но линия все равно падает. Значит, проблема не только в частоте смен, а в том, насколько новые кадры дают понятный смысл."),
-        (scores.get("early_response", 0) < cutoff and scores.get("density", 0) >= 70, "Визуал достаточно сильный, но старт не успевает его раскрыть. Перенеси самый понятный крупный кадр ближе к первым секундам."),
-        (scores[min_key] < 45 and scores[max_key] >= 70, f"Разрыв между сильной и слабой стороной большой. Не перепридумывай весь ролик: сохрани «{_friendly_metric_label(max_key).lower()}» и отдельно чини «{_friendly_metric_label(min_key).lower()}»."),
+        (bool(speech.get("available")) and pause_ratio_is_high, "Hay muchos huecos en la voz. Acorta las pausas o haz la entrega más densa, sobre todo cerca de los baches de la curva."),
+        (not speech.get("available"), "Si las palabras pesan en el mensaje, revisa volumen, ruido y dicción: ahorita la capa de voz no da apoyo confiable para el análisis."),
+        (duration_seconds > 30, "Después del ajuste principal, prueba una versión corta. Así se ve si la curva mejora con el recorte o si se pierde contexto importante."),
+        (scores.get("early_response", 0) >= cutoff and scores.get("sustain", 0) < cutoff, "El arranque ya jala como referencia; el ajuste va por la mitad: ahí mete un motivo nuevo (info o visual) para seguir viendo."),
+        (scores.get("density", 0) >= 75 and scores.get("stability", 0) < cutoff, "La imagen jala en promedio, pero hay bajones bruscos. No le metas a todo — suaviza los baches puntuales para no romper los frames fuertes."),
+        (scores.get("transition", 0) >= 75 and scores.get("sustain", 0) < cutoff, "Eventos hay, pero la curva igual se cae. El problema no es solo la frecuencia de cambios — es qué tanto significado claro aportan los frames nuevos."),
+        (scores.get("early_response", 0) < cutoff and scores.get("density", 0) >= 70, "El visual es fuerte, pero el arranque no alcanza a mostrarlo. Jala el frame grande más legible hacia los primeros segundos."),
+        (scores[min_key] < 45 and scores[max_key] >= 70, f"La brecha entre lo fuerte y lo flojo está grande. No reescribas todo el video: amarra «{_friendly_metric_label(max_key).lower()}» y arregla aparte «{_friendly_metric_label(min_key).lower()}»."),
     ]
 
     recs: list[str] = []
@@ -96,7 +96,7 @@ def _build_recommendations(metrics: list[ReviewMetric], drop_moments: list[dict[
         if len(recs) >= 6:
             break
     if not recs:
-        recs.append("Явной крупной поломки по графику нет. Следующий тест лучше строить как A/B: меняй один элемент за раз и сравнивай старт, средний уровень и просадки.")
+        recs.append("No hay un problema grueso evidente en la curva. La siguiente prueba va de A/B: mueve un elemento a la vez y compara arranque, base y baches.")
     return recs[:6]
 
 
@@ -108,9 +108,9 @@ def _build_simple_recommendations(metrics: list[ReviewMetric], drop_moments: lis
 def _build_recommendation_plan(recommendations: list[str], top_metric: ReviewMetric, weak_metric: ReviewMetric, profile: AnalysisModeProfile) -> list[dict[str, str]]:
     del profile
     return [
-        {"title": "Что оставить", "detail": f"Не ломай сильную часть «{_metric_display(top_metric)}»: она уже дает ролику рабочую опору."},
-        {"title": "Что проверить первым", "detail": recommendations[0] if recommendations else _simple_metric_action(weak_metric)},
-        {"title": "Как перепроверить", "detail": "После правки сравни старую и новую версии по графику: старт, средний уровень и резкие просадки должны стать лучше."},
+        {"title": "Qué dejar", "detail": f"No le muevas a la parte fuerte «{_metric_display(top_metric)}»: ya le está dando base al video."},
+        {"title": "Qué revisar primero", "detail": recommendations[0] if recommendations else _simple_metric_action(weak_metric)},
+        {"title": "Cómo revalidar", "detail": "Después del ajuste, compara la versión vieja con la nueva en la curva: arranque, base y bajones bruscos deben mejorar."},
     ]
 
 
@@ -125,18 +125,18 @@ def _build_verdict(overall_score: int, metrics: list[ReviewMetric], profile: Ana
     stability = scores.get("stability", 0)
     density = scores.get("density", 0)
     candidates = [
-        (overall_score >= 78 and scores.get(metrics[-1].key, 0) >= 65, f"Ролик выглядит сильным и достаточно ровным. Главная опора - «{strongest}», а улучшать лучше точечно через «{weakest}»."),
-        (overall_score >= 75 and scores.get(metrics[-1].key, 0) < 60, f"У ролика есть сильная основа, но она держится не везде. Оставь «{strongest}» и первым делом проверь «{weakest}»."),
-        (early < 60 and density >= 65, "Главная проблема не в картинке, а в том, как быстро ролик раскрывает ее на старте. Сильный визуал стоит подать раньше."),
-        (early < 60, f"Ролик слишком медленно набирает уровень. Первый приоритет - старт, затем уже правка «{weakest}»."),
-        (sustain < 60 and early >= 65, "Начало работает лучше середины. Не ломай старт, а добавь новый поворот перед первым заметным провалом графика."),
-        (transition < 60, "График проседает из-за нехватки новых событий. Участки без смены плана или действия нужно сжимать раньше."),
-        (stability < 60, "Главный риск - резкие просадки. Ролик может иметь хорошие кадры, но слабые окна между ними тянут итог вниз."),
-        (density < 60 and overall_score < 55, "Пока ролик держится на отдельных моментах. Нужно поднимать средний уровень, а не только искать один яркий пик."),
-        (overall_score >= 60, f"Версия рабочая, но неровная. Сильнее всего выглядит «{strongest}», главный запас - «{weakest}»."),
-        (overall_score < 60, f"Это скорее черновик для доработки. Сначала усили «{weakest}», потом перепроверь весь ролик сравнительным тестом."),
+        (overall_score >= 78 and scores.get(metrics[-1].key, 0) >= 65, f"El video está fuerte y bastante parejo. La base es «{strongest}»; los ajustes finos van por «{weakest}»."),
+        (overall_score >= 75 and scores.get(metrics[-1].key, 0) < 60, f"El video tiene base fuerte, pero no aguanta parejo. Amarra «{strongest}» y empieza revisando «{weakest}»."),
+        (early < 60 and density >= 65, "El problema no está en la imagen sino en qué tan rápido la entrega el arranque. Mete el visual fuerte más pronto."),
+        (early < 60, f"El video sube de nivel muy despacio. Prioridad uno: el arranque; después «{weakest}»."),
+        (sustain < 60 and early >= 65, "El arranque jala mejor que la mitad. No le muevas al inicio; mete un giro nuevo antes del primer bache visible."),
+        (transition < 60, "La curva se cae por falta de eventos nuevos. Los tramos sin cambio de shot o acción hay que apretarlos antes."),
+        (stability < 60, "El riesgo grande son los bajones bruscos. Puede haber frames buenos, pero los baches entre ellos jalan el resultado abajo."),
+        (density < 60 and overall_score < 55, "Por ahora el video se aguanta en momentos puntuales. Hay que subir la base, no solo buscar un pico brillante."),
+        (overall_score >= 60, f"La versión jala, pero está dispareja. Lo más fuerte es «{strongest}»; el margen principal está en «{weakest}»."),
+        (overall_score < 60, f"Esto es más un borrador. Primero refuerza «{weakest}», luego revisa todo el video con un A/B."),
     ]
-    return _pick_template(candidates, f"Главный ориентир - «{strongest}». Основная правка сейчас в зоне «{weakest}».")
+    return _pick_template(candidates, f"Referencia principal: «{strongest}». El ajuste fuerte está en «{weakest}».")
 
 
 def _build_executive_summary(overall_score: int, top_metric: ReviewMetric, weak_metric: ReviewMetric, runner_metric: ReviewMetric, speech_layer: dict[str, Any], profile: AnalysisModeProfile) -> str:
@@ -147,18 +147,18 @@ def _build_executive_summary(overall_score: int, top_metric: ReviewMetric, weak_
     weak = _metric_display(weak_metric)
     speech = _speech_line(speech_layer)
     candidates = [
-        (overall_score >= 80, f"Это сильная версия: график держится высоко, а «{top}» дает основную опору. Улучшения стоит делать точечно через «{weak}». {speech}"),
-        (overall_score >= 72 and weak_metric.score < 60, f"Общий уровень хороший, но итог ограничивает «{weak}». Сначала проверь слабые окна, не меняя то, что уже работает в «{top}». {speech}"),
-        (weak_metric.key == "early_response", f"Главный вопрос - старт: ролик поздно набирает уровень. Сохрани «{top}», но перенеси более понятный кадр или смысл ближе к первым секундам. {speech}"),
-        (weak_metric.key == "sustain", f"Старт и отдельные кадры работают лучше, чем продолжение. Нужно понять, где график начинает падать, и дать там новый поворот. {speech}"),
-        (weak_metric.key == "transition", f"Ролику не хватает новых событий в нужный момент. «{top}» можно сохранить, а монтаж проверить на слишком длинные планы. {speech}"),
-        (weak_metric.key == "stability", f"Главная проблема - резкие просадки между сильными местами. Проверь слабые окна на лишние детали, паузы или потерю фокуса. {speech}"),
-        (weak_metric.key == "density", f"Лучшие места заметно сильнее среднего уровня. Нужно не добавлять еще один пик, а поднять базовую силу большинства кадров. {speech}"),
-        (scores.get(top_metric.key, 0) - scores.get(weak_metric.key, 0) >= 25, f"Разрыв между сильной и слабой частью большой: «{top}» трогать опасно, а «{weak}» дает самый понятный запас роста. {speech}"),
-        (overall_score >= 60, f"Версия уже рабочая, но требует аккуратной правки. Ориентир - «{top}», второй сильный признак - «{runner}», главный ремонт - «{weak}». {speech}"),
-        (overall_score < 60, f"Пока это внутренний вариант для доработки. Начни не с полной переработки, а с одного слабого признака: «{weak}». {speech}"),
+        (overall_score >= 80, f"Versión fuerte: la curva se mantiene alta y «{top}» da la base. Los ajustes van puntuales por «{weak}». {speech}"),
+        (overall_score >= 72 and weak_metric.score < 60, f"El nivel general está bien, pero «{weak}» está limitando el total. Revisa los baches sin tocar lo que ya jala en «{top}». {speech}"),
+        (weak_metric.key == "early_response", f"El tema central es el arranque: el video sube de nivel tarde. Amarra «{top}», pero jala el frame o el mensaje más legible hacia los primeros segundos. {speech}"),
+        (weak_metric.key == "sustain", f"El arranque y algunos frames jalan mejor que la continuación. Hay que ver dónde empieza a caerse la curva y meter un giro nuevo ahí. {speech}"),
+        (weak_metric.key == "transition", f"Al video le faltan eventos nuevos en los momentos clave. Amarra «{top}» y revisa el montaje en busca de shots que se alargan. {speech}"),
+        (weak_metric.key == "stability", f"El problema central son los bajones bruscos entre tramos fuertes. Revisa los baches por detalles extra, pausas o pérdida de foco. {speech}"),
+        (weak_metric.key == "density", f"Los mejores tramos están claramente arriba del promedio. No se trata de meter otro pico — hay que subir la base de la mayoría de los frames. {speech}"),
+        (scores.get(top_metric.key, 0) - scores.get(weak_metric.key, 0) >= 25, f"La brecha entre lo fuerte y lo flojo está grande: tocar «{top}» es riesgoso, y «{weak}» da el margen de mejora más claro. {speech}"),
+        (overall_score >= 60, f"La versión ya jala, pero requiere ajustes finos. Referencia: «{top}»; segunda fortaleza: «{runner}»; arreglo principal: «{weak}». {speech}"),
+        (overall_score < 60, f"Por ahora es una versión interna en desarrollo. No empieces rehaciendo todo: arranca por una sola métrica floja: «{weak}». {speech}"),
     ]
-    return _pick_template(candidates, f"Сильная сторона - «{top}», слабая - «{weak}». Следующий шаг: одна правка и повторное сравнение графика.")
+    return _pick_template(candidates, f"Lo fuerte está en «{top}»; lo flojo, en «{weak}». Siguiente paso: un solo ajuste y comparar la curva otra vez.")
 
 
 def _build_product_summary(overall_score: int, ordered_metrics: list[ReviewMetric], speech_layer: dict[str, Any], profile: AnalysisModeProfile) -> str:
@@ -168,18 +168,18 @@ def _build_product_summary(overall_score: int, ordered_metrics: list[ReviewMetri
     weakest = _metric_display(ordered_metrics[-1])
     speech = _speech_line(speech_layer)
     candidates = [
-        (overall_score >= 80, f"Можно брать эту версию как базу для следующего теста. Она уже держит график достаточно высоко; правки лучше ограничить зоной «{weakest}». {speech}"),
-        (overall_score >= 70 and scores.get("early_response", 0) >= 70, f"Старт можно сохранять как рабочий. Следующий тест лучше строить вокруг того, как ролик держится после первых секунд. {speech}"),
-        (scores.get("early_response", 0) < 60, f"Для продукта сейчас важнее всего быстрее объяснить ценность. Перенеси результат, товар или конфликт ближе к началу. {speech}"),
-        (scores.get("sustain", 0) < 60, f"Версия теряет темп после удачных моментов. Добавь в середину новый смысловой шаг: действие, реакцию, деталь или payoff. {speech}"),
-        (scores.get("transition", 0) < 60, f"Монтаж выглядит затянутым. Следующий вариант должен чаще менять состояние кадра, но без хаотичной нарезки. {speech}"),
-        (scores.get("stability", 0) < 60, f"Слабые места похожи на потерю фокуса. Для следующей версии сделай главный объект и действие проще для чтения. {speech}"),
-        (scores.get("density", 0) < 60, f"Ролику не хватает среднего уровня: отдельные хорошие места есть, но базовая картинка должна стать сильнее. {speech}"),
-        (overall_score >= 60, f"Основа рабочая. Не перепридумывай весь ролик: сохрани «{strongest}» и проверь одну правку в зоне «{weakest}». {speech}"),
-        (overall_score < 50, f"Сейчас лучше делать не мелкий полишинг, а новую итерацию вокруг слабого признака «{weakest}». {speech}"),
-        (True, f"Для следующего прогона меняй один элемент за раз и смотри, что происходит со стартом, средним уровнем и просадками. {speech}"),
+        (overall_score >= 80, f"Puedes tomar esta versión como base de la siguiente prueba. Ya mantiene la curva alta; limita los ajustes a la zona de «{weakest}». {speech}"),
+        (overall_score >= 70 and scores.get("early_response", 0) >= 70, f"El arranque ya jala — déjalo. La siguiente prueba va alrededor de cómo aguanta el video después de los primeros segundos. {speech}"),
+        (scores.get("early_response", 0) < 60, f"Para el producto, ahorita lo más importante es explicar el valor más rápido. Jala el resultado, producto o conflicto hacia el inicio. {speech}"),
+        (scores.get("sustain", 0) < 60, f"La versión pierde ritmo después de los buenos momentos. Mete en la mitad un paso nuevo de significado: acción, reacción, detalle o payoff. {speech}"),
+        (scores.get("transition", 0) < 60, f"El montaje se siente alargado. La siguiente versión debe cambiar el estado del frame más seguido, sin caer en cuts caóticos. {speech}"),
+        (scores.get("stability", 0) < 60, f"Los baches se sienten como pérdida de foco. En la siguiente versión, haz el objeto principal y la acción más legibles. {speech}"),
+        (scores.get("density", 0) < 60, f"Al video le falta base: hay buenos momentos puntuales, pero la imagen base tiene que estar más fuerte. {speech}"),
+        (overall_score >= 60, f"La base ya jala. No reescribas todo el video: amarra «{strongest}» y prueba un solo ajuste en la zona de «{weakest}». {speech}"),
+        (overall_score < 50, f"Ahorita conviene más una iteración nueva alrededor de la métrica floja «{weakest}» que un pulido fino. {speech}"),
+        (True, f"En la siguiente corrida mueve un solo elemento a la vez y ve qué pasa con el arranque, la base y los baches. {speech}"),
     ]
-    return _pick_template(candidates, f"Сильнее всего выглядит «{strongest}», слабее всего - «{weakest}».")
+    return _pick_template(candidates, f"Lo más fuerte es «{strongest}»; lo más flojo, «{weakest}».")
 
 
 def _action_copy_for_metric(metric_key: str, variant_index: int) -> tuple[str, str]:
@@ -233,7 +233,7 @@ def _build_action_items(
                 (
                     item
                     for item in focus_windows
-                    if "лаб" in str(getattr(item, "label", "")).lower()
+                    if "bache" in str(getattr(item, "label", "")).lower()
                 ),
                 focus_windows[0],
             )

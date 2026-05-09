@@ -23,7 +23,7 @@ from analysis_settings import AnalysisModeProfile  # noqa: F401  (used by caller
 # item; the friendly-label table itself lives in ``copy_ru``. The reverse
 # import (``copy_ru`` → ``metrics``) is gated behind ``TYPE_CHECKING``, so
 # this stays acyclic at runtime.
-from tribe_review.copy_ru import _friendly_metric_label
+from tribe_review.copy_es import _friendly_metric_label
 
 
 @dataclass

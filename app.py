@@ -527,15 +527,15 @@ def _format_error(exc: Exception, language: str) -> str:
     )
 
     if is_chrome_missing:
-        if language == "ru":
+        if language == "es":
             return (
-                "PDF-отчет не может быть собран: Chrome / Edge / Chromium не найден.\n\n"
-                "Что сделать:\n"
-                "1. Установить любой из них (Chrome, Edge или Chromium).\n"
-                "2. Если установлен в нестандартное место — задать переменную окружения "
-                "TRIBE_CHROME_PATH с полным путем к исполняемому файлу.\n\n"
-                "Альтернатива: PDF можно скачать в режиме совместимости (matplotlib) — "
-                "ответ будет иметь header X-PDF-Renderer: matplotlib."
+                "No se pudo armar el PDF: Chrome / Edge / Chromium no encontrado.\n\n"
+                "Qué hacer:\n"
+                "1. Instala cualquiera de ellos (Chrome, Edge o Chromium).\n"
+                "2. Si está en una ruta no estándar, define la variable de entorno "
+                "TRIBE_CHROME_PATH con la ruta completa al ejecutable.\n\n"
+                "Alternativa: el PDF también baja en modo compatible (matplotlib) — "
+                "la respuesta lleva header X-PDF-Renderer: matplotlib."
             )
         return (
             "PDF report can't be built: Chrome / Edge / Chromium not found.\n\n"
@@ -548,15 +548,15 @@ def _format_error(exc: Exception, language: str) -> str:
         )
 
     if is_whisper_download:
-        if language == "ru":
+        if language == "es":
             return (
-                "Не удалось получить speech transcript.\n\n"
-                "Проверь:\n"
-                "1. Соединение с интернетом — модель WhisperX скачивается на лету.\n"
-                "2. Что установлен uvx (часть uv): pipx install uv или brew install uv.\n"
-                "3. Что папка TRIBE_CACHE_DIR доступна для записи.\n"
-                "4. Достаточно свободного места на диске для модели Whisper (~5 ГБ).\n\n"
-                "Если uvx установлен в нестандартное место — задай TRIBE_UVX_PATH."
+                "No se pudo bajar el speech transcript.\n\n"
+                "Revisa:\n"
+                "1. Conexión a internet — el modelo WhisperX se baja al vuelo.\n"
+                "2. Que uvx (parte de uv) esté instalado: pipx install uv o brew install uv.\n"
+                "3. Que la carpeta TRIBE_CACHE_DIR tenga permisos de escritura.\n"
+                "4. Que haya ~5 GB libres en disco para el modelo Whisper.\n\n"
+                "Si uvx vive en una ruta no estándar, define TRIBE_UVX_PATH."
             )
         return (
             "Could not fetch the speech transcript.\n\n"
@@ -569,15 +569,15 @@ def _format_error(exc: Exception, language: str) -> str:
         )
 
     if is_cuda_error:
-        if language == "ru":
+        if language == "es":
             return (
-                "GPU/CUDA не может выполнить инференс.\n\n"
-                "Возможные причины:\n"
-                "- Нехватка VRAM (TRIBE требует >= 6 ГБ).\n"
-                "- Драйвер NVIDIA устарел или PyTorch собран без поддержки твоей CUDA.\n"
-                "- Видеокарта не NVIDIA.\n\n"
-                "Решение: обнови драйвер NVIDIA до последнего, либо запусти приложение "
-                "без GPU — TRIBE автоматически переключится на CPU (медленнее, но работает)."
+                "GPU/CUDA no pudo correr la inferencia.\n\n"
+                "Causas posibles:\n"
+                "- Falta VRAM (TRIBE necesita >= 6 GB).\n"
+                "- Driver NVIDIA desactualizado, o PyTorch compilado sin tu versión de CUDA.\n"
+                "- La GPU no es NVIDIA.\n\n"
+                "Solución: actualiza el driver NVIDIA al último, o corre la app sin GPU — "
+                "TRIBE pasa automáticamente a CPU (más lento, pero jala)."
             )
         return (
             "GPU/CUDA can't run inference.\n\n"
@@ -592,17 +592,17 @@ def _format_error(exc: Exception, language: str) -> str:
     if not is_llama_gate_error:
         return message
 
-    if language == "ru":
+    if language == "es":
         return (
-            "Официальный TRIBE v2 уперся в gated text encoder из Hugging Face: "
+            "TRIBE v2 oficial chocó con un gated text encoder de Hugging Face: "
             "meta-llama/Llama-3.2-3B.\n\n"
-            "Что нужно сделать:\n"
-            "1. Открыть https://huggingface.co/meta-llama/Llama-3.2-3B и запросить доступ.\n"
-            "2. Создать read token в Hugging Face.\n"
-            "3. Выполнить в PowerShell: huggingface-cli login\n"
-            "4. Вставить token и перезапустить приложение.\n\n"
-            "Это соответствует официальному workflow TRIBE v2: в опубликованном конфиге "
-            "text encoder использует gated LLaMA 3.2-3B."
+            "Qué hay que hacer:\n"
+            "1. Abre https://huggingface.co/meta-llama/Llama-3.2-3B y pide acceso.\n"
+            "2. Crea un read token en Hugging Face.\n"
+            "3. Corre en PowerShell: huggingface-cli login\n"
+            "4. Pega el token y reinicia la app.\n\n"
+            "Esto sigue el workflow oficial de TRIBE v2: en el config publicado el "
+            "text encoder usa el gated LLaMA 3.2-3B."
         )
 
     return (

@@ -120,7 +120,7 @@ def _is_compare_report(report: dict) -> bool:
 
 
 def _compare_summary_page(report: dict):
-    language = report.get("report_language", "ru")
+    language = report.get("report_language", "es")
     fig = _page()
     gs = fig.add_gridspec(18, 6, left=0.06, right=0.94, top=0.96, bottom=0.05, hspace=0.55, wspace=0.42)
     ax_header = fig.add_subplot(gs[0:4, :])
@@ -130,11 +130,11 @@ def _compare_summary_page(report: dict):
     for ax in [ax_header, ax_rank, ax_recs]:
         _hide_axis(ax)
 
-    title = "Comparison of versions" if language == "en" else "Сравнение версий"
+    title = "Comparison of versions" if language == "en" else "Comparativa de versiones"
     subtitle = (
         "The report overlays the score curves and ranks the uploaded cuts."
         if language == "en"
-        else "Отчёт накладывает графики роликов и ранжирует загруженные версии."
+        else "El reporte superpone las curvas y rankea las versiones subidas."
     )
     ax_header.text(0.0, 0.92, "TRIBE v2 Video Review", fontsize=25, fontweight="bold", color=INK, transform=ax_header.transAxes)
     ax_header.text(0.0, 0.75, _report_stamp(report), fontsize=9.5, color=MUTED, transform=ax_header.transAxes)
@@ -149,7 +149,7 @@ def _compare_summary_page(report: dict):
 
     _compare_timeline_chart(ax_timeline, report, language)
 
-    ax_rank.text(0.0, 0.95, "Ranking" if language == "en" else "Рейтинг версий", fontsize=14, fontweight="bold", color=INK, transform=ax_rank.transAxes)
+    ax_rank.text(0.0, 0.95, "Ranking" if language == "en" else "Ranking de versiones", fontsize=14, fontweight="bold", color=INK, transform=ax_rank.transAxes)
     ranking = [item for item in report.get("ranking", []) if isinstance(item, dict)]
     for index, item in enumerate(ranking[:4]):
         x = 0.01 + (index % 2) * 0.49
@@ -159,26 +159,26 @@ def _compare_summary_page(report: dict):
         _info_card(ax_rank, x, y, 0.46, 0.22, label, value)
         ax_rank.text(x + 0.02, y - 0.06, _wrap_pdf(item.get("summary") or "", width=48), fontsize=8.8, color="#405365", transform=ax_rank.transAxes)
 
-    ax_recs.text(0.0, 0.95, "Next checks" if language == "en" else "Что проверить дальше", fontsize=14, fontweight="bold", color=INK, transform=ax_recs.transAxes)
+    ax_recs.text(0.0, 0.95, "Next checks" if language == "en" else "Qué revisar después", fontsize=14, fontweight="bold", color=INK, transform=ax_recs.transAxes)
     recs = [str(item) for item in report.get("recommendations", []) if str(item).strip()]
     if not recs:
-        recs = ["Compare the strongest and weakest sections on the overlaid curve." if language == "en" else "Сравните сильные и слабые участки на наложенном графике."]
+        recs = ["Compare the strongest and weakest sections on the overlaid curve." if language == "en" else "Compara los tramos fuertes y los baches en la curva superpuesta."]
     for index, item in enumerate(recs[:3], start=1):
         ax_recs.text(0.02, 0.78 - (index - 1) * 0.22, f"{index}. " + _wrap_pdf(item, width=98), fontsize=9.8, color="#334355", linespacing=1.35, transform=ax_recs.transAxes)
     return fig
 
 
 def _compare_recommendations_page(report: dict):
-    language = report.get("report_language", "ru")
+    language = report.get("report_language", "es")
     fig = _page()
     ax = fig.add_axes([0.06, 0.05, 0.88, 0.9])
     _hide_axis(ax)
 
-    title = "Comparison details" if language == "en" else "Детали сравнения"
+    title = "Comparison details" if language == "en" else "Detalles de la comparativa"
     hint = (
         "Use this page to decide which cut should become the base version for the next edit."
         if language == "en"
-        else "Используйте эту страницу, чтобы выбрать базовую версию для следующей правки."
+        else "Usa esta página para elegir la versión base de la siguiente edición."
     )
     ax.text(0.0, 0.98, title, fontsize=20, fontweight="bold", color=INK, va="top", transform=ax.transAxes)
     _callout(ax, 0.0, 0.87, 0.98, 0.08, hint)
@@ -186,7 +186,7 @@ def _compare_recommendations_page(report: dict):
     y = 0.79
     recommendations = [str(item) for item in report.get("recommendations", []) if str(item).strip()]
     if recommendations:
-        ax.text(0.0, y, "What to do next" if language == "en" else "Что делать дальше", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
+        ax.text(0.0, y, "What to do next" if language == "en" else "Qué hacer después", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
         y -= 0.07
         for index, item in enumerate(recommendations[:5], start=1):
             ax.text(0.02, y, f"{index}. " + _wrap_pdf(item, width=100), fontsize=10, color="#334355", linespacing=1.35, transform=ax.transAxes)
@@ -195,7 +195,7 @@ def _compare_recommendations_page(report: dict):
     rows = [item for item in report.get("comparison_rows", []) if isinstance(item, dict)]
     if rows:
         y = min(y - 0.02, 0.37)
-        ax.text(0.0, y, "Metric winners" if language == "en" else "Победители по метрикам", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
+        ax.text(0.0, y, "Metric winners" if language == "en" else "Ganadores por métrica", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
         y -= 0.07
         for row in rows[:6]:
             label = str(row.get("label") or row.get("key") or "")
@@ -205,7 +205,7 @@ def _compare_recommendations_page(report: dict):
             text = (
                 f"{label}: {winner} leads with {score}; spread {spread}."
                 if language == "en"
-                else f"{label}: лидирует {winner} с {score}; разрыв {spread}."
+                else f"{label}: lidera {winner} con {score}; brecha {spread}."
             )
             ax.text(0.02, y, _wrap_pdf(text, width=102), fontsize=9.8, color="#334355", transform=ax.transAxes)
             y -= 0.065
@@ -213,7 +213,7 @@ def _compare_recommendations_page(report: dict):
     gaps = [str(item) for item in report.get("common_gaps", []) if str(item).strip()]
     if gaps:
         y = min(y - 0.03, 0.18)
-        ax.text(0.0, y, "Shared weak points" if language == "en" else "Общие слабые места", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
+        ax.text(0.0, y, "Shared weak points" if language == "en" else "Bachones comunes", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
         y -= 0.065
         for item in gaps[:3]:
             ax.text(0.02, y, "- " + _wrap_pdf(item, width=100), fontsize=9.8, color="#334355", transform=ax.transAxes)
@@ -222,7 +222,7 @@ def _compare_recommendations_page(report: dict):
 
 
 def _summary_page(report: dict):
-    language = report.get("report_language", "ru")
+    language = report.get("report_language", "es")
     fig = _page()
     gs = fig.add_gridspec(18, 6, left=0.06, right=0.94, top=0.96, bottom=0.05, hspace=0.62, wspace=0.45)
     ax_header = fig.add_subplot(gs[0:4, :])
@@ -232,16 +232,16 @@ def _summary_page(report: dict):
     for ax in [ax_header, ax_cards, ax_notes]:
         _hide_axis(ax)
 
-    title = "Video score curve" if language == "en" else "График ролика"
+    title = "Video score curve" if language == "en" else "Curva del video"
     subtitle = (
         "Official TRIBE v2 inference output for one uploaded video."
         if language == "en"
-        else "Официальный inference output TRIBE v2 для одного загруженного видео."
+        else "Inference output oficial de TRIBE v2 para un video subido."
     )
     banner = (
         "The main guide is the curve. Compare dips with stronger moments and test edits against each other."
         if language == "en"
-        else "Главный ориентир отчёта - график ролика. Сравнивайте провалы с более сильными участками и проверяйте правки сравнительными тестами."
+        else "La referencia principal del reporte es la curva del video. Compara los baches con los tramos más fuertes y valida los ajustes con A/B."
     )
 
     ax_header.text(0.0, 0.92, "TRIBE v2 Video Review", fontsize=25, fontweight="bold", color=INK, transform=ax_header.transAxes)
@@ -251,17 +251,17 @@ def _summary_page(report: dict):
     _callout(ax_header, 0.0, 0.02, 0.98, 0.17, banner)
 
     meta_cards = [
-        ("duration" if language == "en" else "длительность", f"{_video(report).get('duration_seconds', '-')} s"),
-        ("video size" if language == "en" else "размер видео", str(_video(report).get("resolution", "-"))),
-        ("events" if language == "en" else "частей в разборе", str(_predictions(report).get("events_count", "-"))),
-        ("best moment" if language == "en" else "самый сильный момент", str(_predictions(report).get("peak_time", "-"))),
+        ("duration" if language == "en" else "duración", f"{_video(report).get('duration_seconds', '-')} s"),
+        ("video size" if language == "en" else "tamaño del video", str(_video(report).get("resolution", "-"))),
+        ("events" if language == "en" else "partes del análisis", str(_predictions(report).get("events_count", "-"))),
+        ("best moment" if language == "en" else "mejor momento", str(_predictions(report).get("peak_time", "-"))),
     ]
     for idx, (label, value) in enumerate(meta_cards):
         _info_card(ax_cards, 0.01 + idx * 0.245, 0.27, 0.22, 0.42, label, value)
 
     _timeline_chart(ax_timeline, report, language)
 
-    notes_title = "How to read it" if language == "en" else "Как читать отчёт"
+    notes_title = "How to read it" if language == "en" else "Cómo leer el reporte"
     notes = (
         [
             "TRIBE v2 maps video, audio, and text into a model-based comparison space.",
@@ -270,9 +270,9 @@ def _summary_page(report: dict):
         ]
         if language == "en"
         else [
-            "TRIBE v2 сопоставляет видео, звук и текст с модельным пространством реакции мозга.",
-            "Это модель усреднённого зрителя, а не измерение реакции одного конкретного человека.",
-            "Провалы используйте как кандидаты на правку, но сначала сравнивайте их с соседними сильными участками.",
+            "TRIBE v2 mapea video, audio y texto a un espacio de comparación basado en el modelo.",
+            "Es una lectura del cut basada en el modelo, no la medición de una persona en concreto.",
+            "Usa los bajones como candidatos a editar, pero primero compáralos con los tramos fuertes vecinos antes de tocar el cut.",
         ]
     )
     ax_notes.text(0.0, 0.95, notes_title, fontsize=14, fontweight="bold", color=INK, transform=ax_notes.transAxes)
@@ -282,16 +282,16 @@ def _summary_page(report: dict):
 
 
 def _recommendations_page(report: dict):
-    language = report.get("report_language", "ru")
+    language = report.get("report_language", "es")
     fig = _page()
     ax = fig.add_axes([0.06, 0.05, 0.88, 0.9])
     _hide_axis(ax)
 
-    title = "Recommendations" if language == "en" else "Рекомендации и точки внимания"
+    title = "Recommendations" if language == "en" else "Recomendaciones y puntos de atención"
     hint = (
         "The cards below are general recommendations. The key place to look is the curve: find dips, compare them with stronger moments, experiment with edits, and run comparative tests."
         if language == "en"
-        else "Ниже приведены общие рекомендации. Главное - смотреть на график ролика: находите провалы, сравнивайте их с более сильными местами, экспериментируйте с правками и проводите сравнительные тесты."
+        else "Abajo van recomendaciones generales. Lo clave es mirar la curva del video: encuentra los baches, compáralos con tramos más fuertes, prueba ajustes y corre A/B."
     )
     ax.text(0.0, 0.98, title, fontsize=20, fontweight="bold", color=INK, va="top", transform=ax.transAxes)
     _callout(ax, 0.0, 0.87, 0.98, 0.08, hint)
@@ -299,7 +299,7 @@ def _recommendations_page(report: dict):
     y = 0.77
     action_items = _action_items(report)
     if not action_items:
-        empty = "No editorial recommendations were generated." if language == "en" else "Редакторские рекомендации не были сформированы."
+        empty = "No editorial recommendations were generated." if language == "en" else "No se generaron recomendaciones editoriales."
         ax.text(0.02, y, empty, fontsize=11, color=MUTED, transform=ax.transAxes)
         y -= 0.1
 
@@ -308,7 +308,7 @@ def _recommendations_page(report: dict):
 
     metrics = _metrics(report)
     if metrics:
-        ax.text(0.0, max(y - 0.01, 0.22), "Metrics" if language == "en" else "Ключевые метрики", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
+        ax.text(0.0, max(y - 0.01, 0.22), "Metrics" if language == "en" else "Métricas clave", fontsize=14, fontweight="bold", color=INK, transform=ax.transAxes)
         y = max(y - 0.09, 0.15)
         for metric in metrics[:4]:
             y = _metric_row(ax, y, metric)
@@ -316,12 +316,12 @@ def _recommendations_page(report: dict):
 
 
 def _details_page(report: dict):
-    language = report.get("report_language", "ru")
+    language = report.get("report_language", "es")
     fig = _page()
     ax = fig.add_axes([0.06, 0.05, 0.88, 0.9])
     _hide_axis(ax)
 
-    ax.text(0.0, 0.98, "Technical details" if language == "en" else "Технические детали", fontsize=18, fontweight="bold", color=INK, va="top", transform=ax.transAxes)
+    ax.text(0.0, 0.98, "Technical details" if language == "en" else "Detalles técnicos", fontsize=18, fontweight="bold", color=INK, va="top", transform=ax.transAxes)
     ax.text(0.0, 0.90, "TRIBE v2 workflow", fontsize=13, fontweight="bold", color="#18324b", transform=ax.transAxes)
     code = (
         'from tribev2 import TribeModel\n\n'
@@ -331,7 +331,7 @@ def _details_page(report: dict):
     )
     ax.text(0.0, 0.79, code, fontsize=10.2, color="#334355", family="monospace", linespacing=1.55, transform=ax.transAxes)
 
-    ax.text(0.0, 0.57, "Run metadata" if language == "en" else "Метаданные прогона", fontsize=13, fontweight="bold", color="#18324b", transform=ax.transAxes)
+    ax.text(0.0, 0.57, "Run metadata" if language == "en" else "Metadatos de la corrida", fontsize=13, fontweight="bold", color="#18324b", transform=ax.transAxes)
     metadata = [
         f"filename: {_video(report).get('filename', '-')}",
         f"duration_seconds: {_video(report).get('duration_seconds', '-')}",
@@ -355,17 +355,17 @@ def _timeline_chart(ax, report: dict, language: str) -> None:
     xs = [point.get("seconds", 0) for point in points if isinstance(point, dict)]
     ys = [point.get("signal_score", 0) for point in points if isinstance(point, dict)]
     if not xs or not ys:
-        ax.text(0.02, 0.5, "No timeline data" if language == "en" else "Нет данных графика", fontsize=11, color=MUTED, transform=ax.transAxes)
+        ax.text(0.02, 0.5, "No timeline data" if language == "en" else "Sin datos de la curva", fontsize=11, color=MUTED, transform=ax.transAxes)
         _hide_axis(ax)
         return
 
     ax.plot(xs, ys, color=BLUE, linewidth=2.7)
     ax.fill_between(xs, ys, 0, color=GREEN, alpha=0.12)
-    ax.set_title("Curve over time" if language == "en" else "График по времени", loc="left", fontsize=14, fontweight="bold", color=INK)
+    ax.set_title("Curve over time" if language == "en" else "Curva en el tiempo", loc="left", fontsize=14, fontweight="bold", color=INK)
     ax.set_ylim(0, 100)
     ax.set_xlim(min(xs), max(xs))
-    ax.set_ylabel("Level" if language == "en" else "Уровень", color=MUTED)
-    ax.set_xlabel("Seconds" if language == "en" else "Секунды", color=MUTED)
+    ax.set_ylabel("Level" if language == "en" else "Nivel", color=MUTED)
+    ax.set_xlabel("Seconds" if language == "en" else "Segundos", color=MUTED)
     ax.grid(alpha=0.22, linestyle="--")
     ax.tick_params(colors=MUTED, labelsize=9)
     for spine in ax.spines.values():
@@ -393,16 +393,16 @@ def _compare_timeline_chart(ax, report: dict, language: str) -> None:
             max_seconds = max(max_seconds, max(float(value or 0) for value in xs))
 
     if not plotted:
-        ax.text(0.02, 0.5, "No timeline data" if language == "en" else "Нет данных графика", fontsize=11, color=MUTED, transform=ax.transAxes)
+        ax.text(0.02, 0.5, "No timeline data" if language == "en" else "Sin datos de la curva", fontsize=11, color=MUTED, transform=ax.transAxes)
         _hide_axis(ax)
         return
 
-    ax.set_title("Overlaid curves" if language == "en" else "Наложение графиков", loc="left", fontsize=14, fontweight="bold", color=INK)
+    ax.set_title("Overlaid curves" if language == "en" else "Curvas superpuestas", loc="left", fontsize=14, fontweight="bold", color=INK)
     ax.set_ylim(0, 100)
     duration = max(max_seconds, 1.0)
     ax.set_xlim(0, max(duration, 1.0))
-    ax.set_ylabel("Level" if language == "en" else "Уровень", color=MUTED)
-    ax.set_xlabel("Seconds" if language == "en" else "Секунды", color=MUTED)
+    ax.set_ylabel("Level" if language == "en" else "Nivel", color=MUTED)
+    ax.set_xlabel("Seconds" if language == "en" else "Segundos", color=MUTED)
     ax.grid(alpha=0.22, linestyle="--")
     ax.tick_params(colors=MUTED, labelsize=9)
     if plotted:

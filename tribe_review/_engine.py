@@ -23,7 +23,7 @@ import numpy as np
 
 from analysis_settings import get_analysis_mode_profile
 
-from tribe_review.copy_ru import (
+from tribe_review.copy_es import (
     _metric_label,
     _signal_note,
 )
@@ -75,7 +75,7 @@ def generate_review(
     speech_error: str | None = None,
     analysis_mode: str | None = None,
     variant_name: str | None = None,
-    language: str = "ru",
+    language: str = "es",
 ) -> dict[str, Any]:
     profile = get_analysis_mode_profile(analysis_mode)
     preds = np.asarray(run.preds)
@@ -162,6 +162,7 @@ def generate_review(
             "description": profile.description,
             "note": profile.ui_note,
         },
+        "language": language,
         "signal_note": _signal_note(profile),
         "speech": speech_layer,
         "timeline": timeline,

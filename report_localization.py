@@ -4,76 +4,76 @@ from copy import deepcopy
 from typing import Any
 
 from analysis_settings import ANALYSIS_MODE_PROFILES
-SUPPORTED_REPORT_LANGUAGES = ("en",)
-DEFAULT_REPORT_LANGUAGE = "en"
+SUPPORTED_REPORT_LANGUAGES = ("es", "en")
+DEFAULT_REPORT_LANGUAGE = "es"
 
 
 UI_TEXTS: dict[str, dict[str, str]] = {
-    "ru": {
-        "language": "Язык",
-        "report_language": "Язык отчета",
-        "language_ru": "Русский",
+    "es": {
+        "language": "Idioma",
+        "report_language": "Idioma del reporte",
+        "language_ru": "Ruso",
         "language_en": "English",
-        "open_json": "Открыть JSON",
-        "download_pdf": "Скачать PDF",
-        "overall_score": "Общий score",
-        "overall_score_note_single": "Итоговый score по ролику.",
-        "overall_score_note_compare": "Score лидирующей версии.",
-        "mode": "Режим",
-        "format": "Формат",
-        "single_review": "Один ролик",
-        "versions_suffix": "версий",
-        "video_jump_simple": "Видео и быстрый переход",
-        "video_jump": "Видео и jump-to-time",
-        "timeline_simple": "График ролика",
+        "open_json": "Abrir JSON",
+        "download_pdf": "Descargar PDF",
+        "overall_score": "Score total",
+        "overall_score_note_single": "Score final del cut.",
+        "overall_score_note_compare": "Score de la versión líder.",
+        "mode": "Modo",
+        "format": "Formato",
+        "single_review": "Un solo cut",
+        "versions_suffix": "versiones",
+        "video_jump_simple": "Video y salto rápido",
+        "video_jump": "Video y jump-to-time",
+        "timeline_simple": "Curva creativa",
         "timeline_deep": "TRIBE Timeline",
-        "timeline_hint": "Наведи, чтобы увидеть время. Кликни по графику, чтобы прыгнуть в эту точку ролика.",
-        "timeline_level": "Уровень",
-        "timeline_signal": "Уровень",
-        "avg": "Среднее",
-        "max": "Макс",
-        "min": "Мин",
-        "seconds": "с",
-        "brain_title": "Симуляция активности коры",
-        "brain_status": "Текущее окно",
-        "frames": "Кадров",
-        "brain_activity": "Сила",
-        "brain_hotspots": "Яркие места",
-        "brain_normal": "Обычный",
-        "brain_inflated": "Развернутый",
-        "brain_unavailable": "3D-мозг недоступен для этого прогона.",
-        "what_to_do": "Что сделать с роликом",
-        "what_to_keep_change": "Что оставить и что менять",
-        "strengths": "Сильные стороны",
-        "weaknesses": "Слабые стороны",
-        "next_step": "Следующий шаг",
-        "open_numbers": "Открыть цифры и детали",
-        "open_speech": "Открыть речь и текст",
-        "good_bad": "Что уже хорошо / что мешает",
-        "already_good": "Что уже хорошо",
-        "gets_in_way": "Что мешает",
-        "signal_metrics": "Показатели графика",
-        "windows_phases": "Ключевые окна и фазы",
-        "speech_title": "Речь",
-        "full_text": "Полный текст",
-        "words": "слов",
-        "speech_chunks": "Куски речи",
-        "fix_first": "Что править в первую очередь",
-        "footer_simple": "Это простой режим: он показывает, что в ролике оставить, а что править первым.",
-        "footer_deep": "Этот интерфейс показывает расширенный разбор ролика и отдельный speech/transcript слой.",
-        "compare_summary": "Итог сравнения",
-        "compare_axes": "По каким показателям кто выигрывает",
-        "compare_table": "Compare table",
-        "variant_breakdown": "Разбор по версиям",
-        "winner": "Победитель",
-        "strong_block": "Сильный показатель",
-        "weak_block": "Слабый показатель",
-        "new_run": "Новый прогон",
-        "run_hint": "Загрузи один ролик для полного разбора или сразу 2-5 роликов, чтобы сервис сам сравнил варианты.",
-        "analysis_mode": "Режим отчета",
-        "run_analysis": "Запустить анализ",
-        "choose_files": "Выбрать файлы",
-        "no_files_selected": "Файлы не выбраны",
+        "timeline_hint": "Pasa el cursor para ver el tiempo. Click en la curva para saltar a ese punto del video.",
+        "timeline_level": "Nivel",
+        "timeline_signal": "Nivel",
+        "avg": "Prom",
+        "max": "Máx",
+        "min": "Mín",
+        "seconds": "s",
+        "brain_title": "Simulación de actividad cortical",
+        "brain_status": "Ventana actual",
+        "frames": "Frames",
+        "brain_activity": "Actividad",
+        "brain_hotspots": "Hotspots",
+        "brain_normal": "Normal",
+        "brain_inflated": "Expandido",
+        "brain_unavailable": "La vista 3D del cerebro no está disponible para esta corrida.",
+        "what_to_do": "Qué cambiar en el video",
+        "what_to_keep_change": "Qué dejar y qué cambiar",
+        "strengths": "Lo que jala",
+        "weaknesses": "Lo que no jala",
+        "next_step": "Siguiente paso",
+        "open_numbers": "Partes del timeline",
+        "open_speech": "Abrir voz y texto",
+        "good_bad": "Lo que jala / lo que estorba",
+        "already_good": "Lo que jala",
+        "gets_in_way": "Lo que estorba",
+        "signal_metrics": "Métricas de la curva",
+        "windows_phases": "Ventanas y fases clave",
+        "speech_title": "Voz",
+        "full_text": "Transcripción completa",
+        "words": "palabras",
+        "speech_chunks": "Segmentos de voz",
+        "fix_first": "Qué arreglar primero",
+        "footer_simple": "Modo simple: muestra qué dejar en el cut y qué arreglar primero.",
+        "footer_deep": "Esta vista trae el reporte completo más una capa de voz/transcript aparte.",
+        "compare_summary": "Resumen de la comparativa",
+        "compare_axes": "Dónde gana cada versión",
+        "compare_table": "Tabla comparativa",
+        "variant_breakdown": "Desglose por versión",
+        "winner": "Ganadora",
+        "strong_block": "Área fuerte",
+        "weak_block": "Área floja",
+        "new_run": "Corrida nueva",
+        "run_hint": "Sube un video para review completo o de 2 a 5 videos y la app compara los cuts.",
+        "analysis_mode": "Modo de review",
+        "run_analysis": "Correr análisis",
+        "choose_files": "Elegir archivos",
+        "no_files_selected": "Ningún archivo elegido",
     },
     "en": {
         "language": "Language",
@@ -145,18 +145,18 @@ UI_TEXTS: dict[str, dict[str, str]] = {
 
 
 ANALYSIS_MODE_TEXTS: dict[str, dict[str, dict[str, str]]] = {
-    "ru": {
+    "es": {
         "simplified": {
-            "label": "Упрощенный",
-            "description": "Пишет простым языком: что оставить, что поправить и где именно это делать.",
-            "note": "Подходит, когда нужен короткий рабочий вывод без лишней аналитики.",
-            "comparison_note": "Показывает только различия, которые проще всего превратить в следующую правку.",
+            "label": "Simplificado",
+            "description": "Habla directo: qué dejar, qué arreglar y dónde hacerlo.",
+            "note": "Útil cuando quieres un resultado corto sin análisis extra.",
+            "comparison_note": "Solo saca las diferencias que se traducen fácil en el siguiente cambio.",
         },
         "deep": {
-            "label": "Глубокий анализ",
-            "description": "Разжевывает максимум деталей: где ролик держится, где проседает и почему.",
-            "note": "Подходит, когда нужен более полный разбор, а не только список правок.",
-            "comparison_note": "Показывает не только лидера, но и за счет каких показателей он выигрывает.",
+            "label": "Análisis a profundidad",
+            "description": "Detalla todo: dónde aguanta el cut, dónde se cae y por qué.",
+            "note": "Útil cuando quieres el desglose completo, no solo una lista de ajustes.",
+            "comparison_note": "Muestra al líder y por qué métricas saca la diferencia.",
         },
     },
     "en": {
@@ -177,147 +177,69 @@ ANALYSIS_MODE_TEXTS: dict[str, dict[str, dict[str, str]]] = {
 
 
 METRIC_LABELS = {
-    "ru": {
-        "Ранний отклик": "Старт графика",
-        "Устойчивость отклика": "Как держится график",
-        "Плотность переходов": "Темп событий",
-        "Стабильность сигнала": "Резкие просадки",
-        "Плотность активации": "Средний уровень",
-        "Старт графика": "Старт графика",
-        "Как держится график": "Как держится график",
-        "Темп событий": "Темп событий",
-        "Резкие просадки": "Резкие просадки",
-        "Средний уровень": "Средний уровень",
-        "Первый кадр": "Хук",
-        "Интерес держится": "Удержание",
-        "Смена кадров": "Темп",
-        "Кадр без лишнего": "Чистота кадра",
-        "Сила картинки": "Сила визуала",
-        "Хук": "Хук",
-        "Удержание": "Удержание",
-        "Пейсинг": "Темп",
-        "Чистота кадра": "Чистота кадра",
-        "Сила визуала": "Сила визуала",
-    },
-    "en": {
-        "Ранний отклик": "Curve start",
-        "Устойчивость отклика": "How the curve holds",
-        "Плотность переходов": "Pace of new events",
-        "Стабильность сигнала": "Sharp drops",
-        "Плотность активации": "Average level",
-        "Старт графика": "Curve start",
-        "Как держится график": "How the curve holds",
-        "Темп событий": "Pace of new events",
-        "Резкие просадки": "Sharp drops",
-        "Средний уровень": "Average level",
-        "Первый кадр": "Hook",
-        "Интерес держится": "Retention",
-        "Смена кадров": "Pacing",
-        "Кадр без лишнего": "Visual Clarity",
-        "Сила картинки": "Visual Punch",
-        "Хук": "Hook",
-        "Удержание": "Retention",
-        "Пейсинг": "Pacing",
-        "Чистота кадра": "Visual Clarity",
-        "Сила визуала": "Visual Punch",
-        "Ранний отклик": "Curve start",
-        "Устойчивость отклика": "How the curve holds",
-        "Плотность переходов": "Pace of new events",
-        "Стабильность сигнала": "Sharp drops",
-        "Плотность активации": "Average level",
-        "Старт графика": "Curve start",
-        "Как держится график": "How the curve holds",
-        "Темп событий": "Pace of new events",
-        "Резкие просадки": "Sharp drops",
-        "Средний уровень": "Average level",
-        "Первый кадр": "Hook",
-        "Интерес держится": "Retention",
-        "Смена кадров": "Pacing",
-        "Кадр без лишнего": "Visual Clarity",
-        "Сила картинки": "Visual Punch",
-        "Хук": "Hook",
-        "Удержание": "Retention",
-        "Пейсинг": "Pacing",
-        "Чистота кадра": "Visual Clarity",
-        "Сила визуала": "Visual Punch",
+    "es": {
+        "Arranque de la curva": "Arranque de la curva",
+        "Cómo aguanta la curva": "Cómo aguanta la curva",
+        "Ritmo del cambio": "Ritmo del cambio",
+        "Bajones bruscos": "Bajones bruscos",
+        "Fuerza visual": "Fuerza visual",
         "Hook": "Hook",
         "Retention": "Retention",
         "Pacing": "Pacing",
-        "Visual Clarity": "Visual Clarity",
-        "Visual Punch": "Visual Punch",
+        "Visual clarity": "Visual clarity",
+        "Visual punch": "Visual punch",
+    },
+    "en": {
+        "Arranque de la curva": "Curve start",
+        "Cómo aguanta la curva": "How the curve holds",
+        "Ritmo del cambio": "Pace of new events",
+        "Bajones bruscos": "Sharp drops",
+        "Fuerza visual": "Average level",
+        "Hook": "Hook",
+        "Retention": "Retention",
+        "Pacing": "Pacing",
+        "Visual clarity": "Visual clarity",
+        "Visual punch": "Visual punch",
     },
 }
 
 
 LABEL_MAP_EN = {
-    "Лучший кусок": "Best section",
-    "Где сократить": "Where to cut",
-    "Где сменить кадр": "Where to change the shot",
-    "Где усилить начало": "Where to strengthen the hook",
-    "Где почистить кадр": "Where to clean up the frame",
-    "Где усилить картинку": "Where to punch up the visual",
-    "Где дать фразу раньше": "Where to bring the line earlier",
-    "Где убрать паузу": "Where to cut the pause",
-    "Оставить как есть": "Keep as is",
-    "Подрежь затянутый отрезок": "Trim the dragged section",
-    "Смени кадр раньше": "Change the shot earlier",
-    "Покажи главное раньше": "Show the main thing earlier",
-    "Убери лишнее из кадра": "Clean up the frame",
-    "Покажи товар крупнее": "Show the product larger",
-    "Скажи главное раньше": "Say the main point earlier",
-    "Убери длинную паузу": "Cut the long pause",
-    "Сделать первым": "Do first",
-    "Сделать потом": "Do next",
-    "Оставить": "Keep",
-    "Сильные стороны": "What is working",
-    "Слабые стороны": "What is weak",
-    "Следующий шаг": "Next step",
-    "Что уже хорошо": "What is working",
-    "Что мешает": "What is hurting",
-    "Подозрительный момент": "Weak spot",
-    "Речь": "Speech",
-    "Когда начинается речь": "Voice enters",
-    "Темп речи": "Delivery speed",
-    "Насколько плотно сказано": "Delivery density",
-    "Сколько пауз": "Pauses",
-    "Насколько хорошо разобралась речь": "Transcript confidence",
-    "Лучший участок": "Best section",
-    "Лучший кусок": "Best section",
-    "Пик сигнала": "Peak",
-    "Сильный момент": "Peak",
-    "Слабое окно": "Weak window",
-    "Слабое место": "Weak window",
-    "Самый резкий переход": "Sharpest transition",
-    "Резкая смена": "Sharpest transition",
-    "Где чинить первым": "Weak window",
-    "Где ускорить": "Where to change the shot",
-    "Где ускорить подачу": "Where to tighten delivery",
-    "Где сократить": "Where to cut",
-    "Сделать первым": "Do first",
-    "Сделать потом": "Do next",
-    "Проверить после правок": "Check after edits",
-    "Оставить": "Keep",
-    "Оставить как есть": "Keep as is",
-    "Сильные стороны": "What is working",
-    "Слабые стороны": "What is weak",
-    "Следующий шаг": "Next step",
-    "Что уже хорошо": "What is working",
-    "Что мешает": "What is hurting",
-    "Подозрительный момент": "Weak spot",
-    "Речь": "Speech",
-    "Когда начинается речь": "Voice enters",
-    "Темп речи": "Delivery speed",
-    "Насколько плотно сказано": "Delivery density",
-    "Сколько пауз": "Pauses",
-    "Сказать главное раньше": "Say the main point earlier",
-    "Подключить речь раньше": "Bring the speech in earlier",
-    "Сожми речь": "Tighten the speech",
-    "Подрежь затянутый отрезок": "Trim the dragged section",
-    "Смени кадр раньше": "Change the shot earlier",
-    "Покажи главное раньше": "Show the main thing earlier",
-    "Убери лишнее из кадра": "Clean up the frame",
-    "Покажи товар крупнее": "Show the product larger",
-    "Убери длинную паузу": "Cut the long pause",
+    # Focus-window labels (deep mode emits these via tribe_review.timeline).
+    "Tramo fuerte": "Strong section",
+    "Bache": "Where to fix first",
+    "Cambio brusco": "Where to speed up",
+    # Curve-alignment defaults (curve_alignment.py emits these).
+    "Dónde arreglar primero": "Where to fix first",
+    "Otro bache": "Another drop",
+    "Aquí se ve un bache claro en la curva.": "There is a clear dip here on the curve.",
+    "Aquí se ve otro bache claro en la curva.": "There is another clear dip on the curve here.",
+    "Tómalo de referencia para el resto.": "Use this section as the anchor.",
+    "Dejar": "Keep",
+    "Hacer primero": "Do first",
+    "Hacer después": "Do next",
+    # Action-item titles emitted by ollama_sanitize / ollama_concrete (the
+    # subset that lives outside ACTION_VARIANTS — those are auto-populated
+    # at the bottom of this module).
+    "Arreglar este tramo": "Fix this section",
+    "Dejar como está": "Keep as is",
+    "Revisar este tramo": "Check this section",
+    "Decir lo principal antes": "Say the key line earlier",
+    # Speech-side metric labels emitted by tribe_review.timeline /
+    # ollama_sanitize when simplified mode runs.
+    "Entrada de voz": "Voice entry",
+    "Palabras por segundo": "Words per second",
+    "Densidad del texto": "Speech density",
+    "Pausas largas": "Long pauses",
+    "Confianza del ASR": "ASR confidence",
+    # Drop-marker label emitted by curve_alignment seek targets.
+    "Momento sospechoso": "Weak spot",
+    # Common UI labels surfaced by the report renderers.
+    "Lo que jala": "What is working",
+    "Lo que no jala": "What is weak",
+    "Siguiente paso": "Next step",
+    "Lo que estorba": "What is hurting",
+    "Voz": "Speech",
 }
 
 
@@ -339,7 +261,7 @@ def localize_analysis_mode_options(language: str) -> list[dict[str, str]]:
             {
                 "key": profile.key,
                 "label": text.get("label", profile.label),
-                "short_label": profile.short_label if lang == "ru" else text.get("label", profile.short_label),
+                "short_label": text.get("short_label") or text.get("label", profile.short_label),
                 "description": text.get("description", profile.description),
             }
         )
@@ -394,7 +316,7 @@ def _iter_variants(report: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _apply_known_labels(report: dict[str, Any], language: str) -> None:
-    metric_map = METRIC_LABELS["en" if language == "en" else "ru"]
+    metric_map = METRIC_LABELS["en" if language == "en" else "es"]
 
     for metric in report.get("metrics", []):
         if isinstance(metric, dict):
@@ -1310,82 +1232,98 @@ def _fallback_action_timestamp(report: dict[str, Any]) -> str | None:
 # ---------------------------------------------------------------------------
 
 
-ACTION_VARIANTS_RU: dict[str, list[tuple[str, str]]] = {
+ACTION_VARIANTS_ES: dict[str, list[tuple[str, str]]] = {
     "early_response": [
-        ("Усиль первый кадр", "Поставь перед этой точкой кадр, где сразу видно главный объект, результат или конфликт."),
-        ("Начни с результата", "Покажи итог или самый понятный эффект раньше, а объяснение оставь после него."),
-        ("Убери долгий заход", "Если перед этой точкой есть вступление без нового смысла, сократи его до первого действия."),
-        ("Подними главный объект", "Сделай объект крупнее или ближе к центру уже в начале слабого окна."),
-        ("Дай обещание раньше", "Если ролик продает результат, покажи его пользу до просадки, а не после нее."),
-        ("Начни с действия", "Замени спокойный вход на кадр с движением, жестом или заметным изменением."),
-        ("Переставь сильный кадр", "Возьми ближайший сильный кадр после просадки и протестируй его раньше."),
-        ("Сократи пустой старт", "Убери кадры, где зритель еще не понимает, на что смотреть."),
-        ("Покажи контекст сразу", "Добавь короткую визуальную подсказку, чтобы смысл считывался до слабого места."),
-        ("Сделай вход резче", "Ускорь первые секунды: меньше паузы, крупнее объект, яснее действие."),
+        ("Refuerza el primer frame", "Mete antes de este punto un frame donde se vea de volada el objeto principal, el resultado o el conflicto."),
+        ("Empieza con el resultado", "Pon primero el outcome o el efecto más claro; la explicación va después."),
+        ("Tumba la entrada larga", "Si antes de este punto hay setup que no agrega significado nuevo, recórtalo hasta la primera acción."),
+        ("Sube el objeto principal", "Haz el objeto más grande o más al centro desde el arranque del bache."),
+        ("Promete antes", "Si el cut está vendiendo un resultado, muestra el beneficio antes del bache, no después."),
+        ("Arranca con acción", "Cambia la entrada tranquila por un frame con movimiento, gesto o cambio claro."),
+        ("Mueve un frame fuerte adelante", "Toma el frame fuerte más cercano después del bache y pruébalo más temprano."),
+        ("Recorta el arranque vacío", "Tumba los frames donde el espectador todavía no entiende qué está viendo."),
+        ("Muestra el contexto desde el inicio", "Mete una pista visual corta para que el mensaje aterrice antes del bache."),
+        ("Endurece la entrada", "Apura los primeros segundos: menos pausa, objeto más grande, acción más clara."),
     ],
     "sustain": [
-        ("Подрежь затянутый отрезок", "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию."),
-        ("Добавь новый поворот", "Перед этой точкой вставь новую деталь, движение или смену плана, чтобы ролик не провисал."),
-        ("Собери темп плотнее", "Сожми паузу и оставь только кадры, которые двигают сцену вперед."),
-        ("Обнови середину", "Добавь в этот участок новую информацию: реакцию, деталь, результат или изменение действия."),
-        ("Сократи повтор", "Если кадр повторяет уже понятную мысль, оставь только самый сильный кусок."),
-        ("Смени крупность", "Перед просадкой перейди на другой масштаб: крупный план, общий план или деталь."),
-        ("Дай маленький payoff", "Вставь быстрый мини-результат до того, как график начинает падать."),
-        ("Переставь событие ближе", "Если важное действие происходит позже, протестируй его на 1-2 секунды раньше."),
-        ("Убери нейтральный кадр", "Кадр без новой информации лучше заменить движением или реакцией."),
-        ("Разбей длинный план", "Раздели статичный участок короткой сменой ракурса или вставкой детали."),
+        ("Acorta el tramo arrastrado", "Tumba 1-2 segundos antes de este punto, o brinca más rápido al siguiente beat."),
+        ("Mete un giro nuevo", "Inserta un detalle, movimiento o cambio de shot antes de este punto para que el cut no se cuelgue."),
+        ("Aprieta el ritmo", "Quítale la pausa y deja solo los frames que mueven la escena hacia adelante."),
+        ("Refresca la mitad", "Mete información nueva aquí: una reacción, un detalle, un payoff o un cambio de acción."),
+        ("Tumba la repetición", "Si el frame repite un beat que el espectador ya entendió, deja solo la versión más fuerte."),
+        ("Cambia el encuadre", "Antes del bache pasa a otra escala: close-up, wide shot o un detalle."),
+        ("Suelta un mini-payoff", "Aterriza un mini-resultado rápido antes de que la curva empiece a caer."),
+        ("Mueve el beat antes", "Si la acción importante aterriza después, pruébala 1-2 segundos más temprano."),
+        ("Tumba el frame neutral", "Un frame sin info nueva se ve mejor como movimiento o reacción."),
+        ("Parte el shot largo", "Divide el tramo estático con un cambio de ángulo rápido o un detalle insertado."),
     ],
     "transition": [
-        ("Смени кадр раньше", "Смени план, ракурс или действие раньше, чтобы этот участок не тянулся."),
-        ("Добавь визуальный акцент", "Перед этой точкой добавь движение, жест, приближение или смену крупности."),
-        ("Убери зависший план", "Если кадр стоит без нового действия, сократи его до первого понятного движения."),
-        ("Вставь деталь", "Добавь короткий крупный план детали, чтобы зритель получил новый повод смотреть."),
-        ("Поменяй ракурс", "Оставь то же действие, но покажи его с другого угла до начала просадки."),
-        ("Добавь реакцию", "Если есть человек, животное или объект в действии, вставь реакцию или последствие."),
-        ("Ускорь монтаж", "Проверь более короткую длительность этого плана без изменения смысла сцены."),
-        ("Сделай переход заметнее", "Используй движение в кадре или совпадение действия, чтобы смена не выглядела случайной."),
-        ("Раздели однообразный кусок", "Внутри длинного фрагмента добавь вторую визуальную фазу: было - стало, до - после."),
-        ("Дай текстовую опору", "Если картинка похожа сама на себя, добавь короткую подпись с новым смыслом."),
+        ("Cambia el shot antes", "Cambia el ángulo, encuadre o acción más temprano para que este tramo no arrastre."),
+        ("Mete un acento visual", "Antes de este punto mete movimiento, gesto, push-in o cambio de escala."),
+        ("Tumba el shot detenido", "Si el frame se queda sin acción nueva, recórtalo hasta el primer movimiento claro."),
+        ("Mete un detalle", "Inserta un close-up corto de un detalle para darle al espectador un motivo nuevo de seguir viendo."),
+        ("Cambia el ángulo", "Mantén la misma acción pero muéstrala desde otro ángulo antes de que empiece el bache."),
+        ("Mete una reacción", "Si hay una persona, animal u objeto en movimiento, inserta una reacción o consecuencia."),
+        ("Apura el cut", "Prueba una toma más corta aquí sin cambiar lo que significa la escena."),
+        ("Haz visible el cambio", "Usa movimiento o un match-cut para que la transición no se sienta accidental."),
+        ("Parte el tramo uniforme", "Adentro de un fragmento largo mete una segunda fase visual: antes-después, ahora-luego."),
+        ("Mete un caption como ancla", "Si la imagen se parece a sí misma, mete un caption corto que introduzca un beat nuevo."),
     ],
     "stability": [
-        ("Убери лишнее из кадра", "Оставь один главный объект и убери лишние детали или текст рядом с ним."),
-        ("Сделай фокус понятнее", "Подсвети главный объект крупностью, положением в кадре или более чистым фоном."),
-        ("Разгрузи композицию", "Убери конкурирующие элементы, чтобы взгляд не распадался между несколькими деталями."),
-        ("Спрячь лишний текст", "Если рядом с главным объектом много слов, оставь одну короткую подпись или убери ее совсем."),
-        ("Укрупни главный объект", "Сделай важный объект больше, чтобы он не конкурировал с фоном."),
-        ("Очисти фон", "Проверь кадр без лишних предметов, бликов или деталей за главным действием."),
-        ("Сделай движение понятнее", "Если действие мелкое, покажи его крупнее или повтори в более читаемом ракурсе."),
-        ("Убери второй центр внимания", "Оставь один главный фокус, а второстепенный объект затемни, обрежь или вынеси позже."),
-        ("Стабилизируй кадр", "Если просадка рядом с тряской или резким сдвигом, протестируй более спокойный фрагмент."),
-        ("Отдели объект от фона", "Усиль разницу светом, цветом или рамкой, чтобы главное не сливалось."),
+        ("Limpia el frame", "Deja un objeto principal y tumba los detalles o textos extra a su alrededor."),
+        ("Endurece el foco", "Resalta el objeto principal con tamaño, posición o un fondo más limpio."),
+        ("Descongestiona la composición", "Tumba los elementos que compiten para que la mirada no se parta entre detalles."),
+        ("Esconde el texto extra", "Si hay muchas palabras cerca del objeto, deja un caption corto o tumba todo."),
+        ("Sube el tamaño del objeto", "Sube el objeto importante en escala para que no pelee con el fondo."),
+        ("Limpia el fondo", "Prueba el frame sin objetos extra, brillos o detalles detrás de la acción principal."),
+        ("Haz visible el movimiento", "Si la acción es chica, muéstrala más grande o repítela desde un ángulo más legible."),
+        ("Tumba el segundo foco", "Deja un solo foco principal; oscurece, recorta o mueve el secundario para después."),
+        ("Estabiliza el frame", "Si el bache coincide con un shake o un cut duro, prueba un fragmento más tranquilo."),
+        ("Separa objeto del fondo", "Sube el contraste con luz, color o un frame para que lo principal sobresalga."),
     ],
     "density": [
-        ("Подними средний уровень", "Усиль не один пик, а обычные кадры вокруг этой точки: крупнее объект, чище фон, заметнее действие."),
-        ("Покажи товар крупнее", "Сделай объект крупнее, усили движение в кадре или добавь контраст."),
-        ("Усиль визуальный удар", "Перед этой точкой добавь более яркий кадр, крупный план или заметное действие."),
-        ("Сделай кадр контрастнее", "Отдели главный объект от фона светом, цветом или более чистой композицией."),
-        ("Добавь движение", "Если кадр статичный, протестируй движение руки, камеры, объекта или смену положения."),
-        ("Покажи деталь ближе", "Вставь крупный план детали, на которую зритель должен обратить внимание."),
-        ("Убери серый кадр", "Замени нейтральный фрагмент на кадр с более явным действием или эмоцией."),
-        ("Сделай пользу видимой", "Если продукт или результат плохо читается, покажи его эффект прямо в кадре."),
-        ("Дай визуальный контраст", "Проверь светлый объект на темном фоне, цветовой акцент или более чистую композицию."),
-        ("Собери сильнее сцену", "Убери слабые промежуточные кадры и оставь те, где объект, действие и смысл видны сразу."),
+        ("Sube el nivel promedio", "Refuerza no solo el pico sino los frames de a diario alrededor de este punto: objeto más grande, fondo más limpio, acción más visible."),
+        ("Muestra el producto más grande", "Sube el objeto en escala, mete movimiento o sube el contraste."),
+        ("Endurece el visual punch", "Antes de este punto mete un frame más brillante, un close-up o una acción más fuerte."),
+        ("Sube el contraste", "Separa el objeto del fondo con luz, color o una composición más limpia."),
+        ("Mete movimiento", "Si el frame está estático, prueba movimiento de mano, cámara, objeto o un cambio de posición."),
+        ("Muestra el detalle más cerca", "Inserta un close-up del detalle que el espectador debe notar."),
+        ("Tumba el frame gris", "Cambia el fragmento neutral por uno con acción o emoción más clara."),
+        ("Muestra el beneficio", "Si el producto o resultado es difícil de leer, muestra su efecto dentro del frame."),
+        ("Mete contraste visual", "Prueba un objeto brillante en un fondo oscuro, un acento de color o una composición más limpia."),
+        ("Aprieta la escena", "Tumba los frames de relleno y deja solo aquellos donde objeto, acción y mensaje aterrizan al mismo tiempo."),
     ],
     "speech_start": [
-        ("Скажи главное раньше", "Если смысл держится на словах, подай главную фразу до этой точки и сократи немой заход."),
-        ("Перенеси фразу вперед", "Поставь ключевую реплику ближе к началу слабого участка."),
-        ("Начни с короткой фразы", "Добавь одну понятную реплику до просадки, без длинного объяснения."),
-        ("Убери немой заход", "Если первые секунды без слов не работают, сократи их или положи поверх ключевую мысль."),
-        ("Синхронизируй слово и кадр", "Пусть важная фраза звучит в тот момент, когда главный объект уже виден."),
+        ("Di lo principal antes", "Si el mensaje vive en las palabras, suelta la frase clave antes de este punto y recorta la entrada muda."),
+        ("Mueve la frase adelante", "Pon la frase clave más cerca del arranque del tramo flojo."),
+        ("Abre con una frase corta", "Mete una frase clara antes del bache, sin explicación larga."),
+        ("Tumba el opening mudo", "Si los primeros segundos sin palabras no jalan, recórtalos o monta encima la idea clave."),
+        ("Sincroniza palabra y frame", "Que la frase importante aterrice cuando el objeto principal ya esté visible."),
     ],
     "pause": [
-        ("Убери паузу", "Подрежь пустой промежуток или скажи фразу плотнее, чтобы участок не проседал."),
-        ("Сожми речь", "Сократи паузу между словами и оставь только нужную фразу."),
-        ("Подтяни подачу", "Сделай фразу короче и ближе к действию в кадре."),
-        ("Закрой пустое место", "Если паузу нельзя убрать, перекрой ее действием, реакцией или крупным планом."),
-        ("Разрежь длинную фразу", "Раздели речь на короткие куски и поставь каждый рядом с нужным кадром."),
+        ("Tumba la pausa", "Recorta el hueco vacío o mete la frase más apretada para que el tramo no se caiga."),
+        ("Aprieta el habla", "Comprime el espacio entre palabras y deja solo la frase que necesitas."),
+        ("Aprieta la entrega", "Haz la frase más corta y más cerca de la acción del frame."),
+        ("Tapa el aire muerto", "Si no puedes quitar la pausa, tápala con acción, una reacción o un close-up."),
+        ("Parte la frase larga", "Divide el habla en pedacitos y pega cada uno con el frame correcto."),
     ],
 }
+
+
+CURVE_FOCUS_WINDOW_LABELS_ES: tuple[str, ...] = (
+    "Tramo fuerte",
+    "Dónde arreglar primero",
+    "Otro bache",
+)
+CURVE_FOCUS_WINDOW_SUMMARIES_ES: tuple[str, ...] = (
+    "Tómalo de referencia para el resto.",
+    "Aquí se ve un bache claro en la curva.",
+    "Aquí se ve otro bache claro en la curva.",
+)
+CURVE_DROP_DEFAULT_REASON_ES = "Aquí se ve un bache claro en la curva."
+CURVE_PLAN_TITLE_KEEP_ES = "Dejar"
+CURVE_PLAN_TITLE_FIRST_ES = "Hacer primero"
+CURVE_PLAN_TITLE_NEXT_ES = "Hacer después"
 
 
 ACTION_VARIANTS_EN: dict[str, list[tuple[str, str]]] = {
@@ -1468,21 +1406,6 @@ ACTION_VARIANTS_EN: dict[str, list[tuple[str, str]]] = {
 
 # Curve-alignment defaults (used by tribe_review.curve_alignment when the
 # editorial layer doesn't override them).
-CURVE_FOCUS_WINDOW_LABELS_RU: tuple[str, ...] = (
-    "Лучший кусок",
-    "Где чинить первым",
-    "Еще одна просадка",
-)
-CURVE_FOCUS_WINDOW_SUMMARIES_RU: tuple[str, ...] = (
-    "Используй этот участок как ориентир.",
-    "На графике здесь виден заметный спад.",
-    "Здесь на графике есть еще один заметный спад.",
-)
-CURVE_DROP_DEFAULT_REASON_RU = "На графике здесь виден заметный спад."
-CURVE_PLAN_TITLE_KEEP_RU = "Оставить"
-CURVE_PLAN_TITLE_FIRST_RU = "Сделать первым"
-CURVE_PLAN_TITLE_NEXT_RU = "Сделать потом"
-
 CURVE_FOCUS_WINDOW_LABELS_EN: tuple[str, ...] = (
     "Best section",
     "Weak window",
@@ -1502,35 +1425,35 @@ CURVE_PLAN_TITLE_NEXT_EN = "Do next"
 def get_action_variants(language: str | None = None) -> dict[str, list[tuple[str, str]]]:
     """Return the action-variant catalogue for the given language.
 
-    Defaults to Russian (the engine's source-of-truth language). Pass
-    ``"en"`` for the parallel English catalogue.
+    Defaults to Spanish (Mexican coloquial — the engine's
+    source-of-truth language post Stage 3 / S1). Pass ``"en"`` for
+    the parallel English catalogue.
     """
 
     if (language or "").strip().lower() == "en":
         return ACTION_VARIANTS_EN
-    return ACTION_VARIANTS_RU
+    return ACTION_VARIANTS_ES
 
 
-# Make every Russian action-item title and instruction translatable via the
-# existing ``_apply_known_labels`` machinery. We extend ``LABEL_MAP_EN`` here
-# (rather than rewriting the dict literal hundreds of lines above) so the
-# pre-existing translations stay authoritative when there's a clash.
-for _ru_metric_key, _ru_pairs in ACTION_VARIANTS_RU.items():
-    _en_pairs = ACTION_VARIANTS_EN.get(_ru_metric_key, [])
-    for (_ru_title, _ru_instruction), (_en_title, _en_instruction) in zip(_ru_pairs, _en_pairs):
-        LABEL_MAP_EN.setdefault(_ru_title, _en_title)
-        LABEL_MAP_EN.setdefault(_ru_instruction, _en_instruction)
-del _ru_metric_key, _ru_pairs, _en_pairs, _ru_title, _ru_instruction, _en_title, _en_instruction
+# Make every Spanish action-item title and instruction translatable via
+# the existing ``_apply_known_labels`` machinery. Stage 3 / S1 dropped
+# the RU tables so this population block is now ES-keyed.
+for _es_metric_key, _es_pairs in ACTION_VARIANTS_ES.items():
+    _en_pairs = ACTION_VARIANTS_EN.get(_es_metric_key, [])
+    for (_es_title, _es_instruction), (_en_title, _en_instruction) in zip(_es_pairs, _en_pairs):
+        LABEL_MAP_EN.setdefault(_es_title, _en_title)
+        LABEL_MAP_EN.setdefault(_es_instruction, _en_instruction)
+del _es_metric_key, _es_pairs, _en_pairs, _es_title, _es_instruction, _en_title, _en_instruction
 
-for _ru_label, _en_label in zip(CURVE_FOCUS_WINDOW_LABELS_RU, CURVE_FOCUS_WINDOW_LABELS_EN):
-    LABEL_MAP_EN.setdefault(_ru_label, _en_label)
-for _ru_summary, _en_summary in zip(CURVE_FOCUS_WINDOW_SUMMARIES_RU, CURVE_FOCUS_WINDOW_SUMMARIES_EN):
-    LABEL_MAP_EN.setdefault(_ru_summary, _en_summary)
-LABEL_MAP_EN.setdefault(CURVE_DROP_DEFAULT_REASON_RU, CURVE_DROP_DEFAULT_REASON_EN)
-LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_KEEP_RU, CURVE_PLAN_TITLE_KEEP_EN)
-LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_FIRST_RU, CURVE_PLAN_TITLE_FIRST_EN)
-LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_NEXT_RU, CURVE_PLAN_TITLE_NEXT_EN)
-del _ru_label, _en_label, _ru_summary, _en_summary
+for _es_label, _en_label in zip(CURVE_FOCUS_WINDOW_LABELS_ES, CURVE_FOCUS_WINDOW_LABELS_EN):
+    LABEL_MAP_EN.setdefault(_es_label, _en_label)
+for _es_summary, _en_summary in zip(CURVE_FOCUS_WINDOW_SUMMARIES_ES, CURVE_FOCUS_WINDOW_SUMMARIES_EN):
+    LABEL_MAP_EN.setdefault(_es_summary, _en_summary)
+LABEL_MAP_EN.setdefault(CURVE_DROP_DEFAULT_REASON_ES, CURVE_DROP_DEFAULT_REASON_EN)
+LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_KEEP_ES, CURVE_PLAN_TITLE_KEEP_EN)
+LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_FIRST_ES, CURVE_PLAN_TITLE_FIRST_EN)
+LABEL_MAP_EN.setdefault(CURVE_PLAN_TITLE_NEXT_ES, CURVE_PLAN_TITLE_NEXT_EN)
+del _es_label, _en_label, _es_summary, _en_summary
 
 
 # ============================================================================
@@ -1550,31 +1473,31 @@ del _ru_label, _en_label, _ru_summary, _en_summary
 # ============================================================================
 
 
-METRIC_SUMMARY_LIBRARY_RU: dict[str, dict[str, str]] = {
+METRIC_SUMMARY_LIBRARY_ES: dict[str, dict[str, str]] = {
     "early_response": {
-        "high": "Ролик быстро набирает высокий уровень: главное видно рано и без долгого захода.",
-        "mid": "Старт рабочий, но главное можно показать раньше или крупнее.",
-        "low": "Начало набирает уровень поздно: зритель не сразу понимает, за что держаться.",
+        "high": "Desde el primer shot ya está claro qué ver: el objeto principal o la acción se notan de volada.",
+        "mid": "El arranque está bien, pero el objeto principal o la acción se podría mostrar antes y más grande.",
+        "low": "Los primeros segundos están flojos: lo principal aparece muy tarde o no se ve claro de entrada.",
     },
     "sustain": {
-        "high": "После старта линия держится ровно: в ролике регулярно появляется новый повод смотреть дальше.",
-        "mid": "Линия держится не везде: часть отрезков можно сжать или оживить.",
-        "low": "После сильных мест график быстро проседает: ролику не хватает новых событий по ходу просмотра.",
+        "high": "A lo largo del cut hay frames o acciones nuevas, así que el interés no se cae.",
+        "mid": "El interés no aguanta parejo: hay tramos donde no pasa nada nuevo por mucho tiempo.",
+        "low": "Hay tramos sin acción nueva o sin imagen nueva, así que el cut se quiere saltar.",
     },
     "transition": {
-        "high": "Новые события появляются вовремя: кадр не застывает надолго.",
-        "mid": "Темп в целом рабочий, но отдельные планы можно менять раньше.",
-        "low": "Новых событий мало или они поздно появляются, поэтому некоторые участки начинают тянуться.",
+        "high": "Los shots cambian a tiempo: ningún plano se queda más de lo necesario.",
+        "mid": "El cambio de shots está, pero a veces un plano se queda un poco más de lo que debería.",
+        "low": "Los shots cambian muy tarde: un mismo plano se atora y el cut empieza a arrastrar.",
     },
     "stability": {
-        "high": "Резких провалов немного: зрителю легче непрерывно следить за главным.",
-        "mid": "Есть заметные перепады: часть кадров слабее соседних и требует проверки.",
-        "low": "Просадки резкие: рядом с сильными моментами есть участки, которые быстро теряют уровень.",
+        "high": "El frame se lee fácil: un objeto principal o una acción jalan la atención de volada.",
+        "mid": "A veces el frame trae demasiado de un jalón: varios objetos, texto chico o un fondo cargado.",
+        "low": "Hay demasiado en el frame: fondo, texto y detalles pelean entre ellos y se pierde lo principal.",
     },
     "density": {
-        "high": "Средний уровень высокий: не только отдельные пики, но и большая часть ролика выглядит сильной.",
-        "mid": "Средний уровень нормальный, но лучшие места заметно сильнее остальных.",
-        "low": "Средний уровень низкий: ролик держится на отдельных удачных моментах, а не на всей конструкции.",
+        "high": "La imagen está fuerte: el objeto se ve bien, el movimiento se lee, el contraste aguanta.",
+        "mid": "La imagen está bien, pero a veces el objeto sale chico, hay poco movimiento o falta contraste.",
+        "low": "La imagen está floja: poco tamaño, poco movimiento o poco contraste para jalar el ojo.",
     },
 }
 
@@ -1619,31 +1542,31 @@ SPEECH_BAND_RULES: dict[str, dict[str, Any]] = {
 }
 
 
-SPEECH_SUMMARY_LIBRARY_RU: dict[str, dict[str, str]] = {
+SPEECH_SUMMARY_LIBRARY_ES: dict[str, dict[str, str]] = {
     "speech_start": {
-        "high": "Речь включается почти сразу. Текстовая опора приходит рано.",
-        "mid": "Речь стартует не мгновенно, но ещё в ранней фазе ролика.",
-        "low": "Речь приходит поздно. До этого ролик держится в основном на визуале и звуке без слов.",
+        "high": "La voz entra casi de volada — la pista de texto llega temprano.",
+        "mid": "La voz arranca un beat después, pero todavía en la parte temprana del cut.",
+        "low": "La voz entra tarde — antes de eso el cut se aguanta solo en imagen y audio.",
     },
     "speech_pace": {
-        "high": "Речь подаётся плотно относительно длины ролика.",
-        "mid": "Темп речи умеренный, без сильной перегрузки текстом.",
-        "low": "Речевой слой редкий: слов мало относительно общей длины ролика.",
+        "high": "La entrega está densa para lo que dura el cut.",
+        "mid": "El ritmo de entrega está moderado, sin saturar el cut con texto.",
+        "low": "La capa de voz está dispersa: pocas palabras para lo que dura el cut.",
     },
     "articulation": {
-        "high": "Фразы произносятся плотно, без длинных растяжек внутри самой речи.",
-        "mid": "Артикуляция выглядит обычной по плотности.",
-        "low": "Речь звучит растянуто или очень разреженно внутри речевых отрезков.",
+        "high": "Las frases entran apretadas, sin estiramientos largos dentro del habla.",
+        "mid": "La densidad de la articulación se ve normal.",
+        "low": "El habla se siente estirada o muy dispersa dentro de los tramos hablados.",
     },
     "pause_ratio": {
-        "high": "Длинных пауз мало. Речевой поток собранный.",
-        "mid": "Паузы есть, но они пока не доминируют в длительности ролика.",
-        "low": "Доля длинных пауз высокая. Между фразами много пустого воздуха.",
+        "high": "Pocas pausas largas; el flujo de la voz se mantiene apretado.",
+        "mid": "Hay pausas, pero todavía no dominan lo que dura el cut.",
+        "low": "El porcentaje de pausas largas está alto — entre frases hay mucho aire.",
     },
     "confidence": {
-        "high": "ASR уверенно распознаёт речь. Аудиодорожка читается чисто.",
-        "mid": "Речь в целом читается, но местами качество дорожки ограничивает уверенность распознавания.",
-        "low": "Уверенность низкая: стоит проверить шум, громкость голоса и разборчивость дикции.",
+        "high": "El ASR reconoce voz con confianza. La pista de audio se lee limpia.",
+        "mid": "La voz se lee en general, pero a veces la calidad del audio limita la confianza.",
+        "low": "La confianza está baja: revisa ruido, volumen y dicción.",
     },
 }
 
@@ -1713,21 +1636,22 @@ def _speech_band(metric_key: str, value: float) -> str:
     return "low"
 
 
-def metric_band_summary(metric_key: str, score: int, language: str = "ru") -> str:
-    """Banded summary for a TRIBE metric. ``language`` is ``"ru"`` (default) or
-    ``"en"``. Unknown languages fall back to RU."""
-    if (language or "").strip().lower() == "en":
-        library = METRIC_SUMMARY_LIBRARY_EN
-    else:
-        library = METRIC_SUMMARY_LIBRARY_RU
+def metric_band_summary(metric_key: str, score: int, language: str = "es") -> str:
+    """Banded summary for a TRIBE metric. ``language`` is ``"es"`` (default,
+    Mexican coloquial) or ``"en"``. Unknown languages fall back to ES.
+
+    Stage 3 / S1 dropped the RU table entirely.
+    """
+    library = METRIC_SUMMARY_LIBRARY_EN if (language or "").strip().lower() == "en" else METRIC_SUMMARY_LIBRARY_ES
     return library.get(metric_key, {}).get(_score_band(score), "")
 
 
-def speech_metric_summary(metric_key: str, value: float, language: str = "ru") -> str:
+def speech_metric_summary(metric_key: str, value: float, language: str = "es") -> str:
     """Banded summary for a speech-side metric (see ``SPEECH_BAND_RULES`` for
-    the per-metric thresholds). ``language`` is ``"ru"`` (default) or ``"en"``."""
-    if (language or "").strip().lower() == "en":
-        library = SPEECH_SUMMARY_LIBRARY_EN
-    else:
-        library = SPEECH_SUMMARY_LIBRARY_RU
+    the per-metric thresholds). ``language`` is ``"es"`` (default, Mexican
+    coloquial) or ``"en"``. Unknown languages fall back to ES.
+
+    Stage 3 / S1 dropped the RU table entirely.
+    """
+    library = SPEECH_SUMMARY_LIBRARY_EN if (language or "").strip().lower() == "en" else SPEECH_SUMMARY_LIBRARY_ES
     return library.get(metric_key, {}).get(_speech_band(metric_key, value), "")
