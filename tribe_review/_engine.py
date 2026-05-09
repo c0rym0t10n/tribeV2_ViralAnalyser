@@ -75,7 +75,7 @@ def generate_review(
     speech_error: str | None = None,
     analysis_mode: str | None = None,
     variant_name: str | None = None,
-    language: str = "ru",
+    language: str = "es",
 ) -> dict[str, Any]:
     profile = get_analysis_mode_profile(analysis_mode)
     preds = np.asarray(run.preds)

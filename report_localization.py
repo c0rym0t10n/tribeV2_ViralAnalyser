@@ -261,7 +261,7 @@ def localize_analysis_mode_options(language: str) -> list[dict[str, str]]:
             {
                 "key": profile.key,
                 "label": text.get("label", profile.label),
-                "short_label": profile.short_label if lang == "ru" else text.get("label", profile.short_label),
+                "short_label": text.get("short_label") or text.get("label", profile.short_label),
                 "description": text.get("description", profile.description),
             }
         )
@@ -316,7 +316,7 @@ def _iter_variants(report: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _apply_known_labels(report: dict[str, Any], language: str) -> None:
-    metric_map = METRIC_LABELS["en" if language == "en" else "ru"]
+    metric_map = METRIC_LABELS["en" if language == "en" else "es"]
 
     for metric in report.get("metrics", []):
         if isinstance(metric, dict):

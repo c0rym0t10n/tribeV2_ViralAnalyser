@@ -47,7 +47,7 @@ def _build_speech_layer(
     speech: SpeechRunResult | None,
     speech_error: str | None,
     profile: AnalysisModeProfile,
-    language: str = "ru",
+    language: str = "es",
 ) -> dict[str, Any]:
     if speech_error:
         return {

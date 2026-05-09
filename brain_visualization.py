@@ -242,9 +242,9 @@ def _load_mesh_bundle(mesh_level: str) -> dict[str, Any]:
                 "id": int(item["id"]),
                 "key": item["key"],
                 "color": item["color"],
-                "label_ru": item["label_ru"],
+                "label_es": item["label_es"],
                 "label_en": item["label_en"],
-                "description_ru": item["description_ru"],
+                "description_es": item["description_es"],
                 "description_en": item["description_en"],
             }
             for item in REGION_DEFINITIONS
