@@ -21,7 +21,7 @@ VENV_PYTHON="$VENV_DIR/bin/python"
 REQUIREMENTS_FILE="$APP_DIR/requirements.txt"
 BOOTSTRAP_SCRIPT="$APP_DIR/bootstrap_models.py"
 BOOTSTRAP_READY_FILE="$APP_DIR/.bootstrap/models-ready.json"
-HOST_ADDRESS="127.0.0.1"
+HOST_ADDRESS="${TRIBE_HOST:-127.0.0.1}"
 PREFERRED_PORT="${TRIBE_PORT:-8000}"
 
 stop_with_message() {
