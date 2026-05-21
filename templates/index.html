@@ -1715,19 +1715,19 @@
         </div>
         <div class="hero-aside">
           <div class="hero-panel">
-            <span class="chip hero-kicker">{{ "Read the curve" if language == "en" else "Смотри на кривую" }}</span>
-            <strong>{{ "See where attention grows, holds, and falls off." if language == "en" else "Сразу видно, где ролик набирает, держит и теряет сигнал." }}</strong>
-            <p>{{ "The timeline is the main control surface: hover, compare dips, and inspect nearby shots." if language == "en" else "График — главный ориентир: смотри на провалы, сравнивай их с сильными участками и проверяй соседние кадры." }}</p>
+            <span class="chip hero-kicker">{{ ui.hero_curve_title }}</span>
+            <strong>{{ ui.hero_curve_desc }}</strong>
+            <p>{{ ui.hero_curve_note }}</p>
           </div>
           <div class="hero-panel">
-            <span class="chip hero-kicker">{{ "Understand the frame" if language == "en" else "Понимай кадр" }}</span>
-            <strong>{{ "The brain map turns the model into a visual explanation." if language == "en" else "Карта мозга показывает, что именно сейчас считывает модель." }}</strong>
-            <p>{{ "Large zones stay visible, while the moving bars show which systems matter more in the current moment." if language == "en" else "Все крупные зоны остаются на экране, а полоски ниже показывают, какая система важнее в текущую секунду." }}</p>
+            <span class="chip hero-kicker">{{ ui.hero_brain_title }}</span>
+            <strong>{{ ui.hero_brain_desc }}</strong>
+            <p>{{ ui.hero_brain_note }}</p>
           </div>
           <div class="hero-panel">
-            <span class="chip hero-kicker">{{ "Act on the cut" if language == "en" else "Действуй по монтажу" }}</span>
-            <strong>{{ "Use the practical layer to decide what to trim, move, or reinforce." if language == "en" else "Практический слой сразу переводит сигнал в понятные монтажные шаги." }}</strong>
-            <p>{{ "Recommendations are editing hints, not magic. Compare versions, move faster, and test changes against the curve." if language == "en" else "Советы — это не магия, а подсказки для тестов. Сравнивай версии, ускоряй вход и проверяй правки по графику." }}</p>
+            <span class="chip hero-kicker">{{ ui.hero_action_title }}</span>
+            <strong>{{ ui.hero_action_desc }}</strong>
+            <p>{{ ui.hero_action_note }}</p>
           </div>
         </div>
       </div>
@@ -1739,17 +1739,17 @@
       <form class="card upload-card" action="/review" method="post" enctype="multipart/form-data" data-analysis-form>
         <div class="section-head">
           <div>
-            <h2>{{ "New run" if language == "en" else ui.new_run }}</h2>
-            <p class="muted upload-lead">{{ "Upload one video for a single review or 2-4 videos to compare versions. The app processes them one by one." if language == "en" else "Загрузи один ролик для обычного разбора или 2-4 ролика для сравнения версий. Приложение обработает их по очереди." }}</p>
+            <h2>{{ ui.new_run }}</h2>
+            <p class="muted upload-lead">{{ ui.upload_explainer }}</p>
           </div>
           <div class="meta-row upload-meta">
-            <span class="pill">{{ "1 video = deep review" if language == "en" else "1 ролик = глубокий разбор" }}</span>
-            <span class="pill">{{ "2–4 videos = comparison" if language == "en" else "2–4 ролика = сравнение" }}</span>
-            <span class="pill">{{ "processed safely in sequence" if language == "en" else "безопасная обработка по очереди" }}</span>
-            <div class="pill mode-toggle" role="radiogroup" aria-label="{{ 'Analysis mode' if language == 'en' else 'Режим анализа' }}" data-analysis-toggle>
+            <span class="pill">{{ ui.upload_chip_single }}</span>
+            <span class="pill">{{ ui.upload_chip_compare }}</span>
+            <span class="pill">{{ ui.upload_chip_safe }}</span>
+            <div class="pill mode-toggle" role="radiogroup" aria-label="{{ ui.analysis_mode }}" data-analysis-toggle>
               <input type="hidden" name="analysis_mode" value="deep" data-analysis-input>
-              <button type="button" class="mode-toggle-pill is-active" data-mode="deep" role="radio" aria-checked="true">{{ "Deep" if language == "en" else "Глубокий" }}</button>
-              <button type="button" class="mode-toggle-pill" data-mode="simplified" role="radio" aria-checked="false">{{ "Simplified" if language == "en" else "Упрощённый" }}</button>
+              <button type="button" class="mode-toggle-pill is-active" data-mode="deep" role="radio" aria-checked="true">{{ ui.mode_toggle_deep }}</button>
+              <button type="button" class="mode-toggle-pill" data-mode="simplified" role="radio" aria-checked="false">{{ ui.mode_toggle_simplified }}</button>
             </div>
           </div>
         </div>
@@ -1764,14 +1764,14 @@
             </div>
           </div>
           <div class="upload-actions">
-            <button type="submit" data-submit-button data-busy-label="{{ 'Running analysis' if language == 'en' else 'Идёт анализ' }}">{{ ui.run_analysis }}</button>
+            <button type="submit" data-submit-button data-busy-label="{{ ui.running_analysis }}">{{ ui.run_analysis }}</button>
           </div>
-          <p class="action-note">{{ "Large files are processed one by one so the app stays stable and predictable." if language == "en" else "Тяжёлые файлы идут по очереди, чтобы приложение оставалось стабильным и не перегружало систему." }}</p>
+          <p class="action-note">{{ ui.running_note }}</p>
         </div>
         <div class="submit-progress" data-submit-progress aria-live="polite">
           <div class="submit-progress-head">
-            <span>{{ "Running TRIBE analysis..." if language == "en" else "Запускаю анализ TRIBE..." }}</span>
-            <span>{{ "This can take a while" if language == "en" else "Это может занять время" }}</span>
+            <span>{{ ui.running_status }}</span>
+            <span>{{ ui.running_wait }}</span>
           </div>
           <div class="submit-progress-track"><span class="submit-progress-line"></span></div>
         </div>
@@ -1789,10 +1789,10 @@
         <div class="result-top">
           <div>
             <div class="pill-row result-pills">
-              <p class="chip">Report {{ result.report_id }} В· {{ result.created_at }}</p>
-              <span class="pill">{{ "Compare mode" if result.mode == "compare" and language == "en" else "Режим сравнения" if result.mode == "compare" else "Single review" if language == "en" else "Один ролик" }}</span>
+              <p class="chip">Report {{ result.report_id }} · {{ result.created_at }}</p>
+              <span class="pill">{{ ui.compare_mode if result.mode == "compare" else ui.single_review }}</span>
               {% if result.mode == "compare" %}
-              <span class="pill">{{ result.variants | length }} {{ "versions" if language == "en" else "версии" }}</span>
+              <span class="pill">{{ result.variants | length }} {{ ui.versions_suffix }}</span>
               {% else %}
               <span class="pill">{{ result.video.duration_seconds }} {{ ui.seconds }}</span>
               {% endif %}
@@ -1808,17 +1808,17 @@
           {% endif %}
         </div>
 
-        <div class="banner">{{ "The model shows where the video seems to affect the viewer more or less strongly. It is based on an average viewer model, not one real person. Treat each timestamp as an approximate editing zone and inspect the nearby window around it." if language == "en" else "Модель показывает, где ролик действует сильнее, а где слабее. Это усреднённая модель зрителя, а не реакция одного конкретного человека. Используйте таймкод как примерную зону проверки и смотрите ближайшее окно вокруг него." }}</div>
+        <div class="banner">{{ ui.model_disclaimer }}</div>
         <div class="pill-row quick-nav">
           {% if result.mode == "compare" %}
-          <a class="pill nav-pill" href="#workspace-{{ result.report_id }}">{{ "Workspace" if language == "en" else "Рабочая зона" }}</a>
-          <a class="pill nav-pill" href="#summary-{{ result.report_id }}">{{ "Summary" if language == "en" else "Итог" }}</a>
+          <a class="pill nav-pill" href="#workspace-{{ result.report_id }}">{{ ui.workspace_tab }}</a>
+          <a class="pill nav-pill" href="#summary-{{ result.report_id }}">{{ ui.summary_tab }}</a>
           {% else %}
-          <a class="pill nav-pill" href="#workspace-{{ result.variant_key }}">{{ "Workspace" if language == "en" else "Рабочая зона" }}</a>
+          <a class="pill nav-pill" href="#workspace-{{ result.variant_key }}">{{ ui.workspace_tab }}</a>
           {% if editorial and editorial.action_items %}
-          <a class="pill nav-pill" href="#actions-{{ result.variant_key }}">{{ "Actions" if language == "en" else "Что делать" }}</a>
+          <a class="pill nav-pill" href="#actions-{{ result.variant_key }}">{{ ui.actions_tab }}</a>
           {% endif %}
-          <a class="pill nav-pill" href="#details-{{ result.variant_key }}">{{ "Details" if language == "en" else "Детали" }}</a>
+          <a class="pill nav-pill" href="#details-{{ result.variant_key }}">{{ ui.details_tab }}</a>
           {% endif %}
         </div>
 
@@ -1835,12 +1835,12 @@
 
         <div class="section" id="workspace-{{ result.report_id }}">
           <div class="workspace-meta">
-            <p>{{ "Keep the overlay graph in view and compare the strongest and weakest cuts side by side." if language == "en" else "Держи график в поле зрения и сравнивай сильные и слабые варианты рядом." }}</p>
+            <p>{{ ui.compare_overlay_note }}</p>
           </div>
           <div class="compare-workspace workspace-shell">
             {% set compare_palette = ["#e2d27d", "#d9b184", "#9fc4a3", "#c69ab8", "#95a4d3"] %}
             <div class="timeline-card" data-timeline-mode="compare">
-              <h3>{{ "Overlaid predicted response" if language == "en" else "Наложение графиков ответа" }}</h3>
+              <h3>{{ ui.compare_overlay_title }}</h3>
               <div class="timeline-wrap">
                 <svg class="timeline-svg" viewBox="0 0 860 210" preserveAspectRatio="none">
                   <defs>
@@ -1891,14 +1891,14 @@
 
                 <div class="compare-brain-tile">
                   <div class="compare-tile-head">
-                    <span class="compare-tile-title">{{ "Brain map" if language == "en" else "Карта мозга" }}</span>
+                    <span class="compare-tile-title">{{ ui.brain_map_label }}</span>
                     <span>{{ ui.max }}: {{ variant.timeline.max_score }}</span>
                   </div>
                   {% if variant.brain_simulation and variant.brain_simulation.available %}
                   {% set brain_region_panel = variant.brain_simulation.region_panel if variant.brain_simulation.region_panel else {
-                    "title_ru": "Зоны мозга в анализе видео",
+                    "title_es": "Zonas del cerebro en el análisis del video",
                     "title_en": "Brain zones used in the video analysis",
-                    "hint_ru": "Показаны все крупные зоны коры, которые модель использует при просмотре ролика. Полоски показывают, какая зона активнее в текущий момент.",
+                    "hint_es": "Se muestran todas las zonas grandes de la corteza que el modelo usa al ver el video. Las barras indican qué zona está más activa en el momento actual.",
                     "hint_en": "All major brain zones used by the model during the video are shown. The bars indicate which zone is more active at the current moment."
                   } %}
                   <div
@@ -1918,17 +1918,17 @@
         </div>
 
         <div class="section compare-ranking" id="summary-{{ result.report_id }}">
-          <h3>{{ "Comparison summary" if language == "en" else "Итог сравнения" }}</h3>
+          <h3>{{ ui.compare_summary }}</h3>
           <div class="summary-grid">
             {% for item in result.ranking %}
             <div class="summary-card">
               <div class="chip">#{{ item.rank }} · {{ item.name }}</div>
               <div class="big-number">{{ item.overall_score }}</div>
-              <p class="muted" style="margin-top: 4px; font-size: 12px;">{{ "comparison score" if language == "en" else "score сравнения" }}</p>
+              <p class="muted" style="margin-top: 4px; font-size: 12px;">{{ ui.compare_score_label }}</p>
               {% if item.comparison_signal_avg %}
               <p class="muted" style="margin-top: 8px; font-size: 12px; line-height: 1.24;">
-                {{ "graph avg" if language == "en" else "среднее графика" }}: {{ item.comparison_signal_avg }} ·
-                {{ "start" if language == "en" else "начало" }}: {{ item.comparison_early_avg }}
+                {{ ui.compare_graph_avg }}: {{ item.comparison_signal_avg }} ·
+                {{ ui.compare_start }}: {{ item.comparison_early_avg }}
               </p>
               {% endif %}
               <p class="muted">{{ item.summary }}</p>
@@ -1994,29 +1994,29 @@
 
         <div class="section" id="workspace-{{ result.variant_key }}">
           {% set brain_region_panel = result.brain_simulation.region_panel if result.brain_simulation and result.brain_simulation.region_panel else {
-            "title_ru": "Зоны мозга в анализе видео",
+            "title_es": "Zonas del cerebro en el análisis del video",
             "title_en": "Brain zones used in the video analysis",
-            "hint_ru": "Показаны все крупные зоны коры, которые модель использует при просмотре ролика. Полоски показывают, какая зона активнее в текущий момент.",
+            "hint_es": "Se muestran todas las zonas grandes de la corteza que el modelo usa al ver el video. Las barras indican qué zona está más activa en el momento actual.",
             "hint_en": "All major brain zones used by the model during the video are shown. The bars indicate which zone is more active at the current moment."
           } %}
           <div class="workspace-meta">
-            <p>{{ "The cleanest workflow is: keep the video on the left, read the curve and brain map in the center, then use the zone bars on the right as a live explanation layer." if language == "en" else "Самый удобный порядок такой: видео слева, график и карта мозга в центре, а полоски зон справа как живой пояснительный слой." }}</p>
+            <p>{{ ui.workflow_note }}</p>
             {% if not pdf_mode and result.brain_simulation and result.brain_simulation.available %}
-            <span class="pill">{{ "Fixed workspace layout for stable reading" if language == "en" else "Фиксированная раскладка для стабильного чтения" }}</span>
+            <span class="pill">{{ ui.workflow_layout_note }}</span>
             {% endif %}
           </div>
           <div class="player-layout single-analysis-layout{% if not pdf_mode and result.brain_simulation and result.brain_simulation.available %} has-region-column{% endif %} workspace-shell">
             {% if not pdf_mode %}
             <div class="player-card workspace-panel">
-              <h3>{{ "Video" if language == "en" else "Видео" }}</h3>
+              <h3>{{ ui.video_label }}</h3>
               <video id="video-{{ result.variant_key }}" src="{{ result.media_url }}" controls preload="metadata"></video>
             </div>
             {% endif %}
             <div class="signal-column workspace-panel workspace-stack">
               <div class="timeline-card" data-timeline-mode="single">
-                <h3>{{ "Predicted response over time" if language == "en" else "Предсказанный ответ по времени" }}</h3>
-                <p class="muted" style="margin-top: 8px;">{{ "Hover to inspect the timestamp. Click the curve to move the player." if language == "en" else "Наведи, чтобы посмотреть время. Клик по кривой перемещает плеер." }}</p>
-              <div class="timeline-wrap" data-video-id="video-{{ result.variant_key }}" data-timeline-points='{{ result.timeline.points | tojson | safe }}' data-tooltip-label="{{ 'Level' if language == 'en' else 'Уровень' }}">
+                <h3>{{ ui.predicted_response_title }}</h3>
+                <p class="muted" style="margin-top: 8px;">{{ ui.timeline_hint }}</p>
+              <div class="timeline-wrap" data-video-id="video-{{ result.variant_key }}" data-timeline-points='{{ result.timeline.points | tojson | safe }}' data-tooltip-label="{{ ui.timeline_level }}">
                 <svg class="timeline-svg" viewBox="0 0 860 210" preserveAspectRatio="none">
                   <defs>
                     <marker id="single-axis-arrow" markerWidth="8" markerHeight="8" refX="6.6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
@@ -2035,7 +2035,7 @@
                   <div class="timeline-hover"></div>
                   <div class="timeline-cursor"></div>
                   <div class="timeline-playhead"></div>
-                <div class="timeline-tooltip"><strong>00:00</strong><span>{{ "Level" if language == "en" else "Уровень" }}: 0</span></div>
+                <div class="timeline-tooltip"><strong>00:00</strong><span>{{ ui.timeline_level }}: 0</span></div>
                 </div>
                 {% set video_duration = result.video.duration_seconds|float %}
                 <div class="timeline-axis">
@@ -2054,9 +2054,9 @@
 
               {% if not pdf_mode %}
               <div class="brain-card">
-                <h3>{{ "Predicted brain map" if language == "en" else "Предсказанная карта активности" }}</h3>
+                <h3>{{ ui.predicted_brain_title }}</h3>
                 {% if result.brain_simulation and result.brain_simulation.available %}
-                <p class="muted" style="margin-top: 8px; line-height: 1.2;">{{ "Large brain zones are tinted by area, and bright hotspots show where the current moment reads stronger." if language == "en" else "Крупные зоны коры окрашены по областям, а яркие пятна показывают, где текущий момент действует сильнее." }}</p>
+                <p class="muted" style="margin-top: 8px; line-height: 1.2;">{{ ui.predicted_brain_note }}</p>
                 <div class="pill-row" style="margin-top: 12px;">
                   <span class="pill brain-status" data-brain-label-for="video-{{ result.variant_key }}" data-status-prefix="{{ ui.brain_status }}">{{ ui.brain_status }}: {{ result.brain_simulation.frames[0].timestamp }}</span>
                   <span class="pill">{{ ui.frames }}: {{ result.brain_simulation.frame_count }}</span>
@@ -2110,7 +2110,7 @@
         <div class="section" id="actions-{{ result.variant_key }}">
           <h3>{{ ui.what_to_do }}</h3>
           <div class="banner" style="margin-top: 14px;">
-            {{ "The recommendations below are general editing hints. The main thing to watch is the \"Predicted response over time\" curve: look at the dips, compare what happens there with stronger moments, experiment with edits, and run comparative tests to find the best version." if language == "en" else "Ниже приведены общие рекомендации. Главное, на что стоит обращать внимание, — график «Предсказанный ответ по времени»: смотрите на провалы, сравнивайте эти места с участками, где значения выше, экспериментируйте с правками и проводите сравнительные тесты, чтобы найти лучший вариант." }}
+            {{ ui.recommendations_note }}
           </div>
           <div class="triptych">
             {% for item in editorial.action_items %}
@@ -2180,27 +2180,27 @@
         {% endif %}
 
         <div class="section">
-          <h3>{{ "Prediction details" if language == "en" else "Детали разбора" }}</h3>
+          <h3>{{ ui.prediction_details_title }}</h3>
           <div class="summary-grid">
             <div class="summary-card">
-              <div class="chip">{{ "Duration" if language == "en" else "Длительность" }}</div>
+              <div class="chip">{{ ui.prediction_duration }}</div>
               <div class="big-number">{{ result.video.duration_seconds }}</div>
-              <p class="muted">{{ "seconds" if language == "en" else "секунд" }}</p>
+              <p class="muted">{{ ui.prediction_seconds_unit }}</p>
             </div>
             <div class="summary-card">
-              <div class="chip">{{ "Video size" if language == "en" else "Размер видео" }}</div>
+              <div class="chip">{{ ui.prediction_video_size }}</div>
               <div class="score-badge">{{ result.video.resolution }}</div>
-              <p class="muted">{{ result.video.fps }} {{ "frames per second" if language == "en" else "кадров в секунду" }}</p>
+              <p class="muted">{{ result.video.fps }} {{ ui.prediction_fps_unit }}</p>
             </div>
             <div class="summary-card">
-              <div class="chip">{{ "Parts in analysis" if language == "en" else "Сколько частей взято в разбор" }}</div>
+              <div class="chip">{{ ui.prediction_parts }}</div>
               <div class="big-number">{{ result.predictions.events_count }}</div>
-              <p class="muted">{{ "This is how many pieces the model used to build the read." if language == "en" else "Столько частей модель использовала, чтобы собрать разбор." }}</p>
+              <p class="muted">{{ ui.prediction_parts_note }}</p>
             </div>
             <div class="summary-card">
-              <div class="chip">{{ "Strongest moment on the graph" if language == "en" else "Где график сильнее всего" }}</div>
+              <div class="chip">{{ ui.prediction_strongest }}</div>
               <div class="score-badge">{{ result.predictions.peak_time }}</div>
-              <p class="muted">{{ "Here the curve rises higher than anywhere else in this video." if language == "en" else "Здесь кривая поднимается выше всего в этом ролике." }}</p>
+              <p class="muted">{{ ui.prediction_strongest_note }}</p>
             </div>
           </div>
         </div>
@@ -2212,13 +2212,13 @@
     {% if not pdf_mode %}
     <div class="sources-footer">
       <div class="sources-footer-copy">
-        <h3>{{ "Official model sources" if language == "en" else "Официальные источники модели" }}</h3>
-        <p>{{ "Materials published by the model authors and the official TRIBE v2 release page." if language == "en" else "Материалы от авторов модели и официальная страница релиза TRIBE v2." }}</p>
+        <h3>{{ ui.sources_title }}</h3>
+        <p>{{ ui.sources_desc }}</p>
         <p class="sources-footer-note">This is a non-commercial community share. We do not claim ownership of the model, brand assets, or source materials, and we do not plan to sell this project or any related rights.</p>
       </div>
       <div class="sources-footer-actions">
-        <a class="button-link secondary" href="https://ai.meta.com/research/publications/a-foundation-model-of-vision-audition-and-language-for-in-silico-neuroscience/" target="_blank" rel="noopener">{{ "Meta AI publication" if language == "en" else "Публикация Meta AI" }}</a>
-        <a class="button-link secondary" href="https://huggingface.co/facebook/tribev2" target="_blank" rel="noopener">{{ "TRIBE v2 model page" if language == "en" else "Страница TRIBE v2" }}</a>
+        <a class="button-link secondary" href="https://ai.meta.com/research/publications/a-foundation-model-of-vision-audition-and-language-for-in-silico-neuroscience/" target="_blank" rel="noopener">{{ ui.sources_meta_link }}</a>
+        <a class="button-link secondary" href="https://huggingface.co/facebook/tribev2" target="_blank" rel="noopener">{{ ui.sources_tribe_link }}</a>
       </div>
     </div>
     {% endif %}
@@ -2230,13 +2230,13 @@
     (() => {
       const chooseFilesLabel = {{ ui.choose_files|tojson }};
       const noFilesSelectedLabel = {{ ui.no_files_selected|tojson }};
-    const responseLabel = {{ ("Level" if language == "en" else "Уровень")|tojson }};
-      const brainLoadError = {{ ("3D engine did not load. Refresh the page and try again." if language == "en" else "3D-движок не загрузился. Обнови страницу и попробуй ещё раз.")|tojson }};
-      const brainWebglError = {{ ("WebGL is unavailable in this browser, so the 3D brain view cannot render." if language == "en" else "В этом браузере нет WebGL, поэтому 3D-вид мозга не может отрисоваться.")|tojson }};
-      const brainRegionPrimary = {{ ("more active now" if language == "en" else "заметна сильнее")|tojson }};
-      const brainRegionSecondary = {{ ("active now" if language == "en" else "заметна сейчас")|tojson }};
-      const brainRegionLow = {{ ("low activity" if language == "en" else "низкая активность")|tojson }};
-      const brainRegionUnavailable = {{ ("The model does not highlight one large brain zone strongly enough in this moment." if language == "en" else "В этот момент модель не выделяет одну крупную зону достаточно явно.")|tojson }};
+    const responseLabel = {{ ui.timeline_level|tojson }};
+      const brainLoadError = {{ ui.brain_3d_load_error|tojson }};
+      const brainWebglError = {{ ui.brain_3d_no_webgl|tojson }};
+      const brainRegionPrimary = {{ ui.brain_zone_higher|tojson }};
+      const brainRegionSecondary = {{ ui.brain_zone_active|tojson }};
+      const brainRegionLow = {{ ui.brain_zone_low|tojson }};
+      const brainRegionUnavailable = {{ ui.brain_zone_none|tojson }};
       const timelinePalette = ["#e2d27d", "#d9b184", "#9fc4a3", "#c69ab8", "#95a4d3"];
 
       function hexToRgb(hex) {
@@ -2497,7 +2497,7 @@
         const tooltip = wrap.querySelector(".timeline-tooltip");
         const tooltipTime = tooltip.querySelector("strong");
         const tooltipSignal = tooltip.querySelector("span");
-        const tooltipLabel = (wrap.dataset.tooltipLabel || responseLabel).includes("Р") ? responseLabel : (wrap.dataset.tooltipLabel || responseLabel);
+        const tooltipLabel = wrap.dataset.tooltipLabel || responseLabel;
         const video = document.getElementById(wrap.dataset.videoId);
         let rafId = 0;
 
