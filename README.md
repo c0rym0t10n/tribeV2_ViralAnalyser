@@ -161,6 +161,8 @@ All variables are optional unless noted otherwise.
 | `TRIBE_CHROME_PATH` | auto-detect | Override path to a Chromium-based browser used for HTML→PDF rendering. The app probes Chrome / Edge / Chromium in standard install locations on Windows, macOS, and Linux. If none are found the PDF endpoint falls back to the matplotlib renderer (response includes header `X-PDF-Renderer: matplotlib`). |
 | `TRIBE_UVX_PATH` | auto-detect | Path to the `uvx` executable used by the official TRIBE transcript helper (WhisperX). Falls back to `shutil.which("uvx")` then to `~/.local/bin/uvx`, `/usr/local/bin/uvx`, `/opt/homebrew/bin/uvx`. |
 | `TRIBE_ENABLE_TEXT_EVENTS` | `false` | Set to `true`/`1`/`yes` to enable the official TRIBE Word-event encoder. Requires gated access to `meta-llama/Llama-3.2-3B` on Hugging Face plus ~10 GB additional disk for the encoder weights. Off by default for clean installs. |
+| `TRIBE_HOST` | `127.0.0.1` | Network interface uvicorn binds to. Set to `0.0.0.0` to accept connections from other devices on the same LAN or via a VPN like Tailscale. Leaving the default keeps the app reachable only from the same machine. |
+| `TRIBE_PORT` | `8000` | Preferred port uvicorn listens on. Falls back to 8001-8010 if the preferred port is busy. |
 
 ## Requirements
 

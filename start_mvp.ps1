@@ -7,8 +7,16 @@ $venvPython = Join-Path $appDir ".venv\Scripts\python.exe"
 $requirementsFile = Join-Path $appDir "requirements.txt"
 $bootstrapScript = Join-Path $appDir "bootstrap_models.py"
 $bootstrapReadyFile = Join-Path $appDir ".bootstrap\models-ready.json"
-$hostAddress = "127.0.0.1"
-$preferredPort = 8000
+if ([string]::IsNullOrWhiteSpace($env:TRIBE_HOST)) {
+    $hostAddress = "127.0.0.1"
+} else {
+    $hostAddress = $env:TRIBE_HOST.Trim()
+}
+if ([string]::IsNullOrWhiteSpace($env:TRIBE_PORT)) {
+    $preferredPort = 8000
+} else {
+    $preferredPort = [int]$env:TRIBE_PORT.Trim()
+}
 $fallbackPorts = 8001..8010
 $cudaTorchIndexUrl = "https://download.pytorch.org/whl/cu126"
 $torchVersion = "2.6.0"
