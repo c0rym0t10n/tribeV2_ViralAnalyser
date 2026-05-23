@@ -1,27 +1,15 @@
 """Strict-fallback copy builders for the simplified-review flow.
 
-Lifted out of :mod:`ollama_runtime` in Stage-2 / G4. When the local Ollama
-server is unreachable (or returns no parseable structured reply), the runtime
-calls :func:`_build_strict_simple_copy` to assemble a deterministic Russian
-review from a hand-written copy library + the metric scores already on the
-review dict. Functions in this module:
+Lifted out of :mod:`ollama_runtime` in Stage-2 / G4 and translated to
+Spanish (Mexican coloquial) in Stage-3 / S2. When the local Ollama server
+is unreachable (or returns no parseable structured reply), the runtime
+calls :func:`_build_strict_simple_copy` to assemble a deterministic ES
+review from a hand-written copy library + the metric scores already on
+the review dict.
 
-* :func:`_build_strict_simple_copy` — the entry point ``ollama_runtime`` calls.
-  Walks the review and rewrites ``action_items``, ``focus_windows``,
-  ``strengths``, ``weaknesses``, the executive / product / verdict header,
-  the overview banner, and the recommendation plan.
-* ``_action_library`` and ``_action_variant`` — the per-metric-key Russian
-  copy tables that drive the focus-window relabelling and the action-item
-  titles. Parallel to ``_native_action_library_en`` /
-  ``_native_action_variant_en`` in :mod:`report_localization` (a future PR
-  could consolidate the two translation halves into a single
-  ``ACTION_LIBRARY_{RU,EN}`` pair living next to the rest of the localised
-  copy; out of scope for G4).
-* ``_compact_instruction`` and ``_format_seconds_for_copy`` — small text
-  utilities used by the builders.
-
-The ``_compact_instruction`` helper imports ``_clean_sentence`` from
-:mod:`ollama_sanitize` (the post-LLM sanitiser already owns that helper).
+The action library + variant tables stay parallel to ``ACTION_VARIANTS_ES``
+in :mod:`report_localization`; consolidating both halves into a single
+table is a follow-up cleanup, out of scope for S2.
 """
 
 from __future__ import annotations
@@ -29,6 +17,13 @@ from __future__ import annotations
 from typing import Any
 
 from ollama_sanitize import _clean_sentence
+
+
+# Canonical "keep" action title used as a sentinel by the plan / weakness
+# builders to filter the no-edit row out of the action-item list. The LLM
+# also outputs this title verbatim when it decides the strongest section
+# does not need an edit, so we keep one source of truth.
+KEEP_AS_IS_TITLE = "Dejar como está"
 
 
 def _build_strict_simple_copy(review: dict[str, Any]) -> None:
@@ -70,53 +65,53 @@ def _ordered_metrics(review: dict[str, Any]) -> list[dict[str, Any]]:
 def _action_library(metric_key: str) -> dict[str, str]:
     library = {
         "early_response": {
-            "title": "Покажи главное раньше",
-            "instruction": "Покажи главное с первого кадра, убери длинный заход и скажи главную фразу раньше.",
-            "keep": "Оставь этот старт как ориентир. Здесь уже быстро понятно, что происходит.",
-            "focus_label": "Где усилить начало",
-            "focus_summary": "Покажи главное раньше и убери длинный заход.",
+            "title": "Muestra lo principal antes",
+            "instruction": "Muestra lo principal desde el primer shot, tumba el setup largo y mete la frase clave antes.",
+            "keep": "Deja este arranque como referencia. Aquí ya se entiende de volada qué está pasando.",
+            "focus_label": "Dónde reforzar el arranque",
+            "focus_summary": "Muestra lo principal antes y tumba el setup largo.",
         },
         "sustain": {
-            "title": "Подрежь затянутый отрезок",
-            "instruction": "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию.",
-            "keep": "Оставь этот кусок как ориентир. Здесь темп уже держится.",
-            "focus_label": "Где сократить",
-            "focus_summary": "Подрежь затянутый отрезок или раньше переведи ролик к следующему действию.",
+            "title": "Acorta el tramo arrastrado",
+            "instruction": "Tumba 1-2 segundos antes de este punto o brinca más rápido al siguiente beat.",
+            "keep": "Deja este tramo como referencia. Aquí el ritmo ya jala.",
+            "focus_label": "Dónde acortar",
+            "focus_summary": "Acorta el tramo arrastrado o brinca más rápido al siguiente beat.",
         },
         "transition": {
-            "title": "Смени кадр раньше",
-            "instruction": "Смени план, ракурс или действие раньше, чтобы этот участок не тянулся.",
-            "keep": "Оставь здесь текущий темп как ориентир. Этот кусок уже не тянется.",
-            "focus_label": "Где ускорить",
-            "focus_summary": "Здесь лучше раньше сменить план или добавить новый визуальный акцент.",
+            "title": "Cambia el shot antes",
+            "instruction": "Cambia el plano, ángulo o acción más temprano para que este tramo no arrastre.",
+            "keep": "Deja el ritmo actual como referencia. Aquí el tramo ya no arrastra.",
+            "focus_label": "Dónde apurar",
+            "focus_summary": "Aquí conviene cambiar el plano antes o meter un acento visual nuevo.",
         },
         "stability": {
-            "title": "Сделай главное заметнее",
-            "instruction": "Сделай главное заметнее: крупнее объект, чище фон или меньше конкурирующих деталей.",
-            "keep": "Оставь этот кусок как ориентир. Здесь главное читается лучше.",
-            "focus_label": "Где сделать главное заметнее",
-            "focus_summary": "Здесь лучше сильнее выделить главное и убрать лишние детали.",
+            "title": "Haz lo principal más visible",
+            "instruction": "Haz lo principal más visible: objeto más grande, fondo más limpio o menos detalles que compiten.",
+            "keep": "Deja este tramo como referencia. Aquí lo principal se lee mejor.",
+            "focus_label": "Dónde resaltar lo principal",
+            "focus_summary": "Aquí conviene resaltar más lo principal y tumbar los detalles extra.",
         },
         "density": {
-            "title": "Покажи товар крупнее",
-            "instruction": "Покажи объект крупнее, добавь движение в кадре или усили контраст.",
-            "keep": "Оставь здесь текущую крупность и контраст. Этот кусок выглядит сильнее остальных.",
-            "focus_label": "Где усилить картинку",
-            "focus_summary": "Покажи объект крупнее или добавь более заметное действие.",
+            "title": "Muestra el producto más grande",
+            "instruction": "Muestra el objeto más grande, mete movimiento en el frame o sube el contraste.",
+            "keep": "Deja la escala y el contraste actuales. Este tramo se ve más fuerte que el resto.",
+            "focus_label": "Dónde reforzar la imagen",
+            "focus_summary": "Muestra el objeto más grande o mete una acción más visible.",
         },
         "speech_start": {
-            "title": "Скажи главное раньше",
-            "instruction": "Скажи главную фразу до этой точки или сократи немой заход.",
+            "title": "Di lo principal antes",
+            "instruction": "Mete la frase clave antes de este punto o tumba la entrada muda.",
             "keep": "",
-            "focus_label": "Где дать фразу раньше",
-            "focus_summary": "Скажи главную фразу раньше и сократи немой заход.",
+            "focus_label": "Dónde meter la frase antes",
+            "focus_summary": "Mete la frase clave antes y tumba la entrada muda.",
         },
         "pause": {
-            "title": "Ускорь затянутый кусок",
-            "instruction": "Сократи затянутый кусок и убери пустой промежуток.",
+            "title": "Apura el tramo arrastrado",
+            "instruction": "Acorta el tramo arrastrado y tumba el hueco vacío.",
             "keep": "",
-            "focus_label": "Где ускорить подачу",
-            "focus_summary": "Здесь лучше убрать пустой промежуток и ускорить подачу.",
+            "focus_label": "Dónde apretar la entrega",
+            "focus_summary": "Aquí conviene tumbar el hueco vacío y apretar la entrega.",
         },
     }
     return library.get(metric_key, library["sustain"])
@@ -201,37 +196,37 @@ def _build_concrete_action_items(review: dict[str, Any], metrics: list[dict[str,
 def _action_variant(metric_key: str, variant_index: int) -> dict[str, str]:
     variants = {
         "early_response": [
-            {"title": "Покажи главное раньше", "instruction": "Перенеси главный кадр или оффер ближе к этой точке. Убери длинный заход перед ним."},
-            {"title": "Начни с результата", "instruction": "Поставь перед этой точкой кадр, где сразу понятно, что получит зритель."},
-            {"title": "Убери подводку", "instruction": "Если перед этим местом есть вступление, вырежи его и начни ближе к действию."},
+            {"title": "Muestra lo principal antes", "instruction": "Jala el frame principal o el oferta más cerca de este punto. Tumba el setup largo de adelante."},
+            {"title": "Empieza con el resultado", "instruction": "Pon antes de este punto un frame donde se vea de volada qué se va a llevar el espectador."},
+            {"title": "Tumba el setup", "instruction": "Si antes de este lugar hay introducción, recórtala y arranca más cerca de la acción."},
         ],
         "sustain": [
-            {"title": "Подрежь затянутый отрезок", "instruction": "Убери 1-2 секунды перед этой точкой или быстрее переведи ролик к следующему действию."},
-            {"title": "Добавь новый поворот", "instruction": "Перед этой точкой вставь новую деталь, движение или смену плана, чтобы ролик не провисал."},
-            {"title": "Собери темп плотнее", "instruction": "Сожми паузу и оставь только кадры, которые двигают сцену вперед."},
+            {"title": "Acorta el tramo arrastrado", "instruction": "Tumba 1-2 segundos antes de este punto o brinca más rápido al siguiente beat."},
+            {"title": "Mete un giro nuevo", "instruction": "Antes de este punto inserta un detalle nuevo, movimiento o cambio de plano para que el cut no se cuelgue."},
+            {"title": "Aprieta el ritmo", "instruction": "Quítale la pausa y deja solo los frames que mueven la escena hacia adelante."},
         ],
         "transition": [
-            {"title": "Смени кадр раньше", "instruction": "Смени план, ракурс или действие раньше, чтобы этот участок не тянулся."},
-            {"title": "Добавь визуальный акцент", "instruction": "Перед этой точкой добавь движение, жест, приближение или смену крупности."},
-            {"title": "Убери зависший план", "instruction": "Если кадр стоит без нового действия, сократи его до первого понятного движения."},
+            {"title": "Cambia el shot antes", "instruction": "Cambia el plano, ángulo o acción más temprano para que este tramo no arrastre."},
+            {"title": "Mete un acento visual", "instruction": "Antes de este punto mete movimiento, gesto, push-in o cambio de escala."},
+            {"title": "Tumba el shot detenido", "instruction": "Si el frame se queda sin acción nueva, recórtalo hasta el primer movimiento claro."},
         ],
         "stability": [
-            {"title": "Убери лишнее из кадра", "instruction": "Оставь один главный объект и убери лишние детали или текст рядом с ним."},
-            {"title": "Сделай фокус понятнее", "instruction": "Подсвети главный объект крупностью, положением в кадре или более чистым фоном."},
-            {"title": "Разгрузи композицию", "instruction": "Убери конкурирующие элементы, чтобы взгляд не распадался между несколькими деталями."},
+            {"title": "Limpia el frame", "instruction": "Deja un objeto principal y tumba los detalles o textos extra a su alrededor."},
+            {"title": "Endurece el foco", "instruction": "Resalta el objeto principal con tamaño, posición o un fondo más limpio."},
+            {"title": "Descongestiona la composición", "instruction": "Tumba los elementos que compiten para que la mirada no se parta entre detalles."},
         ],
         "density": [
-            {"title": "Покажи товар крупнее", "instruction": "Сделай объект крупнее, усили движение в кадре или добавь контраст."},
-            {"title": "Усиль визуальный удар", "instruction": "Перед этой точкой добавь более яркий кадр, крупный план или заметное действие."},
-            {"title": "Сделай кадр контрастнее", "instruction": "Отдели главный объект от фона светом, цветом или более чистой композицией."},
+            {"title": "Muestra el producto más grande", "instruction": "Sube el objeto en escala, mete movimiento en el frame o sube el contraste."},
+            {"title": "Endurece el visual punch", "instruction": "Antes de este punto mete un frame más brillante, un close-up o una acción más fuerte."},
+            {"title": "Sube el contraste", "instruction": "Separa el objeto principal del fondo con luz, color o una composición más limpia."},
         ],
         "speech_start": [
-            {"title": "Скажи главное раньше", "instruction": "Подай главную фразу до этой точки и сократи немой заход."},
-            {"title": "Перенеси фразу вперед", "instruction": "Поставь ключевую реплику ближе к началу слабого участка."},
+            {"title": "Di lo principal antes", "instruction": "Mete la frase clave antes de este punto y tumba la entrada muda."},
+            {"title": "Mueve la frase adelante", "instruction": "Pon la frase clave más cerca del arranque del tramo flojo."},
         ],
         "pause": [
-            {"title": "Убери паузу", "instruction": "Подрежь пустой промежуток или скажи фразу плотнее, чтобы участок не проседал."},
-            {"title": "Сожми речь", "instruction": "Сократи паузу между словами и оставь только нужную фразу."},
+            {"title": "Tumba la pausa", "instruction": "Recorta el hueco vacío o mete la frase más apretada para que el tramo no se caiga."},
+            {"title": "Aprieta el habla", "instruction": "Comprime el espacio entre palabras y deja solo la frase que necesitas."},
         ],
     }
     options = variants.get(metric_key)
@@ -259,8 +254,8 @@ def _rewrite_focus_windows(review: dict[str, Any], metrics: list[dict[str, Any]]
     weakest = metrics[-1]["key"] if metrics else "sustain"
 
     if len(windows) >= 1 and isinstance(windows[0], dict):
-        windows[0]["label"] = "Лучший кусок"
-        windows[0]["summary"] = _action_library(strongest)["keep"] or "Оставь этот кусок как ориентир."
+        windows[0]["label"] = "Tramo fuerte"
+        windows[0]["summary"] = _action_library(strongest)["keep"] or "Deja este tramo como referencia."
     if len(windows) >= 2 and isinstance(windows[1], dict):
         weak_action = _action_library(weakest)
         windows[1]["label"] = weak_action["focus_label"]
@@ -275,18 +270,18 @@ def _build_concrete_plan(review: dict[str, Any]) -> list[dict[str, str]]:
     actions = review.get("action_items")
     if not isinstance(actions, list):
         return []
-    keep_item = next((item for item in actions if isinstance(item, dict) and item.get("title") == "Оставить как есть"), None)
+    keep_item = next((item for item in actions if isinstance(item, dict) and item.get("title") == KEEP_AS_IS_TITLE), None)
     edit_items = [
         item
         for item in actions
-        if isinstance(item, dict) and item.get("title") != "Оставить как есть"
+        if isinstance(item, dict) and item.get("title") != KEEP_AS_IS_TITLE
     ]
 
     plan: list[dict[str, str]] = []
     if keep_item:
         plan.append(
             {
-                "title": "Оставить",
+                "title": "Dejar",
                 "detail": f"{keep_item['timestamp']}: {_compact_instruction(str(keep_item.get('instruction') or ''))}",
             }
         )
@@ -294,7 +289,7 @@ def _build_concrete_plan(review: dict[str, Any]) -> list[dict[str, str]]:
         first = edit_items[0]
         plan.append(
             {
-                "title": "Сделать первым",
+                "title": "Hacer primero",
                 "detail": f"{first['timestamp']}: {_compact_instruction(str(first.get('instruction') or ''))}",
             }
         )
@@ -302,7 +297,7 @@ def _build_concrete_plan(review: dict[str, Any]) -> list[dict[str, str]]:
         second = edit_items[1]
         plan.append(
             {
-                "title": "Сделать потом",
+                "title": "Hacer después",
                 "detail": f"{second['timestamp']}: {_compact_instruction(str(second.get('instruction') or ''))}",
             }
         )
@@ -315,14 +310,14 @@ def _build_concrete_strengths(review: dict[str, Any], metrics: list[dict[str, An
     items: list[str] = []
     if best_window and best_window.get("timestamp"):
         items.append(
-            f"{best_window['timestamp']}: {_action_library(strongest)['keep'] or 'Оставь этот кусок как ориентир.'}"
+            f"{best_window['timestamp']}: {_action_library(strongest)['keep'] or 'Deja este tramo como referencia.'}"
         )
     if strongest == "early_response":
-        items.append("Сохрани быстрый заход в начале. Не растягивай вступление новыми вставками.")
+        items.append("Conserva el arranque rápido. No estires la entrada con inserts nuevos.")
     elif strongest == "transition":
-        items.append("Сохрани текущий темп смены кадров в сильных местах. Он уже помогает ролику не тянуться.")
+        items.append("Conserva el ritmo actual de cambio de shots en los tramos fuertes. Ya ayuda a que el cut no arrastre.")
     else:
-        items.append("Сильные места не перегружай новыми правками. Ориентируйся на их темп и подачу.")
+        items.append("No le metas ajustes nuevos a los tramos fuertes. Tómalos de referencia para ritmo y entrega.")
     return items[:2]
 
 
@@ -333,7 +328,7 @@ def _build_concrete_weaknesses(review: dict[str, Any]) -> list[str]:
     edit_items = [
         item
         for item in actions
-        if isinstance(item, dict) and item.get("title") != "Оставить как есть"
+        if isinstance(item, dict) and item.get("title") != KEEP_AS_IS_TITLE
     ]
     items = [
         f"{item['timestamp']}: {_compact_instruction(str(item.get('instruction') or ''))}"
@@ -350,15 +345,15 @@ def _build_concrete_header(review: dict[str, Any]) -> tuple[str, str, str]:
     if not isinstance(actions, list):
         return (
             _overall_status(score),
-            "Ниже отмечены слабые места ролика и простые решения, что именно поменять.",
-            "Смотри ниже отмеченные места и правь ролик по одному куску за раз.",
+            "Abajo van marcados los baches del cut y soluciones simples — qué exactamente cambiar.",
+            "Mira los puntos marcados abajo y edita el cut un tramo a la vez.",
         )
 
-    keep_item = next((item for item in actions if isinstance(item, dict) and item.get("title") == "Оставить как есть"), None)
+    keep_item = next((item for item in actions if isinstance(item, dict) and item.get("title") == KEEP_AS_IS_TITLE), None)
     edit_items = [
         item
         for item in actions
-        if isinstance(item, dict) and item.get("title") != "Оставить как есть"
+        if isinstance(item, dict) and item.get("title") != KEEP_AS_IS_TITLE
     ]
     verdict = _overall_status(score)
     executive_summary = _simple_overview_text(metric_scores, len(edit_items))
@@ -382,10 +377,10 @@ def _metric_scores(review: dict[str, Any]) -> dict[str, int]:
 
 def _overall_status(score: int) -> str:
     if score >= 75:
-        return "Ролик сильный."
+        return "El cut está fuerte."
     if score >= 60:
-        return "Ролик нормальный, но нужны правки."
-    return "Ролик слабый."
+        return "El cut está bien, pero le faltan ajustes."
+    return "El cut está flojo."
 
 
 def _simple_overview_text(metric_scores: dict[str, int], edit_count: int) -> str:
@@ -396,41 +391,41 @@ def _simple_overview_text(metric_scores: dict[str, int], edit_count: int) -> str
     density = metric_scores.get("density", 0)
 
     if early >= 75:
-        start_phrase = "В начале ролик смотрится уверенно"
+        start_phrase = "El arranque se siente firme"
     elif early >= 60:
-        start_phrase = "В начале ролик выглядит нормально"
+        start_phrase = "El arranque está normal"
     else:
-        start_phrase = "В начале ролик слабый"
+        start_phrase = "El arranque está flojo"
 
     if sustain < 60:
-        middle_phrase = "потом темп проседает"
+        middle_phrase = "después el ritmo se cae"
     elif transition < 60:
-        middle_phrase = "потом кадры меняются поздно"
+        middle_phrase = "después los shots cambian tarde"
     elif stability < 60:
-        middle_phrase = "местами в кадре слишком много лишнего"
+        middle_phrase = "a veces el frame trae demasiado de un jalón"
     elif density < 60:
-        middle_phrase = "местами картинка выглядит слабо"
+        middle_phrase = "a veces la imagen se ve floja"
     else:
-        middle_phrase = "дальше ролик держится ровно"
+        middle_phrase = "después el cut se mantiene parejo"
 
-    tail = " Проблемные места отмечены ниже, и рядом уже есть простые решения." if edit_count else " Ниже можно посмотреть отмеченные места ролика."
-    return f"{start_phrase}, но {middle_phrase}.{tail}"
+    tail = " Los baches están marcados abajo y al lado ya hay soluciones simples." if edit_count else " Abajo puedes ver los puntos marcados del cut."
+    return f"{start_phrase}, pero {middle_phrase}.{tail}"
 
 
 def _simple_banner_text(metric_scores: dict[str, int], has_keep_item: bool, edit_count: int) -> str:
     parts: list[str] = []
     if has_keep_item:
-        parts.append("Сильные места лучше не ломать")
+        parts.append("no le muevas a los tramos fuertes")
     if metric_scores.get("transition", 0) < 60:
-        parts.append("слабые места чаще всего лечатся более ранней сменой кадра")
+        parts.append("los baches casi siempre se arreglan cambiando el shot antes")
     elif metric_scores.get("stability", 0) < 60:
-        parts.append("слабые места чаще всего лечатся более чистым кадром")
+        parts.append("los baches casi siempre se arreglan limpiando el frame")
     elif metric_scores.get("density", 0) < 60:
-        parts.append("слабые места чаще всего лечатся более сильной картинкой")
+        parts.append("los baches casi siempre se arreglan con una imagen más fuerte")
     else:
-        parts.append("слабые места отмечены ниже")
+        parts.append("los baches están marcados abajo")
     if edit_count:
-        parts.append("ниже уже есть конкретные рекомендации, что менять")
+        parts.append("abajo ya hay recomendaciones concretas de qué cambiar")
     return ". ".join(part[:1].upper() + part[1:] for part in parts) + "."
 
 

@@ -95,19 +95,22 @@ def simplify_review_copy(review: dict[str, Any]) -> dict[str, Any]:
         {
             "role": "system",
             "content": (
-                "You write the final simplified Russian review directly from structured output of a video-analysis model. "
+                "You write the final simplified Spanish review (Mexican coloquial register) directly from structured output of a video-analysis model. "
+                "Write in tu-imperativo, not usted. Use short sentences (8-12 words max). Keep a TikTok-creator tone — punchy, not academic. "
+                "Keep these TikTok terms in English without translating: hook, cut, shot, frame, beat, payoff, caption, B-roll, opening, CTA, retention, drop-off. "
+                "Translate everything else into Spanish. Use 'video' without an accent. "
+                "Use 'está' (state) for edit quality, not 'es' (inherent property): 'el cut está flojo', not 'el cut es flojo'. "
                 "Do not paraphrase stock templates. Base every verdict and recommendation only on the provided metrics, timings, weak spots, and speech data. "
-                "Give concrete editing advice. Use short sentences. Keep timestamps. "
-                "Do not use jargon or research language. Do not use the words TRIBE, signal, local drop, "
-                "turbulence, payoff, plot, ending, final, virality, artifact. "
-                "Do not explain why. There must be no field or phrase named 'Почему'. "
+                "Give concrete editing advice. Keep timestamps. "
+                "Do not use jargon or research language. Do not use the words TRIBE, signal, local drop, turbulence, plot, ending, final, virality, artifact. "
+                "Do not explain why. There must be no field or phrase named 'Why', 'Por qué', or 'Почему'. "
                 "Do not assume the video has a story. Avoid advice about endings or plot twists. "
                 "Every recommendation must say what exactly to edit. "
                 "If the data is mixed, say that it is mixed. Do not call every weak score a bad video. "
                 "Different videos must not receive the same wording unless the data is genuinely similar. "
-                "Bad: 'проверь кадр', 'улучши удержание внимания', 'не трогай ровность ролика'. "
-                "Good: 'подрежь затянутый отрезок', 'смени кадр раньше', 'убери лишний текст из кадра', "
-                "'покажи товар крупнее', 'скажи главную фразу раньше', 'убери паузу'. "
+                "Bad: 'revisa el frame', 'mejora la retención', 'no le muevas a la parejidad'. "
+                "Good: 'acorta el tramo arrastrado', 'cambia el shot antes', 'tumba el caption extra del frame', "
+                "'muestra el objeto más grande', 'di la frase clave antes', 'tumba la pausa'. "
                 "Do not recommend edits in the first 3 seconds or in the last 5 seconds of the video timeline. "
                 "Return only these fields: verdict, executive_summary, product_summary, strengths, weaknesses, recommendation_plan, action_items. "
                 "strengths and weaknesses must be arrays of short strings. "
@@ -120,8 +123,8 @@ def simplify_review_copy(review: dict[str, Any]) -> dict[str, Any]:
         {
             "role": "user",
             "content": (
-                "Rewrite this review for simplified mode. "
-                "The person should immediately understand what to change in the video.\n"
+                "Rewrite this review for simplified mode in Spanish (Mexican coloquial). "
+                "The creator should immediately understand what to change in the video.\n"
                 f"{json.dumps(prompt_payload, ensure_ascii=False)}"
             ),
         },
